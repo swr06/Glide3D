@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{37c426c9-f879-4b6e-a964-9d5c34bd0487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\glad">
+      <UniqueIdentifier>{f71fe278-f0e3-4b6b-ac98-80394a9512a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{b697040a-d446-4094-9726-1ffeafb8d8b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\GL Classes">
+      <UniqueIdentifier>{59c3c2f0-e999-46c6-9397-b3717646fcb9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Dependencies\glad\include\glad\glad.h">
+      <Filter>Dependencies\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\glad\include\KHR\khrplatform.h">
+      <Filter>Dependencies\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\CubeTextureMap.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\Fps.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\Framebuffer.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\GLDebug.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\IndexBuffer.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\Random.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\Shader.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\stb_image.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\Texture.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\VertexArray.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GL_Classes\VertexBuffer.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Dependencies\glad\src\glad.c">
+      <Filter>Dependencies\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Core\GL_Classes\CubeTextureMap.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\Fps.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\Framebuffer.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\GLDebug.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\IndexBuffer.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\Random.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\Shader.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\stb_image.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\Texture.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\VertexArray.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\VertexBuffer.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
