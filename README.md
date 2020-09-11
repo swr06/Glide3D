@@ -22,5 +22,8 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Bloom
 - SSAO (Ambient Occlusion)
 
+# Note 
+Since my school has started, development may be slower as I have to finish my school work. :)
+
 # Supporting
 If you like this project, please consider starring it on GitHub.
