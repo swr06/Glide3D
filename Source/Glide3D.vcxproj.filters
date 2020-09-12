@@ -31,6 +31,12 @@
     <Filter Include="Core\Engine\Post Processor">
       <UniqueIdentifier>{1e0c789f-c154-42b2-a010-915818a43068}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Engine\Utils">
+      <UniqueIdentifier>{4c52b3d6-1b1e-4a24-a2ef-cdf3940e6889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Transform">
+      <UniqueIdentifier>{826a9aa1-b559-4e38-8cfb-cd1dc3c0afa3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -75,9 +81,6 @@
     <ClInclude Include="Core\Application\Application.h">
       <Filter>Core\Engine\Application</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Instance\Instance.h">
-      <Filter>Core\Engine\Instance</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Object\Object.h">
       <Filter>Core\Engine\Object</Filter>
     </ClInclude>
@@ -110,6 +113,18 @@
     </ClInclude>
     <ClInclude Include="Core\Application\Logger.h">
       <Filter>Core\Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Transform\Transform.h">
+      <Filter>Core\Engine\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ObjectTypes\Plane.h">
+      <Filter>Core\Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Instance\Entity.h">
+      <Filter>Core\Engine\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Utils\Vertex.h">
+      <Filter>Core\Engine\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +168,6 @@
     <ClCompile Include="Core\Application\Application.cpp">
       <Filter>Core\Engine\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Instance\Instance.cpp">
-      <Filter>Core\Engine\Instance</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Object\Object.cpp">
       <Filter>Core\Engine\Object</Filter>
     </ClCompile>
@@ -179,6 +191,12 @@
     </ClCompile>
     <ClCompile Include="Core\Application\Logger.cpp">
       <Filter>Core\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Transform\Transform.cpp">
+      <Filter>Core\Engine\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Instance\Entity.cpp">
+      <Filter>Core\Engine\Instance</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

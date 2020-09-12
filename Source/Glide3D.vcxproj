@@ -162,15 +162,18 @@
     <ClInclude Include="Core\GL_Classes\Texture.h" />
     <ClInclude Include="Core\GL_Classes\VertexArray.h" />
     <ClInclude Include="Core\GL_Classes\VertexBuffer.h" />
-    <ClInclude Include="Core\Instance\Instance.h" />
+    <ClInclude Include="Core\Instance\Entity.h" />
     <ClInclude Include="Core\Model Loader\OBJFileLoader.h" />
     <ClInclude Include="Core\ObjectTypes\Cone.h" />
     <ClInclude Include="Core\ObjectTypes\Cube.h" />
+    <ClInclude Include="Core\ObjectTypes\Plane.h" />
     <ClInclude Include="Core\ObjectTypes\Sphere.h" />
     <ClInclude Include="Core\Object\Object.h" />
     <ClInclude Include="Core\OrthographicCamera.h" />
     <ClInclude Include="Core\Post Processor\PostProcessor.h" />
     <ClInclude Include="Core\TextureAtlas.h" />
+    <ClInclude Include="Core\Transform\Transform.h" />
+    <ClInclude Include="Core\Utils\Vertex.h" />
     <ClInclude Include="Dependencies\glad\include\glad\glad.h" />
     <ClInclude Include="Dependencies\glad\include\KHR\khrplatform.h" />
   </ItemGroup>
@@ -190,12 +193,13 @@
     <ClCompile Include="Core\GL_Classes\Texture.cpp" />
     <ClCompile Include="Core\GL_Classes\VertexArray.cpp" />
     <ClCompile Include="Core\GL_Classes\VertexBuffer.cpp" />
-    <ClCompile Include="Core\Instance\Instance.cpp" />
+    <ClCompile Include="Core\Instance\Entity.cpp" />
     <ClCompile Include="Core\Model Loader\OBJFileLoader.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
     <ClCompile Include="Core\OrthographicCamera.cpp" />
     <ClCompile Include="Core\Post Processor\PostProcessor.cpp" />
     <ClCompile Include="Core\TextureAtlas.cpp" />
+    <ClCompile Include="Core\Transform\Transform.cpp" />
     <ClCompile Include="Dependencies\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

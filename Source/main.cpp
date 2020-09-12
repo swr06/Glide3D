@@ -8,6 +8,10 @@
 #include "Core/GL_Classes/VertexArray.h"
 #include "Core/Application/Application.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 using namespace Glide3D;
 
 class MyApp : public Application
