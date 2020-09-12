@@ -1,25 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Dependencies">
-      <UniqueIdentifier>{37c426c9-f879-4b6e-a964-9d5c34bd0487}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Dependencies\glad">
-      <UniqueIdentifier>{f71fe278-f0e3-4b6b-ac98-80394a9512a8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{b697040a-d446-4094-9726-1ffeafb8d8b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\GL Classes">
       <UniqueIdentifier>{59c3c2f0-e999-46c6-9397-b3717646fcb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Engine">
+      <UniqueIdentifier>{b9d9fc38-b230-4b33-aff7-571c64357d08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Application">
+      <UniqueIdentifier>{ceb47571-bd68-48e4-a9e6-0ca2c1043201}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Instance">
+      <UniqueIdentifier>{433fc9ab-b14a-4459-a32e-8a598dc786c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Object">
+      <UniqueIdentifier>{cf7dbb78-9a6b-44a4-bc2b-2c4f0ca4ef78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Dependencies">
+      <UniqueIdentifier>{37c426c9-f879-4b6e-a964-9d5c34bd0487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Dependencies\glad">
+      <UniqueIdentifier>{f71fe278-f0e3-4b6b-ac98-80394a9512a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
-      <Filter>Dependencies\glad</Filter>
+      <Filter>Core\Dependencies\glad</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\glad\include\KHR\khrplatform.h">
-      <Filter>Dependencies\glad</Filter>
+      <Filter>Core\Dependencies\glad</Filter>
     </ClInclude>
     <ClInclude Include="Core\GL_Classes\CubeTextureMap.h">
       <Filter>Core\GL Classes</Filter>
@@ -54,10 +66,40 @@
     <ClInclude Include="Core\GL_Classes\VertexBuffer.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Application\Application.h">
+      <Filter>Core\Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Instance\Instance.h">
+      <Filter>Core\Engine\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Object\Object.h">
+      <Filter>Core\Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ObjectTypes\Cone.h">
+      <Filter>Core\Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ObjectTypes\Cube.h">
+      <Filter>Core\Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ObjectTypes\Sphere.h">
+      <Filter>Core\Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Camera.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\FpsCamera.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\OrthographicCamera.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TextureAtlas.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
-      <Filter>Dependencies\glad</Filter>
+      <Filter>Core\Dependencies\glad</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeTextureMap.cpp">
@@ -92,6 +134,27 @@
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\VertexBuffer.cpp">
       <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Application\Application.cpp">
+      <Filter>Core\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Instance\Instance.cpp">
+      <Filter>Core\Engine\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Object\Object.cpp">
+      <Filter>Core\Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Camera.cpp">
+      <Filter>Core\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\FpsCamera.cpp">
+      <Filter>Core\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\OrthographicCamera.cpp">
+      <Filter>Core\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\TextureAtlas.cpp">
+      <Filter>Core\Engine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

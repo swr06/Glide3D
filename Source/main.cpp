@@ -9,6 +9,8 @@
 
 int main()
 {
+	std::cout << "Welcome To Glide 3D\n";
+
 	glfwInit();
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Glide 3D", NULL, NULL);
 
@@ -30,7 +32,14 @@ int main()
 		return -1;
 	}
 
-	std::cin.get();
-	std::cin.get();
+	while (!glfwWindowShouldClose(window))
+	{
+		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glfwPollEvents();
+		glfwSwapBuffers(window);
+	}
+
 	glfwDestroyWindow(window);
 }
