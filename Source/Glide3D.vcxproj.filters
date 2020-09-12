@@ -25,6 +25,12 @@
     <Filter Include="Core\Dependencies\glad">
       <UniqueIdentifier>{f71fe278-f0e3-4b6b-ac98-80394a9512a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Engine\Model Loader">
+      <UniqueIdentifier>{23b2abe7-6f95-49e9-b0cb-613c90bf0925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Post Processor">
+      <UniqueIdentifier>{1e0c789f-c154-42b2-a010-915818a43068}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -96,6 +102,15 @@
     <ClInclude Include="Core\TextureAtlas.h">
       <Filter>Core\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Model Loader\OBJFileLoader.h">
+      <Filter>Core\Engine\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Post Processor\PostProcessor.h">
+      <Filter>Core\Engine\Post Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Application\Logger.h">
+      <Filter>Core\Engine\Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -155,6 +170,15 @@
     </ClCompile>
     <ClCompile Include="Core\TextureAtlas.cpp">
       <Filter>Core\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Model Loader\OBJFileLoader.cpp">
+      <Filter>Core\Engine\Model Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Post Processor\PostProcessor.cpp">
+      <Filter>Core\Engine\Post Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Application\Logger.cpp">
+      <Filter>Core\Engine\Application</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
