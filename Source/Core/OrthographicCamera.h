@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-namespace Minecraft
+namespace Glide3D
 {
 	// Orthographic camera class for 2D element rendering
 

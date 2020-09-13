@@ -30,6 +30,5 @@ namespace Glide3D
 		GLClasses::VertexArray m_VAO;
 		GLClasses::VertexBuffer m_VBO;
 		GLClasses::VertexBuffer m_MatrixVBO;
-		static GLClasses::IndexBuffer m_IBO;
 	};
 }

@@ -8,7 +8,7 @@
 
 // A Simple 3D camera
 
-namespace Minecraft
+namespace Glide3D
 {
 	class Camera
 	{

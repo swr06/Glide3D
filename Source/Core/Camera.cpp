@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-namespace Minecraft
+namespace Glide3D
 {
 	Camera::Camera(float fov, float aspect, float zNear, float zFar)
 	{

@@ -1,6 +1,6 @@
 #include "FpsCamera.h"
 
-namespace Minecraft
+namespace Glide3D
 {
 	FPSCamera::FPSCamera(float fov, float aspect, float zNear, float zFar, float sensitivity)
 	{

@@ -6,9 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// The FPS Camera that is used for the player's movement, frustum culling
-
-namespace Minecraft
+namespace Glide3D
 {
 	class FPSCamera
 	{

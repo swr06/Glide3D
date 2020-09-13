@@ -40,6 +40,9 @@
     <Filter Include="Core\Engine\Entity">
       <UniqueIdentifier>{8ba26edc-9b17-4e6c-9cbf-ea674458a4a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Shaders">
+      <UniqueIdentifier>{77e833be-e455-49ef-8095-5fb9b162f3fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -135,6 +138,9 @@
     <ClInclude Include="Core\Entity\Entity.h">
       <Filter>Core\Engine\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Renderer\CubeRenderer.h">
+      <Filter>Core\Engine\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -210,5 +216,22 @@
     <ClCompile Include="Core\Entity\Entity.cpp">
       <Filter>Core\Engine\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Renderer\CubeRenderer.cpp">
+      <Filter>Core\Engine\Renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Core\Shaders\RendererFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\RendererVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\CubeRendererFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\CubeRendererVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

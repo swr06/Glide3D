@@ -3,16 +3,17 @@
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
 
-#include "Core/GL_Classes/VertexBuffer.h"
-#include "Core/GL_Classes/IndexBuffer.h"
-#include "Core/GL_Classes/VertexArray.h"
 #include "Core/Application/Application.h"
+#include "Core/Renderer/CubeRenderer.h"
+#include "Core/FpsCamera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace Glide3D;
+
+FPSCamera camera(45, 800.0f / 600.0f, 0, 1000, 0.25f);
 
 class MyApp : public Application
 {
@@ -29,20 +30,65 @@ public:
 
 	void OnEvent(Event e) override
 	{
-		if (e.type == EventTypes::KeyPress)
+		if (e.type == EventTypes::MouseMove)
 		{
-			std::cout << "\nKEY PRESS!";
+			camera.UpdateOnMouseMovement(e.mx, e.my);
 		}
 	}
+
 };
+
+MyApp app;
 
 int main()
 {
-	MyApp app;
 	app.Initialize();
+	glfwSwapInterval(1);
+	glfwSetInputMode(app.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	CubeRenderer renderer;
+	GLFWwindow* window = app.GetWindow();
+	const float camera_speed = 0.1f;
+	
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
+
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			// Take the cross product of the camera's right and up.
+			glm::vec3 front = -glm::cross(camera.GetRight(), camera.GetUp());
+			camera.ChangePosition(front * camera_speed);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			glm::vec3 back = glm::cross(camera.GetRight(), camera.GetUp());
+			camera.ChangePosition(back * camera_speed);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			camera.ChangePosition(-(camera.GetRight() * camera_speed));
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			camera.ChangePosition(camera.GetRight() * camera_speed);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			camera.ChangePosition(camera.GetUp() * camera_speed);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			camera.ChangePosition(-(camera.GetUp() * camera_speed));
+		}
+
+		renderer.RenderCube(glm::vec3(0, 0, 0), nullptr, 0, camera.GetProjectionMatrix(), camera.GetViewMatrix(), nullptr);
+		camera.OnUpdate();
+		app.FinishFrame();
 	}
 }

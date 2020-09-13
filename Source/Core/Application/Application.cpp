@@ -70,6 +70,10 @@ namespace Glide3D
 		PollEvents();
 
 		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
+	}
+
+	void Application::FinishFrame()
+	{
 		glfwSwapBuffers(m_Window);
 	}
 

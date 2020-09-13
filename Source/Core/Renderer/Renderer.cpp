@@ -7,6 +7,7 @@ namespace Glide3D
 	Renderer::Renderer() : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER)
 	{
 		bool IndexBufferInitialized = false;
+		static GLClasses::IndexBuffer m_IBO;
 
 		if (IndexBufferInitialized == false)
 		{
@@ -14,7 +15,7 @@ namespace Glide3D
 
 			GLuint* IndexBuffer = nullptr;
 
-			int index_size = 1;
+			int index_size = 1000;
 			int index_offset = 0;
 
 			IndexBuffer = new GLuint[index_size * 6];
@@ -36,7 +37,11 @@ namespace Glide3D
 			delete[] IndexBuffer;
 		}
 
+		/*
+		Setup all the opengl buffer and array objects
+		*/
 		m_VAO.Bind();
+		m_IBO.Bind();
 		m_VBO.Bind();
 		m_VBO.VertexAttribPointer(0, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, position)));
 		m_VBO.VertexAttribPointer(1, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
@@ -45,6 +50,10 @@ namespace Glide3D
 		m_MatrixVBO.VertexAttribPointer(3, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 4)); // column 2
 		m_MatrixVBO.VertexAttribPointer(4, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 8)); // column 3
 		m_MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 12)); // column 4
+		glVertexAttribDivisor(2, 1);
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
 		m_VAO.Unbind();
 	}
 

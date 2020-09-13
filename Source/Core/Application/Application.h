@@ -44,6 +44,7 @@ namespace Glide3D
 		~Application();
 		void Initialize();
 		void OnUpdate();
+		void FinishFrame();
 		inline GLFWwindow* GetWindow() { return m_Window; }
 
 	protected:

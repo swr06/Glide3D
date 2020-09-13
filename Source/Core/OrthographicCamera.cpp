@@ -1,6 +1,6 @@
 #include "OrthographicCamera.h"
 
-namespace Minecraft
+namespace Glide3D
 {
 	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
 	{
