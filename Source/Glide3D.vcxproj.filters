@@ -13,9 +13,6 @@
     <Filter Include="Core\Engine\Application">
       <UniqueIdentifier>{ceb47571-bd68-48e4-a9e6-0ca2c1043201}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Engine\Instance">
-      <UniqueIdentifier>{433fc9ab-b14a-4459-a32e-8a598dc786c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Engine\Object">
       <UniqueIdentifier>{cf7dbb78-9a6b-44a4-bc2b-2c4f0ca4ef78}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,12 @@
     </Filter>
     <Filter Include="Core\Engine\Transform">
       <UniqueIdentifier>{826a9aa1-b559-4e38-8cfb-cd1dc3c0afa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Renderer">
+      <UniqueIdentifier>{211d5219-6d5c-49bc-92b6-e2485ce17543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Entity">
+      <UniqueIdentifier>{8ba26edc-9b17-4e6c-9cbf-ea674458a4a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,9 +84,6 @@
     <ClInclude Include="Core\Application\Application.h">
       <Filter>Core\Engine\Application</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Object\Object.h">
-      <Filter>Core\Engine\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Core\ObjectTypes\Cone.h">
       <Filter>Core\Engine\Object</Filter>
     </ClInclude>
@@ -117,14 +117,23 @@
     <ClInclude Include="Core\Transform\Transform.h">
       <Filter>Core\Engine\Transform</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Utils\Vertex.h">
+      <Filter>Core\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Renderer\Renderer.h">
+      <Filter>Core\Engine\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Core\ObjectTypes\Plane.h">
       <Filter>Core\Engine\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Instance\Entity.h">
-      <Filter>Core\Engine\Instance</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Utils\Vertex.h">
+    <ClInclude Include="Core\Utils\Defs.h">
       <Filter>Core\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Object\Object.h">
+      <Filter>Core\Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Entity\Entity.h">
+      <Filter>Core\Engine\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -168,9 +177,6 @@
     <ClCompile Include="Core\Application\Application.cpp">
       <Filter>Core\Engine\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Object\Object.cpp">
-      <Filter>Core\Engine\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Camera.cpp">
       <Filter>Core\Engine</Filter>
     </ClCompile>
@@ -195,8 +201,14 @@
     <ClCompile Include="Core\Transform\Transform.cpp">
       <Filter>Core\Engine\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Instance\Entity.cpp">
-      <Filter>Core\Engine\Instance</Filter>
+    <ClCompile Include="Core\Renderer\Renderer.cpp">
+      <Filter>Core\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Object\Object.cpp">
+      <Filter>Core\Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Entity\Entity.cpp">
+      <Filter>Core\Engine\Entity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

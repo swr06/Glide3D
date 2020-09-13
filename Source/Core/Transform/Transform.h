@@ -14,7 +14,7 @@ namespace Glide3D
 		void Rotate(float angle, const glm::vec3& axis = glm::vec3(1.0f, 1.0f, 1.0f));
 		void Scale(const glm::vec3& scale);
 
-		const glm::mat4& GetTransformationMatrix();
+		const glm::mat4& GetTransformationMatrix() const;
 
 	private :
 		glm::mat4 m_TransformationMatrix;
