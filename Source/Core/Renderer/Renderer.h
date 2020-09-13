@@ -8,6 +8,7 @@
 #include "../Entity/Entity.h"
 #include "../Utils/Vertex.h"
 #include "../Utils/Defs.h"
+#include "../FpsCamera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,6 +18,7 @@
 #include "../GL_Classes/VertexBuffer.h"
 #include "../GL_Classes/IndexBuffer.h"
 #include "../GL_Classes/VertexArray.h"
+#include "../GL_Classes/Shader.h"
 
 namespace Glide3D
 {
@@ -24,11 +26,12 @@ namespace Glide3D
 	{
 	public :
 		Renderer();
-		void RenderObjects(const std::vector<Entity>& entities);
+		void RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera);
 
 	private :
 		GLClasses::VertexArray m_VAO;
 		GLClasses::VertexBuffer m_VBO;
 		GLClasses::VertexBuffer m_MatrixVBO;
+		GLClasses::Shader m_DefaultShader;
 	};
 }

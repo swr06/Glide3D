@@ -9,6 +9,8 @@ layout (location = 5) in vec4 a_ModelColumn3;
 
 out vec2 v_TexCoords;
 
+uniform mat4 u_ViewProjection;
+
 void main()
 {
 	mat4 model_matrix;
@@ -17,6 +19,6 @@ void main()
 	model_matrix[2] = a_ModelColumn2;
 	model_matrix[3] = a_ModelColumn3;
 
-	gl_Position = model_matrix * vec4(a_Position, 1.0f);
+	gl_Position = u_ViewProjection * model_matrix * vec4(a_Position, 1.0f);
 	v_TexCoords = a_TexCoords;
 }

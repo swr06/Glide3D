@@ -5,7 +5,10 @@
 
 #include "Core/Application/Application.h"
 #include "Core/Renderer/CubeRenderer.h"
+#include "Core/Renderer/Renderer.h"
 #include "Core/FpsCamera.h"
+#include "Core/ObjectTypes/Cube.h"
+#include "Core/Entity/Entity.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -46,9 +49,20 @@ int main()
 	glfwSwapInterval(1);
 	glfwSetInputMode(app.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	CubeRenderer renderer;
+	CubeRenderer cube_renderer;
+	Renderer renderer;
 	GLFWwindow* window = app.GetWindow();
 	const float camera_speed = 0.1f;
+
+	CubeObject cube;
+	Entity entity(&cube);
+	entity.GetTransform().Translate(glm::vec3(4, 0, 0));
+	Entity entity1(&cube);
+	entity1.GetTransform().Translate(glm::vec3(6, 0, 0));
+	Entity entity2(&cube);
+	entity2.GetTransform().Translate(glm::vec3(8, 0, 0));
+	Entity entity3(&cube);
+	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
 	
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
@@ -87,7 +101,9 @@ int main()
 			camera.ChangePosition(-(camera.GetUp() * camera_speed));
 		}
 
-		renderer.RenderCube(glm::vec3(0, 0, 0), nullptr, 0, camera.GetProjectionMatrix(), camera.GetViewMatrix(), nullptr);
+		cube_renderer.RenderCube(glm::vec3(0, 0, 0), nullptr, 0, camera.GetProjectionMatrix(), camera.GetViewMatrix(), nullptr);
+		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
+
 		camera.OnUpdate();
 		app.FinishFrame();
 	}

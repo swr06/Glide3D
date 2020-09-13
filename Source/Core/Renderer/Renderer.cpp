@@ -15,7 +15,7 @@ namespace Glide3D
 
 			GLuint* IndexBuffer = nullptr;
 
-			int index_size = 1000;
+			int index_size = 10000;
 			int index_offset = 0;
 
 			IndexBuffer = new GLuint[index_size * 6];
@@ -55,9 +55,12 @@ namespace Glide3D
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);
 		m_VAO.Unbind();
+
+		m_DefaultShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
+		m_DefaultShader.CompileShaders();
 	}
 
-	void Renderer::RenderObjects(const std::vector<Entity>& entities)
+	void Renderer::RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera)
 	{
 		unsigned int entity_num = 0;
 
@@ -72,11 +75,15 @@ namespace Glide3D
 			entity_num++;
 		}
 
+		m_DefaultShader.Use();
+		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 		m_VBO.BufferData(Vertices.size() * sizeof(Vertex), &Vertices.front(), GL_STATIC_DRAW);
 		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
 		m_VAO.Bind();
-		glDrawElementsInstanced(GL_ARRAY_BUFFER, 6, GL_UNSIGNED_INT, 0, entities.size());
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, (Vertices.size() / 4) * 6, GL_UNSIGNED_INT, 0, entities.size()));
+	
 		m_VAO.Unbind();
+		glUseProgram(0);
 
 		return;
 	}
