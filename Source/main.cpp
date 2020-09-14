@@ -67,7 +67,7 @@ int main()
 	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
 	
 	camera.SetPosition(glm::vec3(0, 0, -2));
-	glViewport(0, 0, 800, 600);
+	//glViewport(0, 0, 800, 600);
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
@@ -75,13 +75,10 @@ int main()
 		
 		// Clear the framebuffer
 		myFBO.Bind();
-		glViewport(0, 0, 800, 600);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		myFBO.CleanUp(app.GetWidth(), app.GetHeight());
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			// Take the cross product of the camera's right and up.
 			glm::vec3 front = -glm::cross(camera.GetRight(), camera.GetUp());
 			camera.ApplyAcceleration(front * camera_speed);
 		}

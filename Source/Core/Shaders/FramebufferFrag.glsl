@@ -8,5 +8,4 @@ uniform sampler2D u_FramebufferTexture;
 void main()
 {
 	o_Color = texture(u_FramebufferTexture, v_TexCoords);
-	//o_Color = vec4(0.0f, 1.0f, 0.0f, 1.0f);
 }

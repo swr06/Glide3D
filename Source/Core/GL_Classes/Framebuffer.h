@@ -18,6 +18,15 @@ namespace GLClasses
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 		}
 
+		// Needs window width and height to set glViewPort
+		void CleanUp(int width, int height) const
+		{
+			this->Bind();
+			glViewport(0, 0, width, height);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_DEPTH_BUFFER_BIT);
+		}
+
 		GLuint GetTexture() const 
 		{
 			return m_TextureAttachment;

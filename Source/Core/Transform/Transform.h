@@ -17,6 +17,6 @@ namespace Glide3D
 		const glm::mat4& GetTransformationMatrix() const;
 
 	private :
-		glm::mat4 m_TransformationMatrix;
+		glm::mat4 m_TransformationMatrix = glm::mat4(1.0f);
 	};
 }
