@@ -18,6 +18,8 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Post Processing pipeline
 - Gamma correction
 - Normal mapping 
+
+# Advanced Features (That will come later..)
 - Defferred shading
 - Bloom
 - SSAO (Ambient Occlusion)
