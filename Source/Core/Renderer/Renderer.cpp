@@ -4,7 +4,8 @@ namespace Glide3D
 {
 	constexpr unsigned int indices_count = 10000;
 
-	Renderer::Renderer() : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), m_FBOVBO(GL_ARRAY_BUFFER)
+	Renderer::Renderer(GLFWwindow* window) : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), 
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
 	{
 		bool IndexBufferInitialized = false;
 
@@ -35,20 +36,17 @@ namespace Glide3D
 
 		/* Framebuffer stuff */
 
+		// basic quad vertices
 		float Vertices[] = 
 		{ 
-			-1.0f,  1.0f,  0.0f, 1.0f,
-			-1.0f, -1.0f,  0.0f, 0.0f,
-			 1.0f, -1.0f,  1.0f, 0.0f,
-
-			-1.0f,  1.0f,  0.0f, 1.0f,
-			 1.0f, -1.0f,  1.0f, 0.0f,
-			 1.0f,  1.0f,  1.0f, 1.0f
+			-1.0f,  1.0f,  0.0f, 1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f, -1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,  1.0f,  1.0f,  1.0f, 1.0f
 		};
 
+		m_FBOVBO.BufferData(sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 		m_FBOVAO.Bind();
 		m_FBOVBO.Bind();
-		m_FBOVBO.BufferData(sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 		m_FBOVBO.VertexAttribPointer(0, 2, GL_FLOAT, 0, 4 * sizeof(GLfloat), 0);
 		m_FBOVBO.VertexAttribPointer(1, 2, GL_FLOAT, 0, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
 		m_FBOVAO.Unbind();
@@ -60,6 +58,9 @@ namespace Glide3D
 		m_FBOShader.CompileShaders();
 	}
 
+	/*
+	Renders a group of the same entity at different positions using instanced rendering
+	*/
 	void Renderer::RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera)
 	{
 		unsigned int entity_num = 0;
@@ -105,11 +106,13 @@ namespace Glide3D
 		return;
 	}
 
+	/*
+	Renders a framebuffer onto the main window
+	*/
 	void Renderer::RenderFBO(const GLClasses::Framebuffer& fbo)
 	{
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, 800, 600);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 

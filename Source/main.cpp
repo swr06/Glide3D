@@ -7,6 +7,7 @@
 #include "Core/Renderer/CubeRenderer.h"
 #include "Core/Renderer/Renderer.h"
 #include "Core/FpsCamera.h"
+#include "Core/GL_Classes/Fps.h"
 #include "Core/ObjectTypes/Cube.h"
 #include "Core/Entity/Entity.h"
 #include "Core/GL_Classes/Framebuffer.h"
@@ -38,6 +39,14 @@ public:
 		{
 			camera.UpdateOnMouseMovement(e.mx, e.my);
 		}
+
+		else if (e.type == EventTypes::WindowResize)
+		{
+			if (e.wx > 1 && e.wy > 1) // To prevent division by zero
+			{
+				camera.SetAspect((float)e.wx / (float)e.wy); // No integer division!
+			}
+		}
 	}
 
 };
@@ -51,9 +60,9 @@ int main()
 	glfwSetInputMode(app.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	CubeRenderer cube_renderer;
-	Renderer renderer;
+	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
-	GLClasses::Framebuffer myFBO(800, 600);
+	GLClasses::Framebuffer FBO(800, 600);
 	const float camera_speed = 0.03f;
 
 	CubeObject cube;
@@ -67,15 +76,14 @@ int main()
 	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
 	
 	camera.SetPosition(glm::vec3(0, 0, -2));
-	//glViewport(0, 0, 800, 600);
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
 		
 		// Clear the framebuffer
-		myFBO.Bind();
-		myFBO.CleanUp(app.GetWidth(), app.GetHeight());
+		FBO.Bind();
+		FBO.OnUpdate(app.GetWidth(), app.GetHeight());
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
@@ -110,10 +118,12 @@ int main()
 		}
 
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
-		renderer.RenderFBO(myFBO);
+		renderer.RenderFBO(FBO);
 
 		camera.OnUpdate();
 		camera.ResetAcceleration();
 		app.FinishFrame();
+
+		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
 	}
 }

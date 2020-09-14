@@ -64,6 +64,8 @@ namespace Glide3D
 	void Application::OnUpdate()
 	{
 		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, m_CurrentWidth, m_CurrentHeight);
 
 		// Poll the events
 		glfwPollEvents();

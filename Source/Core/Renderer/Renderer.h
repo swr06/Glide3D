@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <glad/glad.h>
+#include <glfw/glfw3.h>
 
 #include "../Object/Object.h"
 #include "../Entity/Entity.h"
@@ -26,7 +27,7 @@ namespace Glide3D
 	class Renderer
 	{
 	public :
-		Renderer();
+		Renderer(GLFWwindow* window);
 		void RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera);
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
 
@@ -40,5 +41,6 @@ namespace Glide3D
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
 		GLClasses::Shader m_FBOShader;
+		GLFWwindow* m_Window;
 	};
 }
