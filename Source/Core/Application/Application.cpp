@@ -52,24 +52,22 @@ namespace Glide3D
 		glfwSetWindowUserPointer(m_Window, (void*)&m_EventQueue);
 
 		OnUserCreate(glfwGetTime());
+		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
 
 		glClearColor(0.25f, 0.30f, 0.25f, 1.0f);
 	}
 
 	/*
 	This function should be called every frame.
-	It updates the window, polls events and 
+	It updates the window, polls events 
 	*/
 	void Application::OnUpdate()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
 
 		// Poll the events
 		glfwPollEvents();
 		PollEvents();
-
-		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
 	}
 
 	void Application::FinishFrame()

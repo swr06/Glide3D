@@ -4,7 +4,7 @@ namespace Glide3D
 {
 	constexpr unsigned int indices_count = 10000;
 
-	Renderer::Renderer() : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER)
+	Renderer::Renderer() : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), m_FBOVBO(GL_ARRAY_BUFFER)
 	{
 		bool IndexBufferInitialized = false;
 
@@ -33,9 +33,31 @@ namespace Glide3D
 
 		m_VAO.Unbind();
 
+		/* Framebuffer stuff */
+
+		float Vertices[] = 
+		{ 
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
+
+		m_FBOVAO.Bind();
+		m_FBOVBO.Bind();
+		m_FBOVBO.BufferData(sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+		m_FBOVBO.VertexAttribPointer(0, 2, GL_FLOAT, 0, 4 * sizeof(GLfloat), 0);
+		m_FBOVBO.VertexAttribPointer(1, 2, GL_FLOAT, 0, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+		m_FBOVAO.Unbind();
+
 		/* Create and compile the shaders */
 		m_DefaultShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
 		m_DefaultShader.CompileShaders();
+		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferVert.glsl", "Core/Shaders/FramebufferFrag.glsl");
+		m_FBOShader.CompileShaders();
 	}
 
 	void Renderer::RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera)
@@ -81,5 +103,24 @@ namespace Glide3D
 		glUseProgram(0);
 
 		return;
+	}
+
+	void Renderer::RenderFBO(const GLClasses::Framebuffer& fbo)
+	{
+		glDisable(GL_DEPTH_TEST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, 800, 600);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		m_FBOShader.Use();
+		m_FBOShader.SetInteger("u_FramebufferTexture", 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
+		m_FBOVAO.Bind();
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+		m_FBOVAO.Unbind();
+
+		glUseProgram(0);
 	}
 }
