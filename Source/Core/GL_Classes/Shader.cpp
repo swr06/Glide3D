@@ -42,6 +42,16 @@ namespace GLClasses
 			std::cout << "\nCOMPILATION ERROR IN VERTEX SHADER (" << m_VertexPath << ")" << "\n" << GLInfoLog << "\n\n";
 		}
 
+
+		GLint log_length = 0;
+		glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &log_length);
+		if (log_length > 0)
+		{
+			std::string shaderlog(log_length, 0);
+			glGetShaderInfoLog(vs, log_length, 0, shaderlog.data());
+			std::cout << "Shader compilation log: " << shaderlog << std::endl;
+		}
+
 		glCompileShader(fs);
 		glGetShaderiv(fs, GL_COMPILE_STATUS, &successful);
 
@@ -49,6 +59,15 @@ namespace GLClasses
 		{
 			glGetShaderInfoLog(fs, 512, NULL, GLInfoLog);
 			std::cout << "\nCOMPILATION ERROR IN FRAGMENT SHADER (" << m_FragmentPath << ")" << "\n" << GLInfoLog << "\n";
+		}
+
+		log_length = 0;
+		glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &log_length);
+		if (log_length > 0)
+		{
+			std::string shaderlog(log_length, 0);
+			glGetShaderInfoLog(fs, log_length, 0, shaderlog.data());
+			std::cout << "Shader compilation log: " << shaderlog << std::endl;
 		}
 
 		m_Program = glCreateProgram();

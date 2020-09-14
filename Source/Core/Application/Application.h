@@ -46,6 +46,10 @@ namespace Glide3D
 		void OnUpdate();
 		void FinishFrame();
 		inline GLFWwindow* GetWindow() { return m_Window; }
+		double GetTime();
+		uint64_t GetCurrentFrame();
+		unsigned int GetWidth();
+		unsigned int GetHeight();
 
 	protected:
 		GLFWwindow* m_Window;
@@ -59,11 +63,6 @@ namespace Glide3D
 		virtual void OnUserUpdate(double ts) = 0;
 		virtual void OnUserCreate(double ts) = 0;
 		virtual void OnEvent(Event e) = 0;
-
-		double GetTime();
-		uint64_t GetCurrentFrame();
-		unsigned int GetWidth();
-		unsigned int GetHeight();
 
 	private:
 		void PollEvents();

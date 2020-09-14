@@ -19,6 +19,7 @@
 #include "../GL_Classes/IndexBuffer.h"
 #include "../GL_Classes/VertexArray.h"
 #include "../GL_Classes/Shader.h"
+#include "../GL_Classes/Framebuffer.h"
 
 namespace Glide3D
 {
@@ -27,6 +28,7 @@ namespace Glide3D
 	public :
 		Renderer();
 		void RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera);
+		void RenderFBO(const GLClasses::Framebuffer& fbo);
 
 	private :
 		GLClasses::VertexArray m_VAO;
@@ -34,5 +36,9 @@ namespace Glide3D
 		GLClasses::VertexBuffer m_MatrixVBO;
 		GLClasses::IndexBuffer m_IBO;
 		GLClasses::Shader m_DefaultShader;
+
+		GLClasses::VertexArray m_FBOVAO;
+		GLClasses::VertexBuffer m_FBOVBO;
+		GLClasses::Shader m_FBOShader;
 	};
 }

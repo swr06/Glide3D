@@ -9,6 +9,7 @@
 #include "Core/FpsCamera.h"
 #include "Core/ObjectTypes/Cube.h"
 #include "Core/Entity/Entity.h"
+#include "Core/GL_Classes/Framebuffer.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -52,7 +53,8 @@ int main()
 	CubeRenderer cube_renderer;
 	Renderer renderer;
 	GLFWwindow* window = app.GetWindow();
-	const float camera_speed = 0.1f;
+	GLClasses::Framebuffer myFBO(800, 600);
+	const float camera_speed = 0.03f;
 
 	CubeObject cube;
 	Entity entity(&cube);
@@ -64,47 +66,54 @@ int main()
 	Entity entity3(&cube);
 	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
 	
+	camera.SetPosition(glm::vec3(0, 0, -2));
+	//glViewport(0, 0, 800, 600);
+
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
+		
+		// Clear the framebuffer
+		myFBO.Bind();
+		myFBO.CleanUp(app.GetWidth(), app.GetHeight());
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			// Take the cross product of the camera's right and up.
 			glm::vec3 front = -glm::cross(camera.GetRight(), camera.GetUp());
-			camera.ChangePosition(front * camera_speed);
+			camera.ApplyAcceleration(front * camera_speed);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
 			glm::vec3 back = glm::cross(camera.GetRight(), camera.GetUp());
-			camera.ChangePosition(back * camera_speed);
+			camera.ApplyAcceleration(back * camera_speed);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
-			camera.ChangePosition(-(camera.GetRight() * camera_speed));
+			camera.ApplyAcceleration(-(camera.GetRight() * camera_speed));
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		{
-			camera.ChangePosition(camera.GetRight() * camera_speed);
+			camera.ApplyAcceleration(camera.GetRight() * camera_speed);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
-			camera.ChangePosition(camera.GetUp() * camera_speed);
+			camera.ApplyAcceleration(camera.GetUp() * camera_speed);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
-			camera.ChangePosition(-(camera.GetUp() * camera_speed));
+			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
 		}
 
-		cube_renderer.RenderCube(glm::vec3(0, 0, 0), nullptr, 0, camera.GetProjectionMatrix(), camera.GetViewMatrix(), nullptr);
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
+		renderer.RenderFBO(myFBO);
 
 		camera.OnUpdate();
+		camera.ResetAcceleration();
 		app.FinishFrame();
 	}
 }

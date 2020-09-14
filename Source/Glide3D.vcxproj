@@ -211,6 +211,8 @@
   <ItemGroup>
     <None Include="Core\Shaders\CubeRendererFrag.glsl" />
     <None Include="Core\Shaders\CubeRendererVert.glsl" />
+    <None Include="Core\Shaders\FramebufferFrag.glsl" />
+    <None Include="Core\Shaders\FramebufferVert.glsl" />
     <None Include="Core\Shaders\RendererFrag.glsl" />
     <None Include="Core\Shaders\RendererVert.glsl" />
   </ItemGroup>
