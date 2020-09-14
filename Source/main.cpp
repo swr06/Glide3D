@@ -113,21 +113,7 @@ int main()
 		}
 
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
-		glDisable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, 800, 600);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		m_FBOShader.Use();
-		m_FBOShader.SetInteger("u_FramebufferTexture", 1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
-		m_FBOVAO.Bind();
-		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-		m_FBOVAO.Unbind();
-
-		glUseProgram(0);
+		renderer.RenderFBO(myFBO);
 
 		camera.OnUpdate();
 		camera.ResetAcceleration();
