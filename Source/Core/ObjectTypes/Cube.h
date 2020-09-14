@@ -21,6 +21,17 @@ namespace Glide3D
 
 		CubeObject(const std::array<PlaneTextureCoordinates, 6>& texture_coordinates)
 		{
+			// Define the indices for the cube with the format (0, 1, 2, 2, 3, 0)
+			p_Indices =
+			{
+				0, 1, 2, 2, 3, 0,
+				0 + 4, 1 + 4, 2 + 4, 2 + 4, 3 + 4, 0 + 4,
+				0 + 8, 1 + 8, 2 + 8, 2 + 8, 3 + 8, 0 + 8,
+				0 + 12, 1 + 12, 2 + 12, 2 + 12, 3 + 12, 0 + 12,
+				0 + 16, 1 + 16, 2 + 16, 2 + 16, 3 + 16, 0 + 16,
+				0 + 20, 1 + 20, 2 + 20, 2 + 20, 3 + 20, 0 + 20,
+			};
+
 			// Forward Face
 			p_Vertices.push_back({glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(texture_coordinates[0][0], texture_coordinates[0][1])});
 			p_Vertices.push_back({glm::vec3(1.0f, 0.0f, 1.0f), glm::vec2(texture_coordinates[0][2], texture_coordinates[0][3])});
@@ -60,6 +71,17 @@ namespace Glide3D
 
 		CubeObject()
 		{
+			// Define the indices for the cube with the format (0, 1, 2, 2, 3, 0)
+			p_Indices = 
+			{ 
+				0, 1, 2, 2, 3, 0, 
+				0 + 4, 1 + 4, 2 + 4, 2 + 4, 3 + 4, 0 + 4,
+				0 + 8, 1 + 8, 2 + 8, 2 + 8, 3 + 8, 0 + 8,
+				0 + 12, 1 + 12, 2 + 12, 2 + 12, 3 + 12, 0 + 12,
+				0 + 16, 1 + 16, 2 + 16, 2 + 16, 3 + 16, 0 + 16,
+				0 + 20, 1 + 20, 2 + 20, 2 + 20, 3 + 20, 0 + 20,
+			};
+
 			// Forward Face
 			p_Vertices.push_back({ glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) });
 			p_Vertices.push_back({ glm::vec3(1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) });

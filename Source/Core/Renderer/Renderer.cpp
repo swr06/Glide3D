@@ -7,35 +7,6 @@ namespace Glide3D
 	Renderer::Renderer() : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER)
 	{
 		bool IndexBufferInitialized = false;
-		static GLClasses::IndexBuffer m_IBO;
-
-		if (IndexBufferInitialized == false)
-		{
-			IndexBufferInitialized = true;
-
-			GLuint* IndexBuffer = nullptr;
-
-			int index_size = 10000;
-			int index_offset = 0;
-
-			IndexBuffer = new GLuint[index_size * 6];
-
-			for (size_t i = 0; i < index_size; i += 6)
-			{
-				IndexBuffer[i] = 0 + index_offset;
-				IndexBuffer[i + 1] = 1 + index_offset;
-				IndexBuffer[i + 2] = 2 + index_offset;
-				IndexBuffer[i + 3] = 2 + index_offset;
-				IndexBuffer[i + 4] = 3 + index_offset;
-				IndexBuffer[i + 5] = 0 + index_offset;
-
-				index_offset = index_offset + 4;
-			}
-
-			m_IBO.BufferData(index_size * 6 * sizeof(GLuint), IndexBuffer, GL_STATIC_DRAW);
-
-			delete[] IndexBuffer;
-		}
 
 		/*
 		Setup all the opengl buffer and array objects
@@ -46,16 +17,22 @@ namespace Glide3D
 		m_VBO.VertexAttribPointer(0, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, position)));
 		m_VBO.VertexAttribPointer(1, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
 		m_MatrixVBO.Bind();
+
+		// Structure padding shouldn't be an issue since the size is 16
 		m_MatrixVBO.VertexAttribPointer(2, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)0); // column 1
 		m_MatrixVBO.VertexAttribPointer(3, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 4)); // column 2
 		m_MatrixVBO.VertexAttribPointer(4, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 8)); // column 3
 		m_MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 12)); // column 4
+
+		// Set the matrix attributes to be per-instance
 		glVertexAttribDivisor(2, 1);
 		glVertexAttribDivisor(3, 1);
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);
+
 		m_VAO.Unbind();
 
+		/* Create and compile the shaders */
 		m_DefaultShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
 		m_DefaultShader.CompileShaders();
 	}
@@ -64,10 +41,9 @@ namespace Glide3D
 	{
 		unsigned int entity_num = 0;
 
-		std::vector<Vertex> Vertices;
+		const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
+		const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
 		std::vector<glm::mat4> ModelMatrices;
-
-		Vertices = entities[0].p_Object->p_Vertices;
 
 		for (auto& e : entities)
 		{
@@ -75,12 +51,30 @@ namespace Glide3D
 			entity_num++;
 		}
 
+		bool indexed = false;
+
 		m_DefaultShader.Use();
 		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
-		m_VBO.BufferData(Vertices.size() * sizeof(Vertex), &Vertices.front(), GL_STATIC_DRAW);
+
+		if (Indices.size() > 0)
+		{
+			m_IBO.BufferData(Indices.size() * sizeof(GLuint), (void*)&Indices.front(), GL_STATIC_DRAW);
+			indexed = true;
+		}
+
+		m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
 		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
 		m_VAO.Bind();
-		GLCall(glDrawElementsInstanced(GL_TRIANGLES, (Vertices.size() / 4) * 6, GL_UNSIGNED_INT, 0, entities.size()));
+
+		if (indexed)
+		{
+			GLCall(glDrawElementsInstanced(GL_TRIANGLES, (Vertices.size() / 4) * 6, GL_UNSIGNED_INT, 0, entities.size()));
+		}
+
+		else
+		{
+			GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size()));
+		}
 	
 		m_VAO.Unbind();
 		glUseProgram(0);

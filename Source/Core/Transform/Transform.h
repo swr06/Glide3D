@@ -10,9 +10,9 @@ namespace Glide3D
 	class Transform
 	{
 	public : 
-		void Translate(const glm::vec3& position);
-		void Rotate(float angle, const glm::vec3& axis = glm::vec3(1.0f, 1.0f, 1.0f));
-		void Scale(const glm::vec3& scale);
+		void Translate(const glm::vec3& position) noexcept;
+		void Rotate(float angle, const glm::vec3& axis = glm::vec3(1.0f, 1.0f, 1.0f)) noexcept;
+		void Scale(const glm::vec3& scale) noexcept;
 
 		const glm::mat4& GetTransformationMatrix() const;
 

@@ -32,6 +32,7 @@ namespace Glide3D
 		GLClasses::VertexArray m_VAO;
 		GLClasses::VertexBuffer m_VBO;
 		GLClasses::VertexBuffer m_MatrixVBO;
+		GLClasses::IndexBuffer m_IBO;
 		GLClasses::Shader m_DefaultShader;
 	};
 }
