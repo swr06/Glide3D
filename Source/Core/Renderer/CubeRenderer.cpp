@@ -90,7 +90,7 @@ namespace Glide3D
         //texture->Bind(1);
 
         use_shader->Use();
-        use_shader->SetMatrix4("u_Model", glm::mat4(1.0f));
+        use_shader->SetMatrix4("u_Model", model);
         use_shader->SetMatrix4("u_View", view);
         use_shader->SetMatrix4("u_Projection", projection);
         use_shader->SetInteger("u_Texture", 1);

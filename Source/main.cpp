@@ -19,7 +19,7 @@
 
 using namespace Glide3D;
 
-FPSCamera camera(45, 800.0f / 600.0f, 0.5f, 1000, 0.25f);
+FPSCamera camera(45, 800.0f / 600.0f, 0.1f, 1000, 0.25f);
 
 class MyApp : public Application
 {
@@ -94,7 +94,6 @@ int main()
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// Clear the framebuffer
 		FBO.Bind();
@@ -135,6 +134,7 @@ int main()
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
 		renderer.RenderObjects({ pot }, &camera);
 		renderer.RenderObjects({ suzanne_ }, &camera);
+		cube_renderer.RenderCube(glm::vec3(15.0f, 1.1f, 13.0f), nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
 
 		camera.OnUpdate();
@@ -142,6 +142,5 @@ int main()
 		app.FinishFrame();
 
 		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
-
 	}
 }
