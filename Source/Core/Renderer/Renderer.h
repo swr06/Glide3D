@@ -33,7 +33,9 @@ namespace Glide3D
 
 	private :
 		GLClasses::VertexArray m_VAO;
-		GLClasses::VertexBuffer m_VBO;
+		GLClasses::VertexBuffer m_VertexVBO; // For the actual vertex positions
+		GLClasses::VertexBuffer m_UVVBO; // For the UV or texture coordinates
+		GLClasses::VertexBuffer m_NormalVBO; // For the vertex normals
 		GLClasses::VertexBuffer m_MatrixVBO;
 		GLClasses::IndexBuffer m_IBO;
 		GLClasses::Shader m_DefaultShader;

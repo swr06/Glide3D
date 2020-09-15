@@ -4,8 +4,8 @@ namespace Glide3D
 {
 	constexpr unsigned int indices_count = 10000;
 
-	Renderer::Renderer(GLFWwindow* window) : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
+	Renderer::Renderer(GLFWwindow* window) : m_VertexVBO(GL_ARRAY_BUFFER), m_UVVBO(GL_ARRAY_BUFFER), 
+		m_NormalVBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
 	{
 		bool IndexBufferInitialized = false;
 
@@ -14,10 +14,12 @@ namespace Glide3D
 		*/
 		m_VAO.Bind();
 		m_IBO.Bind();
-		m_VBO.Bind();
-		m_VBO.VertexAttribPointer(0, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, position)));
-		m_VBO.VertexAttribPointer(1, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, normals)));
-		m_VBO.VertexAttribPointer(2, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
+		m_VertexVBO.Bind();
+		m_VertexVBO.VertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
+		m_UVVBO.Bind();
+		m_UVVBO.VertexAttribPointer(1, 2, GL_FLOAT, 0, 0, 0);
+		m_NormalVBO.Bind();
+		m_NormalVBO.VertexAttribPointer(2, 3, GL_FLOAT, 0, 0, 0);
 		m_MatrixVBO.Bind();
 
 		// Structure padding shouldn't be an issue since the size is 16
@@ -65,7 +67,9 @@ namespace Glide3D
 	{
 		unsigned int entity_num = 0;
 
-		const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
+		const std::vector<glm::vec3>& Vertices = entities[0].p_Object->p_Vertices;
+		const std::vector<glm::vec2>& TextureCoords = entities[0].p_Object->p_TextureCoords;
+		const std::vector<glm::vec3>& Normals = entities[0].p_Object->p_Normals;
 		const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
 		std::vector<glm::mat4> ModelMatrices;
 
@@ -86,7 +90,13 @@ namespace Glide3D
 			indexed = true;
 		}
 
-		m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
+		/*
+		Upload all the data to the gpu
+		*/
+		m_VertexVBO.BufferData(Vertices.size() * sizeof(glm::vec3), (void*)&Vertices.front(), GL_STATIC_DRAW);
+		m_UVVBO.BufferData(TextureCoords.size() * sizeof(glm::vec2), (void*)&TextureCoords.front(), GL_STATIC_DRAW);
+		m_NormalVBO.BufferData(Normals.size() * sizeof(glm::vec3), (void*)&Normals.front(), GL_STATIC_DRAW);
+
 		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
 		m_VAO.Bind();
 

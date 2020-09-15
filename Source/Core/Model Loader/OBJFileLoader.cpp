@@ -6,7 +6,7 @@ namespace Glide3D
 	{
 		void LoadOBJFile(Object* object, const std::string& filepath)
 		{
-			std::vector<Vertex>& ObjectVertices = object->p_Vertices;
+			/*std::vector<Vertex>& ObjectVertices = object->p_Vertices;
 			std::vector<GLuint>& ObjectIndices = object->p_Indices;
 
 			// buffers to store the data
@@ -75,9 +75,6 @@ namespace Glide3D
 					}
 				}
 
-				/*
-				Create the triangle mesh
-				*/
 				for (int i = 0 ; i < faces.size() ; i++)
 				{
 					faces[i] -= 1;
@@ -94,7 +91,7 @@ namespace Glide3D
 			else
 			{
 				std::cout << "FATAL ERROR ! COULD NOT LOAD : " << filepath;
-			}
+			}*/
 		}
 	}
 }
