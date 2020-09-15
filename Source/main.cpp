@@ -79,9 +79,13 @@ int main()
 	camera.SetPosition(glm::vec3(0, 0, -2));
 
 	Object teapot;
-	FileLoader::LoadOBJFile(&teapot, "Resources/suzanne.obj");
+	Object suzanne;
+	FileLoader::LoadOBJFile(&suzanne, "Resources/suzanne.obj");
+	FileLoader::LoadOBJFile(&teapot, "Resources/teapot.obj");
 	Entity pot(&teapot);
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
+	Entity suzanne_(&suzanne);
+	suzanne_.GetTransform().Translate(glm::vec3(20, 0, 0));
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
@@ -125,6 +129,7 @@ int main()
 
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
 		renderer.RenderObjects({ pot }, &camera);
+		renderer.RenderObjects({ suzanne_ }, &camera);
 		renderer.RenderFBO(FBO);
 
 		camera.OnUpdate();

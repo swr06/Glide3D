@@ -3,7 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <glad/glad.h>
+#include <sstream>
 #include "../Object/Object.h"
+#include "../Application/Logger.h"
 
 #include <cstdio>
 #include <cstdlib>

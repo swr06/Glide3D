@@ -88,28 +88,23 @@ namespace Glide3D
 		if (Vertices.size() > 0)
 		{
 			m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
-			can_render = true;
 		}
 
 		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
-		
-		if (can_render)
+		m_VAO.Bind();
+
+		if (indexed)
 		{
-			m_VAO.Bind();
-
-			if (indexed)
-			{
-				GLCall(glDrawElementsInstanced(GL_TRIANGLES, (Vertices.size() / 4) * 6, GL_UNSIGNED_INT, 0, entities.size()));
-			}
-
-			else
-			{
-				GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size()));
-			}
-
-			m_VAO.Unbind();
-			glUseProgram(0);
+			GLCall(glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size()));
 		}
+
+		else
+		{
+			GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size()));
+		}
+
+		m_VAO.Unbind();
+		glUseProgram(0);
 
 		return;
 	}

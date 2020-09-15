@@ -1,37 +1,91 @@
 #include "OBJFileLoader.h"
-#include "../../Dependencies/obj_loader/OBJ_Loader.h"
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace Glide3D
 {
 	namespace FileLoader
 	{
-		void LoadOBJFile(Object* object, const std::string& filepath)
+		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object)
 		{
 			std::vector<Vertex>& vertices = object->p_Vertices;
 			std::vector<GLuint>& indices = object->p_Indices;
-			std::string& mesh_name = object->p_MeshName;
-
-			objl::Loader Loader;
-			bool res = Loader.LoadFile(filepath);
-
-			if (res)
+			
+			for (int i = 0; i < mesh->mNumVertices; i++)
 			{
-				objl::Mesh mesh = Loader.LoadedMeshes[0];
-				for (auto &e : mesh.Vertices)
+				Vertex vt;
+				vt.position = glm::vec3(
+					(float)mesh->mVertices[i].x,
+					(float)mesh->mVertices[i].y,
+					(float)mesh->mVertices[i].z
+				);
+
+				if (mesh->HasNormals())
 				{
-					vertices.push_back({ 
-						glm::vec3(e.Position.X, e.Position.Y, e.Position.Z), 
-						glm::vec3(e.Normal.X, e.Normal.Y, e.Normal.Z),
-						glm::vec2(e.TextureCoordinate.X, e.TextureCoordinate.Y)});
+					vt.normals = glm::vec3(
+					(float)mesh->mNormals[i].x,
+					(float)mesh->mNormals[i].y,
+					(float)mesh->mNormals[i].z
+					);
 				}
 
-				for (auto& e : mesh.Indices)
+				if (mesh->mTextureCoords[0])
 				{
-					indices.push_back(e);
+					vt.tex_coords = glm::vec2(
+						(float)mesh->mTextureCoords[0][i].x,
+						(float)mesh->mTextureCoords[0][i].y
+					);
+				} 
+				
+				else
+				{
+					vt.tex_coords = glm::vec2(0.0f, 0.0f);
 				}
 
-				mesh_name = mesh.MeshName;
+				vertices.push_back(vt);
 			}
+
+			for (int i = 0; i < mesh->mNumFaces; i++)
+			{
+				aiFace face = mesh->mFaces[i];
+
+				for (unsigned int j = 0; j < face.mNumIndices; j++)
+				{
+					indices.push_back(face.mIndices[j]);
+				}
+			}
+		}
+
+		void ProcessAssimpNode(aiNode* Node, const aiScene* Scene, Object* object)
+		{
+			for (int i = 0; i < Node->mNumMeshes; i++)
+			{
+				aiMesh* mesh = Scene->mMeshes[Node->mMeshes[i]];
+				ProcessAssimpMesh(mesh, Scene, object);
+			}
+
+			for (int i = 0; i < Node->mNumChildren; i++)
+			{
+				ProcessAssimpNode(Node->mChildren[i], Scene, object);
+			}
+		}
+
+		void LoadOBJFile(Object* object, const std::string& filepath)
+		{
+			Assimp::Importer importer;
+			const aiScene* Scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+			if (!Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode)
+			{
+				std::stringstream str;
+				str << "ERROR LOADING ASSIMP MODEL (" << filepath << ") || ASSIMP ERROR : " << importer.GetErrorString();
+				Logger::Log(str.str());
+				return;
+			}
+
+			ProcessAssimpNode(Scene->mRootNode, Scene, object);
 		}
 	}
 }
