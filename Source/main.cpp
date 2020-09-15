@@ -11,6 +11,7 @@
 #include "Core/ObjectTypes/Cube.h"
 #include "Core/Entity/Entity.h"
 #include "Core/GL_Classes/Framebuffer.h"
+#include "Core/Model Loader/OBJFileLoader.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -77,6 +78,11 @@ int main()
 	
 	camera.SetPosition(glm::vec3(0, 0, -2));
 
+	Object teapot;
+	FileLoader::LoadOBJFile(&teapot, "Resources/sphere.obj");
+	Entity pot(&teapot);
+	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
+
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
@@ -118,6 +124,7 @@ int main()
 		}
 
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
+		renderer.RenderObjects({ pot }, &camera);
 		renderer.RenderFBO(FBO);
 
 		camera.OnUpdate();

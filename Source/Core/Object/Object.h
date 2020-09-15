@@ -17,9 +17,9 @@ namespace Glide3D
 	public :
 		std::vector<Vertex> p_Vertices;
 		std::vector<GLuint> p_Indices;
-		GLClasses::Texture p_Texture;
-		GLClasses::Texture p_LightMap;
-		GLClasses::Texture p_AlbedoMap;
-		GLClasses::Texture p_NormalMap;
+		//GLClasses::Texture p_Texture;
+		//GLClasses::Texture p_LightMap;
+		//GLClasses::Texture p_AlbedoMap;
+		//GLClasses::Texture p_NormalMap;
 	};
 }
