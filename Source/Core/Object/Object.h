@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include "../Utils/Vertex.h"
 #include "../Utils/Defs.h"
@@ -17,9 +18,10 @@ namespace Glide3D
 	public :
 		std::vector<Vertex> p_Vertices;
 		std::vector<GLuint> p_Indices;
-		//GLClasses::Texture p_Texture;
-		//GLClasses::Texture p_LightMap;
-		//GLClasses::Texture p_AlbedoMap;
-		//GLClasses::Texture p_NormalMap;
+		std::string p_MeshName;
+		GLClasses::Texture* p_Texture;
+		GLClasses::Texture* p_LightMap;
+		GLClasses::Texture* p_AlbedoMap;
+		GLClasses::Texture* p_NormalMap;
 	};
 }

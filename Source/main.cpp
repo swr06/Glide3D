@@ -79,7 +79,7 @@ int main()
 	camera.SetPosition(glm::vec3(0, 0, -2));
 
 	Object teapot;
-	FileLoader::LoadOBJFile(&teapot, "Resources/sphere.obj");
+	FileLoader::LoadOBJFile(&teapot, "Resources/suzanne.obj");
 	Entity pot(&teapot);
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
 

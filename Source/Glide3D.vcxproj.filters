@@ -43,6 +43,9 @@
     <Filter Include="Core\Shaders">
       <UniqueIdentifier>{77e833be-e455-49ef-8095-5fb9b162f3fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Dependencies\objloader">
+      <UniqueIdentifier>{39733176-3870-4ea2-a433-a633776d07ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -140,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="Core\Renderer\CubeRenderer.h">
       <Filter>Core\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\obj_loader\OBJ_Loader.h">
+      <Filter>Core\Dependencies\objloader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,8 +2,6 @@
 
 namespace Glide3D
 {
-	constexpr unsigned int indices_count = 10000;
-
 	Renderer::Renderer(GLFWwindow* window) : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
 	{
@@ -76,6 +74,7 @@ namespace Glide3D
 		}
 
 		bool indexed = false;
+		bool can_render = true; // Flag to assure that the size of the vertices is over zero
 
 		m_DefaultShader.Use();
 		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
@@ -86,22 +85,31 @@ namespace Glide3D
 			indexed = true;
 		}
 
-		m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
+		if (Vertices.size() > 0)
+		{
+			m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
+			can_render = true;
+		}
+
 		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
-		m_VAO.Bind();
-
-		if (indexed)
+		
+		if (can_render)
 		{
-			GLCall(glDrawElementsInstanced(GL_TRIANGLES, (Vertices.size() / 4) * 6, GL_UNSIGNED_INT, 0, entities.size()));
-		}
+			m_VAO.Bind();
 
-		else
-		{
-			GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size()));
+			if (indexed)
+			{
+				GLCall(glDrawElementsInstanced(GL_TRIANGLES, (Vertices.size() / 4) * 6, GL_UNSIGNED_INT, 0, entities.size()));
+			}
+
+			else
+			{
+				GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size()));
+			}
+
+			m_VAO.Unbind();
+			glUseProgram(0);
 		}
-	
-		m_VAO.Unbind();
-		glUseProgram(0);
 
 		return;
 	}
