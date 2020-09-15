@@ -54,7 +54,8 @@ namespace Glide3D
 		OnUserCreate(glfwGetTime());
 		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
 
-		glClearColor(0.25f, 0.30f, 0.25f, 1.0f);
+		//glClearColor(0.25f, 0.30f, 0.25f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	/*

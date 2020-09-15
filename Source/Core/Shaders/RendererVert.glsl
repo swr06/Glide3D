@@ -11,6 +11,8 @@ layout (location = 5) in vec4 a_ModelColumn2;
 layout (location = 6) in vec4 a_ModelColumn3;
 
 out vec2 v_TexCoords;
+out vec3 v_FragPosition;
+out vec3 v_Normal;
 
 uniform mat4 u_ViewProjection;
 
@@ -22,6 +24,10 @@ void main()
 	model_matrix[2] = a_ModelColumn2;
 	model_matrix[3] = a_ModelColumn3;
 
+	v_FragPosition = vec3(model_matrix * vec4(a_Position, 1.0f)); // For lighting calculations
 	gl_Position = u_ViewProjection * model_matrix * vec4(a_Position, 1.0f);
+
 	v_TexCoords = a_TexCoords;
+	v_Normal = a_Normal;
+	v_Normal = mat3(transpose(inverse(model_matrix))) * a_Normal;  
 }

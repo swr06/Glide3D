@@ -77,6 +77,10 @@ namespace Glide3D
 		bool can_render = true; // Flag to assure that the size of the vertices is over zero
 
 		m_DefaultShader.Use();
+		m_DefaultShader.SetVector3f("u_LightPosition", glm::vec3(15.0f, 1.1f, 13.0f));
+		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
+		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
+		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 
 		if (Indices.size() > 0)
@@ -114,11 +118,11 @@ namespace Glide3D
 	*/
 	void Renderer::RenderFBO(const GLClasses::Framebuffer& fbo)
 	{
-		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
+		glDisable(GL_DEPTH_TEST);
 		m_FBOShader.Use();
 		m_FBOShader.SetInteger("u_FramebufferTexture", 1);
 		glActiveTexture(GL_TEXTURE1);
@@ -126,6 +130,8 @@ namespace Glide3D
 		m_FBOVAO.Bind();
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 		m_FBOVAO.Unbind();
+		glEnable(GL_DEPTH_TEST);
+
 
 		glUseProgram(0);
 	}

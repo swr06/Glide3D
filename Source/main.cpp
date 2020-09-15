@@ -19,7 +19,7 @@
 
 using namespace Glide3D;
 
-FPSCamera camera(45, 800.0f / 600.0f, 0, 1000, 0.25f);
+FPSCamera camera(45, 800.0f / 600.0f, 0.5f, 1000, 0.25f);
 
 class MyApp : public Application
 {
@@ -80,16 +80,21 @@ int main()
 
 	Object teapot;
 	Object suzanne;
-	FileLoader::LoadOBJFile(&suzanne, "Resources/suzanne.obj");
-	FileLoader::LoadOBJFile(&teapot, "Resources/teapot.obj");
+	FileLoader::LoadOBJFile(&suzanne, "Resources/suzanne.objm");
+	FileLoader::LoadOBJFile(&teapot, "Resources/teapot.objm");
 	Entity pot(&teapot);
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
+	pot.GetTransform().Scale(glm::vec3(0.1f));
 	Entity suzanne_(&suzanne);
 	suzanne_.GetTransform().Translate(glm::vec3(20, 0, 0));
+
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// Clear the framebuffer
 		FBO.Bind();
@@ -137,5 +142,6 @@ int main()
 		app.FinishFrame();
 
 		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
+
 	}
 }

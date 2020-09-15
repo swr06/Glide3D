@@ -26,6 +26,8 @@ namespace GLClasses
 		*/
 		void OnUpdate(int width, int height) 
 		{
+			this->Bind();
+
 			if (width != m_FBWidth || height != m_FBHeight)
 			{
 				glDeleteFramebuffers(1, &m_FBO);
@@ -33,12 +35,10 @@ namespace GLClasses
 				m_FBWidth = width;
 				m_FBHeight = height;
 
-				this->Bind();
 				glViewport(0, 0, width, height);
 			}
 			
-			glClear(GL_COLOR_BUFFER_BIT);
-			glClear(GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
 		GLuint GetTexture() const 
