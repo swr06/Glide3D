@@ -29,7 +29,7 @@ struct DirectionalLight
 };
 
 // Shader storage buffer object with the scene's light data
-layout (std140, binding = 1) uniform SceneDirectionalLights
+layout (std430, binding = 1) buffer SceneDirectionalLights
 {
 	DirectionalLight m_SceneLights[];
 };

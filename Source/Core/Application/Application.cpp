@@ -161,7 +161,6 @@ namespace Glide3D
 		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
 
 #ifndef NDEBUG
-		glEnable(GL_DEBUG_OUTPUT); 
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
 		glDebugMessageCallback(gl_debug_callback, nullptr);
 #endif
@@ -180,11 +179,15 @@ namespace Glide3D
 
 		if (glfwExtensionSupported("GL_ARB_debug_output"))
 		{
-			std::cout << "\tDEBUG : THE OPENGL SYNCHRONOUS DEBUG MODE IS AVAILABLE\n";
+			std::cout << "\tDEBUG : THE OPENGL SYNCHRONOUS DEBUG EXTENSION IS AVAILABLE\n";
+		}
+
+		else
+		{
+			std::cout << "\tDEBUG : THE OPENGL SYNCHRONOUS DEBUG EXTENSION IS UN AVAILABLE\n";
 		}
 
 		std::cout << "------------------------------------------------\n\n";
-
 		return;
 	}
 

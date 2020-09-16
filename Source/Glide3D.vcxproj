@@ -155,7 +155,6 @@
     <ClInclude Include="Core\GL_Classes\CubeTextureMap.h" />
     <ClInclude Include="Core\GL_Classes\Fps.h" />
     <ClInclude Include="Core\GL_Classes\Framebuffer.h" />
-    <ClInclude Include="Core\GL_Classes\GLDebug.h" />
     <ClInclude Include="Core\GL_Classes\IndexBuffer.h" />
     <ClInclude Include="Core\GL_Classes\Random.h" />
     <ClInclude Include="Core\GL_Classes\Shader.h" />
@@ -192,7 +191,6 @@
     <ClCompile Include="Core\GL_Classes\CubeTextureMap.cpp" />
     <ClCompile Include="Core\GL_Classes\Fps.cpp" />
     <ClCompile Include="Core\GL_Classes\Framebuffer.cpp" />
-    <ClCompile Include="Core\GL_Classes\GLDebug.cpp" />
     <ClCompile Include="Core\GL_Classes\IndexBuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\Random.cpp" />
     <ClCompile Include="Core\GL_Classes\Shader.cpp" />

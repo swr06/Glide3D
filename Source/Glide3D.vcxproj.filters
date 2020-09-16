@@ -66,9 +66,6 @@
     <ClInclude Include="Core\GL_Classes\Framebuffer.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
-    <ClInclude Include="Core\GL_Classes\GLDebug.h">
-      <Filter>Core\GL Classes</Filter>
-    </ClInclude>
     <ClInclude Include="Core\GL_Classes\IndexBuffer.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
@@ -169,9 +166,6 @@
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\Framebuffer.cpp">
-      <Filter>Core\GL Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\GL_Classes\GLDebug.cpp">
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\IndexBuffer.cpp">

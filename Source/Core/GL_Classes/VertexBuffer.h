@@ -5,8 +5,6 @@
 #include <iostream>
 #include <string>
 
-#include "GLDebug.h"
-
 namespace GLClasses
 {
 	using namespace std;
