@@ -96,7 +96,7 @@ namespace Glide3D
         use_shader->SetInteger("u_Texture", 1);
 
         m_VAO.Bind();
-        GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         m_VAO.Unbind();
 	}
 }

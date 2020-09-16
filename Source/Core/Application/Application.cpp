@@ -1,4 +1,5 @@
 #include "Application.h"
+#include <glad/gl/glext.h> // The opengl extensions
 
 namespace Glide3D
 {
@@ -8,6 +9,108 @@ namespace Glide3D
 	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 	void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+	/*
+	The OpenGL Debug callback
+	*/
+	void APIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id,
+		GLenum severity, GLsizei length,
+		const GLchar* msg, const void* data)
+	{
+		char* _source;
+		char* _type;
+		char* _severity;
+
+		switch (source) {
+		case GL_DEBUG_SOURCE_API:
+			_source = (char*)"API";
+			break;
+
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+			_source = (char*)"WINDOW SYSTEM";
+			break;
+
+		case GL_DEBUG_SOURCE_SHADER_COMPILER:
+			_source = (char*)"SHADER COMPILER";
+			break;
+
+		case GL_DEBUG_SOURCE_THIRD_PARTY:
+			_source = (char*)"THIRD PARTY";
+			break;
+
+		case GL_DEBUG_SOURCE_APPLICATION:
+			_source = (char*)"APPLICATION";
+			break;
+
+		case GL_DEBUG_SOURCE_OTHER:
+			_source = (char*)"UNKNOWN";
+			break;
+
+		default:
+			_source = (char*)"UNKNOWN";
+			break;
+		}
+
+		switch (type) 
+		{
+		case GL_DEBUG_TYPE_ERROR:
+			_type = (char*)"ERROR";
+			break;
+
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			_type = (char*)"DEPRECATED BEHAVIOR";
+			break;
+
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			_type = (char*)"UDEFINED BEHAVIOR";
+			break;
+
+		case GL_DEBUG_TYPE_PORTABILITY:
+			_type = (char*)"PORTABILITY";
+			break;
+
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			_type = (char*)"PERFORMANCE";
+			break;
+
+		case GL_DEBUG_TYPE_OTHER:
+			_type = (char*)"OTHER";
+			break;
+
+		case GL_DEBUG_TYPE_MARKER:
+			_type = (char*)"MARKER";
+			break;
+
+		default:
+			_type = (char*)"UNKNOWN";
+			break;
+		}
+
+		switch (severity) {
+		case GL_DEBUG_SEVERITY_HIGH:
+			_severity = (char*)"HIGH";
+			break;
+
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			_severity = (char*)"MEDIUM";
+			break;
+
+		case GL_DEBUG_SEVERITY_LOW:
+			_severity = (char*)"LOW";
+			break;
+
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+			_severity = (char*)"NOTIFICATION";
+			break;
+
+		default:
+			_severity = (char*)"UNKNOWN";
+			break;
+		}
+
+		printf("%d: %s of %s severity, raised from %s: %s\n",
+			id, _type, _severity, _source, msg);
+	}
 
 	Application::Application()
 	{
@@ -26,6 +129,7 @@ namespace Glide3D
 	void Application::Initialize()
 	{
 		glfwInit();
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
 
 		// Use the latest ogl version
 		m_Window = glfwCreateWindow(m_Width, m_Height, "Glide 3D", NULL, NULL); 
@@ -56,8 +160,32 @@ namespace Glide3D
 		OnUserCreate(glfwGetTime());
 		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
 
+#ifndef NDEBUG
+		glEnable(GL_DEBUG_OUTPUT); 
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+		glDebugMessageCallback(gl_debug_callback, nullptr);
+#endif
+
 		//glClearColor(0.25f, 0.30f, 0.25f, 1.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+		char* renderer = (char*)glGetString(GL_RENDERER);
+		char* vendor = (char*)glGetString(GL_VENDOR);
+		char* version = (char*)glGetString(GL_VERSION);
+
+		std::cout << "Glide 3D\n";
+		std::cout << "\tRENDERER : " << renderer << "\n";
+		std::cout << "\tVENDOR : " << vendor << "\n";
+		std::cout << "\tVERSION : " << version << "\n";
+
+		if (glfwExtensionSupported("GL_ARB_debug_output"))
+		{
+			std::cout << "\tDEBUG : THE OPENGL SYNCHRONOUS DEBUG MODE IS AVAILABLE\n";
+		}
+
+		std::cout << "------------------------------------------------\n\n";
+
+		return;
 	}
 
 	/*

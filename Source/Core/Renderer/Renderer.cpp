@@ -107,12 +107,12 @@ namespace Glide3D
 
 		if (indexed)
 		{
-			GLCall(glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size()));
+			glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size());
 		}
 
 		else
 		{
-			GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size()));
+			glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size());
 		}
 
 		m_VAO.Unbind();
@@ -140,7 +140,7 @@ namespace Glide3D
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
 		m_FBOVAO.Bind();
-		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		m_FBOVAO.Unbind();
 		glEnable(GL_DEPTH_TEST);
 
