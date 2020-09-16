@@ -93,7 +93,7 @@ namespace Glide3D
         use_shader->SetMatrix4("u_Model", model);
         use_shader->SetMatrix4("u_View", view);
         use_shader->SetMatrix4("u_Projection", projection);
-        use_shader->SetInteger("u_Texture", 1);
+        //use_shader->SetInteger("u_Texture", 1);
 
         m_VAO.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
