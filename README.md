@@ -24,6 +24,11 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Bloom
 - SSAO (Ambient Occlusion)
 
+# Requirements 
+- CPU : Any Dual Core CPU or better
+- GPU : OpenGL 4.0+ capable gpu 
+- RAM : 1 GB or higher
+
 # Note 
 Since my school has started, development may be slower as I have to finish my school work. :)
 
