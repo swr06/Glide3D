@@ -20,7 +20,10 @@
 #include "../GL_Classes/IndexBuffer.h"
 #include "../GL_Classes/VertexArray.h"
 #include "../GL_Classes/Shader.h"
+#include "../GL_Classes/SSBO.h"
 #include "../GL_Classes/Framebuffer.h"
+
+#include "../Lighting/Light.h"
 
 namespace Glide3D
 {
@@ -28,7 +31,14 @@ namespace Glide3D
 	{
 	public :
 		Renderer(GLFWwindow* window);
-		void RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera);
+
+		void AddLight(const DirectionalLight& light);
+
+		// Rendering
+		void StartRender(const FPSCamera* camera);
+		void RenderObjects(const std::vector<Entity>& entities);
+		void EndRender();
+
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
 
 	private :
@@ -42,5 +52,8 @@ namespace Glide3D
 		GLClasses::VertexBuffer m_FBOVBO;
 		GLClasses::Shader m_FBOShader;
 		GLFWwindow* m_Window;
+		GLClasses::SSBO m_LightSSBO;
+
+		std::vector<DirectionalLight> m_DirectionalLights;
 	};
 }

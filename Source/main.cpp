@@ -93,6 +93,7 @@ int main()
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
+		renderer.StartRender(&camera);
 		app.OnUpdate();
 		
 		// Clear the framebuffer
@@ -131,12 +132,13 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
 		}
 
-		renderer.RenderObjects({ entity, entity1, entity2, entity3 }, &camera);
-		renderer.RenderObjects({ pot }, &camera);
-		renderer.RenderObjects({ suzanne_ }, &camera);
+		renderer.RenderObjects({ entity, entity1, entity2, entity3 });
+		renderer.RenderObjects({ pot });
+		renderer.RenderObjects({ suzanne_ });
 		cube_renderer.RenderCube(glm::vec3(15.0f, 1.1f, 13.0f), nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
 
+		renderer.EndRender();
 		camera.OnUpdate();
 		camera.ResetAcceleration();
 		app.FinishFrame();

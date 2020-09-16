@@ -1,5 +1,9 @@
 #version 330 core
 
+/*
+Lighting is based on the phong lighting model.
+*/
+
 in vec2 v_TexCoords;
 in vec3 v_FragPosition;
 in vec3 v_Normal;

@@ -46,6 +46,9 @@
     <Filter Include="Core\Dependencies\assimp">
       <UniqueIdentifier>{ba8be500-f463-45be-bb2f-60053b815d77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Engine\Lights">
+      <UniqueIdentifier>{8f4bc770-0561-47b0-ad5f-9c14b506fe1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="Core\GL_Classes\SSBO.h">
       <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Lighting\Light.h">
+      <Filter>Core\Engine\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

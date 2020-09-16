@@ -56,10 +56,25 @@ namespace Glide3D
 		m_FBOShader.CompileShaders();
 	}
 
+	void Renderer::AddLight(const DirectionalLight& light)
+	{
+		m_DirectionalLights.push_back(light);
+	}
+
+	void Renderer::StartRender(const FPSCamera* camera)
+	{
+		m_DefaultShader.Use();
+		m_DefaultShader.SetVector3f("u_LightPosition", glm::vec3(15.0f, 1.1f, 13.0f));
+		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
+		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
+		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
+		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
+	}
+
 	/*
 	Renders a group of the same entity at different positions using instanced rendering
 	*/
-	void Renderer::RenderObjects(const std::vector<Entity>& entities, FPSCamera* camera)
+	void Renderer::RenderObjects(const std::vector<Entity>& entities)
 	{
 		unsigned int entity_num = 0;
 
@@ -75,16 +90,6 @@ namespace Glide3D
 
 		bool indexed = false;
 		bool can_render = true; // Flag to assure that the size of the vertices is over zero
-
-		m_DefaultShader.Use();
-		m_DefaultShader.SetVector3f("u_LightPosition", glm::vec3(15.0f, 1.1f, 13.0f)); 
-
-		// -3 1 -12 (Insert another light)
-
-		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
-		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
-		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
-		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 
 		if (Indices.size() > 0)
 		{
@@ -111,9 +116,13 @@ namespace Glide3D
 		}
 
 		m_VAO.Unbind();
-		glUseProgram(0);
 
 		return;
+	}
+
+	void Renderer::EndRender()
+	{
+		glUseProgram(0);
 	}
 
 	/*

@@ -65,7 +65,7 @@ namespace Glide3D
 		/*
 		Gets the yaw of the camera
 		*/
-		inline float GetYaw()
+		inline float GetYaw() const
 		{
 			return _Yaw;
 		}
@@ -73,7 +73,7 @@ namespace Glide3D
 		/*
 		Gets the pitch of the camera
 		*/
-		inline float GetPitch()
+		inline float GetPitch() const
 		{
 			return _Pitch;
 		}
@@ -81,7 +81,7 @@ namespace Glide3D
 		/*
 		Sets the sensitivity of the camera
 		*/
-		inline void SetSensitivity(float sensitivity)
+		inline void SetSensitivity(float sensitivity) 
 		{
 			_Sensitivity = sensitivity;
 		}
@@ -89,12 +89,12 @@ namespace Glide3D
 		/*
 		Returns the sensitivity of the camera
 		*/
-		float GetSensitivity() { return _Sensitivity; }
+		float GetSensitivity()  const { return _Sensitivity; }
 
 		/*
 		Gets the position of the camera
 		*/
-		inline const glm::vec3& GetPosition()
+		inline const glm::vec3& GetPosition() const 
 		{
 			return m_Position;
 		}
@@ -118,7 +118,7 @@ namespace Glide3D
 		/*
 		Gets the vp matrix of the camera
 		*/
-		inline const glm::mat4& GetViewProjection()
+		inline const glm::mat4& GetViewProjection() const
 		{
 			return m_ViewProjectionMatrix;
 		}
@@ -126,7 +126,7 @@ namespace Glide3D
 		/*
 		Gets the projection matrix of the camera
 		*/
-		inline const glm::mat4& GetProjectionMatrix()
+		inline const glm::mat4& GetProjectionMatrix() const
 		{
 			return m_ProjectionMatrix;
 		}

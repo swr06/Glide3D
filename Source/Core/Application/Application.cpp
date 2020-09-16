@@ -26,7 +26,9 @@ namespace Glide3D
 	void Application::Initialize()
 	{
 		glfwInit();
-		m_Window = glfwCreateWindow(m_Width, m_Height, "Glide 3D", NULL, NULL);
+
+		// Use the latest ogl version
+		m_Window = glfwCreateWindow(m_Width, m_Height, "Glide 3D", NULL, NULL); 
 
 		if (!m_Window)
 		{

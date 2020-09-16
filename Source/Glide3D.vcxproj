@@ -164,6 +164,7 @@
     <ClInclude Include="Core\GL_Classes\Texture.h" />
     <ClInclude Include="Core\GL_Classes\VertexArray.h" />
     <ClInclude Include="Core\GL_Classes\VertexBuffer.h" />
+    <ClInclude Include="Core\Lighting\Light.h" />
     <ClInclude Include="Core\Model Loader\OBJFileLoader.h" />
     <ClInclude Include="Core\ObjectTypes\Cone.h" />
     <ClInclude Include="Core\ObjectTypes\Cube.h" />
