@@ -29,10 +29,9 @@ struct DirectionalLight
 };
 
 // Shader storage buffer object with the scene's light data
-layout (std430, binding = 1) buffer SceneLightData
+layout (std140, binding = 1) uniform SceneDirectionalLights
 {
-	DirectionalLight b_DirectionalLights[];
-	int b_DirectionalLightCount;
+	DirectionalLight m_SceneLights[];
 };
 
 vec3 CalculateDirectionalLight(float ambient_strength, float specular_strength, int specular_exponent,

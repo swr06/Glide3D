@@ -153,6 +153,9 @@
     <ClInclude Include="Core\Lighting\Light.h">
       <Filter>Core\Engine\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\UBO.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -232,6 +235,9 @@
       <Filter>Core\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\SSBO.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\UBO.cpp">
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
   </ItemGroup>

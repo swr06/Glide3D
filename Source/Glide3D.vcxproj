@@ -162,6 +162,7 @@
     <ClInclude Include="Core\GL_Classes\SSBO.h" />
     <ClInclude Include="Core\GL_Classes\stb_image.h" />
     <ClInclude Include="Core\GL_Classes\Texture.h" />
+    <ClInclude Include="Core\GL_Classes\UBO.h" />
     <ClInclude Include="Core\GL_Classes\VertexArray.h" />
     <ClInclude Include="Core\GL_Classes\VertexBuffer.h" />
     <ClInclude Include="Core\Lighting\Light.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Core\GL_Classes\SSBO.cpp" />
     <ClCompile Include="Core\GL_Classes\stb_image.cpp" />
     <ClCompile Include="Core\GL_Classes\Texture.cpp" />
+    <ClCompile Include="Core\GL_Classes\UBO.cpp" />
     <ClCompile Include="Core\GL_Classes\VertexArray.cpp" />
     <ClCompile Include="Core\GL_Classes\VertexBuffer.cpp" />
     <ClCompile Include="Core\Model Loader\OBJFileLoader.cpp" />
