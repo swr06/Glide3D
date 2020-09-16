@@ -159,6 +159,7 @@
     <ClInclude Include="Core\GL_Classes\IndexBuffer.h" />
     <ClInclude Include="Core\GL_Classes\Random.h" />
     <ClInclude Include="Core\GL_Classes\Shader.h" />
+    <ClInclude Include="Core\GL_Classes\SSBO.h" />
     <ClInclude Include="Core\GL_Classes\stb_image.h" />
     <ClInclude Include="Core\GL_Classes\Texture.h" />
     <ClInclude Include="Core\GL_Classes\VertexArray.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Core\GL_Classes\IndexBuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\Random.cpp" />
     <ClCompile Include="Core\GL_Classes\Shader.cpp" />
+    <ClCompile Include="Core\GL_Classes\SSBO.cpp" />
     <ClCompile Include="Core\GL_Classes\stb_image.cpp" />
     <ClCompile Include="Core\GL_Classes\Texture.cpp" />
     <ClCompile Include="Core\GL_Classes\VertexArray.cpp" />

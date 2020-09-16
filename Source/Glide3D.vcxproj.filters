@@ -144,6 +144,9 @@
     <ClInclude Include="Core\Renderer\CubeRenderer.h">
       <Filter>Core\Engine\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\SSBO.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -221,6 +224,9 @@
     </ClCompile>
     <ClCompile Include="Core\Renderer\CubeRenderer.cpp">
       <Filter>Core\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\SSBO.cpp">
+      <Filter>Core\GL Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

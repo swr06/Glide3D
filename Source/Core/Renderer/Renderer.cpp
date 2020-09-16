@@ -77,7 +77,10 @@ namespace Glide3D
 		bool can_render = true; // Flag to assure that the size of the vertices is over zero
 
 		m_DefaultShader.Use();
-		m_DefaultShader.SetVector3f("u_LightPosition", glm::vec3(15.0f, 1.1f, 13.0f));
+		m_DefaultShader.SetVector3f("u_LightPosition", glm::vec3(15.0f, 1.1f, 13.0f)); 
+
+		// -3 1 -12 (Insert another light)
+
 		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
 		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
 		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
