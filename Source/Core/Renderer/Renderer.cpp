@@ -96,6 +96,7 @@ namespace Glide3D
 			name = name + std::to_string(i) + "]";
 
 			shader.SetVector3f(name + ".m_Position", m_DirectionalLights[i].m_Position);
+			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i].m_SpecularColor);
 			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i].m_SpecularExponent);
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i].m_SpecularStrength);
 		}
@@ -106,6 +107,7 @@ namespace Glide3D
 			name = name + std::to_string(i) + "]";
 
 			shader.SetVector3f(name + ".m_Position", m_PointLights[i].m_Position);
+			shader.SetVector3f(name + ".m_SpecularColor", m_PointLights[i].m_SpecularColor);
 			shader.SetInteger(name + ".m_SpecularExponent", m_PointLights[i].m_SpecularExponent);
 			shader.SetFloat(name + ".m_SpecularStrength", m_PointLights[i].m_SpecularStrength);
 			shader.SetFloat(name + ".m_Linear", m_PointLights[i].m_Linear);
@@ -117,7 +119,6 @@ namespace Glide3D
 	void Renderer::StartRender(const FPSCamera* camera)
 	{
 		m_DefaultShader.Use();
-		m_DefaultShader.SetVector3f("u_LightPosition", glm::vec3(15.0f, 1.1f, 13.0f));
 		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
 		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
 		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)

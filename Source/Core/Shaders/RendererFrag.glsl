@@ -1,5 +1,9 @@
 #version 330 core
 
+/*
+The renderer's fragment shader which includes a phong lighting model
+*/
+
 #define MAX_DIRECTIONAL_LIGHTS 4
 #define MAX_POINT_LIGHTS 100
 
@@ -25,6 +29,7 @@ uniform sampler2D u_NormalMap;
 struct DirectionalLight
 {
 	vec3 m_Position;
+	vec3 m_SpecularColor;
 	float m_SpecularStrength;
 	int m_SpecularExponent;
 };
@@ -32,6 +37,7 @@ struct DirectionalLight
 struct PointLight
 {
 	vec3 m_Position;
+	vec3 m_SpecularColor;
 	float m_Constant;
 	float m_Linear;
 	float m_Quadratic;
@@ -45,8 +51,8 @@ uniform int u_SceneDirectionalLightCount = 0;
 uniform int u_ScenePointLightCount = 0;
 
 // Function prototypes
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal);
-vec3 CalculatePointLight(PointLight light, vec3 normal);
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color);
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color);
 
 vec3 g_Ambient;
 
@@ -60,21 +66,21 @@ void main()
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
-		FinalColor += CalculateDirectionalLight(u_SceneDirectionalLights[i], normalize(v_Normal));
+		FinalColor += CalculateDirectionalLight(u_SceneDirectionalLights[i], normalize(v_Normal), u_SceneDirectionalLights[i].m_SpecularColor);
 	}
 
 	for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 	{
-		FinalColor += CalculatePointLight(u_ScenePointLights[i], normalize(v_Normal));
+		FinalColor += CalculatePointLight(u_ScenePointLights[i], normalize(v_Normal), u_ScenePointLights[i].m_SpecularColor);
 	}
-
+	 
 	o_Color = vec4(FinalColor.xyz, 1.0f);
 }
 
 /*
 Calculates phong lighting with a bunch of parameters
 */
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal)
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color)
 {
 	vec3 LightDirection = normalize(light.m_Position - normal);
 
@@ -86,12 +92,12 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal)
 	float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
 	
 	vec3 DiffuseColor = Diffuse * u_Color; // To be replaced with diffuse map
-	vec3 SpecularColor = light.m_SpecularStrength * Specular * vec3(1.0f, 1.0f, 1.0f); // To be replaced with specular map
+	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color ; // To be also sampled with specular map
 
 	return vec3((g_Ambient + DiffuseColor + SpecularColor) * u_Color);  
 }
 
-vec3 CalculatePointLight(PointLight light, vec3 normal)
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color)
 {
 	vec3 LightDirection = normalize(light.m_Position - normal);
 
@@ -103,7 +109,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal)
 	float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
 
 	vec3 DiffuseColor = Diffuse * u_Color;
-	vec3 SpecularColor = light.m_SpecularStrength * Specular * vec3(1.0f, 1.0f, 1.0f);    
+	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color;    
 
 	// Calculate the attenuation
 	float Distance = length(light.m_Position - v_FragPosition);

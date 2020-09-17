@@ -106,11 +106,11 @@ int main()
 
 	PointLight light;
 	light.m_Position = glm::vec3(15.0f, 1.1f, 13.0f);
-	light.m_SpecularExponent = 32;
+	//light.m_SpecularExponent = 32;
 	light.m_SpecularStrength = 5;
-	light.m_Constant = 1.0f;
-	light.m_Linear = 0.09f;
-	light.m_Quadratic = 0.032f;
+	//light.m_Constant = 1.0f;
+	//light.m_Linear = 0.09f;
+	//light.m_Quadratic = 0.032f;
 
 	renderer.AddPointLight(light);
 	//renderer.AddDirectionalLight(light);
