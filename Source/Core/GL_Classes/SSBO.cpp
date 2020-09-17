@@ -9,6 +9,6 @@ namespace GLClasses
 
 	SSBO::~SSBO()
 	{
-		
+		glDeleteBuffers(1, &m_SSBO);
 	}
 }

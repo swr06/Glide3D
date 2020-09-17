@@ -133,7 +133,7 @@ namespace GLClasses
 		return m_Program;
 	}
 
-	void Shader::SetFloat(const GLchar* name, GLfloat value, GLboolean useShader)
+	void Shader::SetFloat(const std::string& name, GLfloat value, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -143,7 +143,7 @@ namespace GLClasses
 		glUniform1f(GetUniformLocation(name), value);
 	}
 
-	void Shader::SetInteger(const GLchar* name, GLint value, GLboolean useShader)
+	void Shader::SetInteger(const std::string& name, GLint value, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -153,7 +153,7 @@ namespace GLClasses
 		glUniform1i(GetUniformLocation(name), value);
 	}
 
-	void Shader::SetIntegerArray(const GLchar* name, const GLint* value, GLsizei count, GLboolean useShader)
+	void Shader::SetIntegerArray(const std::string& name, const GLint* value, GLsizei count, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -163,7 +163,7 @@ namespace GLClasses
 		glUniform1iv(GetUniformLocation(name), count, value);
 	}
 
-	void Shader::SetVector2f(const GLchar* name, GLfloat x, GLfloat y, GLboolean useShader)
+	void Shader::SetVector2f(const std::string& name, GLfloat x, GLfloat y, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -173,7 +173,7 @@ namespace GLClasses
 		glUniform2f(GetUniformLocation(name), x, y);
 	}
 
-	void Shader::SetVector2f(const GLchar* name, const glm::vec2& value, GLboolean useShader)
+	void Shader::SetVector2f(const std::string& name, const glm::vec2& value, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -183,7 +183,7 @@ namespace GLClasses
 		glUniform2f(GetUniformLocation(name), value.x, value.y);
 	}
 
-	void Shader::SetVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader)
+	void Shader::SetVector3f(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -193,7 +193,7 @@ namespace GLClasses
 		glUniform3f(GetUniformLocation(name), x, y, z);
 	}
 
-	void Shader::SetVector3f(const GLchar* name, const glm::vec3& value, GLboolean useShader)
+	void Shader::SetVector3f(const std::string& name, const glm::vec3& value, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -203,7 +203,7 @@ namespace GLClasses
 		glUniform3f(GetUniformLocation(name), value.x, value.y, value.z);
 	}
 
-	void Shader::SetVector4f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader)
+	void Shader::SetVector4f(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -213,7 +213,7 @@ namespace GLClasses
 		glUniform4f(GetUniformLocation(name), x, y, z, w);
 	}
 
-	void Shader::SetVector4f(const GLchar* name, const glm::vec4& value, GLboolean useShader)
+	void Shader::SetVector4f(const std::string& name, const glm::vec4& value, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -223,7 +223,7 @@ namespace GLClasses
 		glUniform4f(GetUniformLocation(name), value.x, value.y, value.z, value.w);
 	}
 
-	void Shader::SetMatrix4(const GLchar* name, const glm::mat4& matrix, GLboolean useShader)
+	void Shader::SetMatrix4(const std::string& name, const glm::mat4& matrix, GLboolean useShader)
 	{
 		if (useShader)
 		{
@@ -234,7 +234,17 @@ namespace GLClasses
 		glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	GLint Shader::GetUniformLocation(string uniform_name)
+	void Shader::SetMatrix3(const std::string& name, const glm::mat3& matrix, GLboolean useShader)
+	{
+		if (useShader)
+		{
+			this->Use();
+		}
+
+		glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	GLint Shader::GetUniformLocation(const std::string& uniform_name)
 	{
 		if (Location_map.find(uniform_name) == Location_map.end())
 		{

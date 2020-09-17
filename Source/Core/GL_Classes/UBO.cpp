@@ -9,4 +9,9 @@ namespace Glide3D
 		glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_STATIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
+
+	UBO::~UBO()
+	{
+		glDeleteBuffers(1, &m_UBO);
+	}
 }

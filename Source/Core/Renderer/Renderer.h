@@ -32,7 +32,8 @@ namespace Glide3D
 	public :
 		Renderer(GLFWwindow* window);
 
-		void AddLight(const DirectionalLight& light);
+		void AddDirectionalLight(const DirectionalLight& light);
+		void AddPointLight(const PointLight& light);
 
 		// Rendering
 		void StartRender(const FPSCamera* camera);
@@ -53,7 +54,9 @@ namespace Glide3D
 		GLClasses::Shader m_FBOShader;
 		GLFWwindow* m_Window;
 		GLClasses::SSBO m_LightSSBO;
-
 		std::vector<DirectionalLight> m_DirectionalLights;
+		std::vector<PointLight> m_PointLights;
+
+		void SetLightUniforms(GLClasses::Shader& shader);
 	};
 }

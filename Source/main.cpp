@@ -48,6 +48,22 @@ public:
 				camera.SetAspect((float)e.wx / (float)e.wy); // No integer division!
 			}
 		}
+
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_V)
+		{
+			static bool vsync = true;
+			vsync = !vsync;
+			if (vsync)
+			{
+				glfwSwapInterval(1);
+			}
+
+			else
+			{
+				glfwSwapInterval(0);
+			}
+
+		}
 	}
 
 };
@@ -87,6 +103,17 @@ int main()
 	pot.GetTransform().Scale(glm::vec3(0.1f));
 	Entity suzanne_(&suzanne);
 	suzanne_.GetTransform().Translate(glm::vec3(20, 0, 0));
+
+	PointLight light;
+	light.m_Position = glm::vec3(15.0f, 1.1f, 13.0f);
+	light.m_SpecularExponent = 32;
+	light.m_SpecularStrength = 5;
+	light.m_Constant = 1.0f;
+	light.m_Linear = 0.09f;
+	light.m_Quadratic = 0.032f;
+
+	renderer.AddPointLight(light);
+	//renderer.AddDirectionalLight(light);
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);

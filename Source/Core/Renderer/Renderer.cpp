@@ -1,5 +1,8 @@
 #include "Renderer.h"
 
+#define MAX_DIRECTIONAL_LIGHTS 4
+#define MAX_POINT_LIGHTS 100
+
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), 
@@ -56,9 +59,59 @@ namespace Glide3D
 		m_FBOShader.CompileShaders();
 	}
 
-	void Renderer::AddLight(const DirectionalLight& light)
+	void Renderer::AddDirectionalLight(const DirectionalLight& light)
 	{
+		if (m_DirectionalLights.size() + 1 > MAX_DIRECTIONAL_LIGHTS)
+		{
+			std::stringstream s;
+			s << "Max DIRECTIONAL lights allowed is : " << MAX_DIRECTIONAL_LIGHTS << " || Light could not be added!";
+			Logger::Log(s.str());
+			assert(0);
+		}
+
 		m_DirectionalLights.push_back(light);
+	}
+
+	void Renderer::AddPointLight(const PointLight& light)
+	{
+		if (m_PointLights.size() + 1 > MAX_POINT_LIGHTS)
+		{
+			std::stringstream s;
+			s << "Max POINT lights allowed is : " << MAX_POINT_LIGHTS << " || Light could not be added!";
+			Logger::Log(s.str());
+			assert(0);
+		}
+
+		m_PointLights.push_back(light);
+	}
+
+	void Renderer::SetLightUniforms(GLClasses::Shader& shader)
+	{
+		shader.SetInteger("u_SceneDirectionalLightCount", m_DirectionalLights.size(), 0);
+		shader.SetInteger("u_ScenePointLightCount", m_PointLights.size(), 0);
+
+		for (int i = 0; i < m_DirectionalLights.size(); i++)
+		{
+			std::string name("u_SceneDirectionalLights[");
+			name = name + std::to_string(i) + "]";
+
+			shader.SetVector3f(name + ".m_Position", m_DirectionalLights[i].m_Position);
+			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i].m_SpecularExponent);
+			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i].m_SpecularStrength);
+		}
+
+		for (int i = 0; i < m_PointLights.size(); i++)
+		{
+			std::string name("u_ScenePointLights[");
+			name = name + std::to_string(i) + "]";
+
+			shader.SetVector3f(name + ".m_Position", m_PointLights[i].m_Position);
+			shader.SetInteger(name + ".m_SpecularExponent", m_PointLights[i].m_SpecularExponent);
+			shader.SetFloat(name + ".m_SpecularStrength", m_PointLights[i].m_SpecularStrength);
+			shader.SetFloat(name + ".m_Linear", m_PointLights[i].m_Linear);
+			shader.SetFloat(name + ".m_Constant", m_PointLights[i].m_Constant);
+			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i].m_Quadratic);
+		}
 	}
 
 	void Renderer::StartRender(const FPSCamera* camera)
@@ -69,6 +122,7 @@ namespace Glide3D
 		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
 		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
+		SetLightUniforms(m_DefaultShader);
 	}
 
 	/*
@@ -101,7 +155,7 @@ namespace Glide3D
 		{
 			m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
 		}
-
+		
 		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
 		m_VAO.Bind();
 

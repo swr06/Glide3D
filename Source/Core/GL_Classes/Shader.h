@@ -54,16 +54,17 @@ namespace GLClasses
 			glUseProgram(this->m_Program);
 		}
 
-		void SetFloat(const GLchar* name, GLfloat value, GLboolean useShader = GL_FALSE);
-		void SetInteger(const GLchar* name, GLint value, GLboolean useShader = GL_FALSE);
-		void SetVector2f(const GLchar* name, GLfloat x, GLfloat y, GLboolean useShader = GL_FALSE);
-		void SetVector2f(const GLchar* name, const glm::vec2& value, GLboolean useShader = GL_FALSE);
-		void SetVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader = GL_FALSE);
-		void SetVector3f(const GLchar* name, const glm::vec3& value, GLboolean useShader = GL_FALSE);
-		void SetVector4f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader = GL_FALSE);
-		void SetVector4f(const GLchar* name, const glm::vec4& value, GLboolean useShader = GL_FALSE);
-		void SetMatrix4(const GLchar* name, const glm::mat4& matrix, GLboolean useShader = GL_FALSE);
-		void SetIntegerArray(const GLchar* name, const GLint* value, GLsizei count, GLboolean useShader = GL_FALSE);
+		void SetFloat(const std::string& name, GLfloat value, GLboolean useShader = GL_FALSE);
+		void SetInteger(const std::string& name, GLint value, GLboolean useShader = GL_FALSE);
+		void SetVector2f(const std::string& name, GLfloat x, GLfloat y, GLboolean useShader = GL_FALSE);
+		void SetVector2f(const std::string& name, const glm::vec2& value, GLboolean useShader = GL_FALSE);
+		void SetVector3f(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader = GL_FALSE);
+		void SetVector3f(const std::string& name, const glm::vec3& value, GLboolean useShader = GL_FALSE);
+		void SetVector4f(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader = GL_FALSE);
+		void SetVector4f(const std::string& name, const glm::vec4& value, GLboolean useShader = GL_FALSE);
+		void SetMatrix4(const std::string& name, const glm::mat4& matrix, GLboolean useShader = GL_FALSE);
+		void SetMatrix3(const std::string& name, const glm::mat3& matrix, GLboolean useShader = GL_FALSE);
+		void SetIntegerArray(const std::string& name, const GLint* value, GLsizei count, GLboolean useShader = GL_FALSE);
 
 	 private:
 
@@ -71,7 +72,7 @@ namespace GLClasses
 		GLuint m_Program;
 		bool m_CompiledShader = false;
 
-		GLint GetUniformLocation(string uniform_name);
+		GLint GetUniformLocation(const std::string& uniform_name);
 		string m_VertexData;
 		string m_VertexPath;
 		string m_FragmentData;
