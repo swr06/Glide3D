@@ -5,8 +5,9 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - 3D Object rendering (such as cubes, cones and spheres) 
 - OBJ Model loading
 - Lighting
-  - Phong
+  - Phong Lighting model
   - Blinn-Phong
+  - Directional light
   - Point light
 - Cubemaps
 - Cubemap reflections
