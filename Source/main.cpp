@@ -102,7 +102,6 @@ int main()
 	FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
-	object_3.p_AlbedoMap->CreateTexture("Resources/12305_Backpack_v1_diffuse.jpg");
 
 	Entity pot(&object_1);
 	Entity suzanne(&object_2);
