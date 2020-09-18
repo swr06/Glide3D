@@ -49,20 +49,32 @@ uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform PointLight u_ScenePointLights[MAX_POINT_LIGHTS];
 uniform int u_SceneDirectionalLightCount = 0;
 uniform int u_ScenePointLightCount = 0;
+uniform int u_HasAlbedoMap;
 
 // Function prototypes
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color);
 
 vec3 g_Ambient;
+vec3 g_Color;
 
 void main()
 {
 	bool light_cast = false;
 
+	if (u_HasAlbedoMap == 0)
+	{
+		g_Color = u_Color;
+	}
+
+	else
+	{
+		g_Color = vec3(texture(u_AlbedoMap, v_TexCoords));
+	}
+
 	// Calculate the ambient light only once
 	vec3 FinalColor = vec3(0.0f, 0.0f, 0.0f);
-	g_Ambient = u_AmbientStrength * u_Color;
+	g_Ambient = u_AmbientStrength * g_Color;
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
@@ -91,10 +103,10 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 	vec3 ReflectDir = reflect(-LightDirection, normal);  
 	float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
 	
-	vec3 DiffuseColor = Diffuse * u_Color; // To be replaced with diffuse map
+	vec3 DiffuseColor = Diffuse * g_Color; // To be replaced with diffuse map
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color ; // To be also sampled with specular map
 
-	return vec3((g_Ambient + DiffuseColor + SpecularColor) * u_Color);  
+	return vec3((g_Ambient + DiffuseColor + SpecularColor) * g_Color);  
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color)
@@ -108,7 +120,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color)
 	vec3 ReflectDir = reflect(-LightDirection, normal);  
 	float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
 
-	vec3 DiffuseColor = Diffuse * u_Color;
+	vec3 DiffuseColor = Diffuse * g_Color;
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color;    
 
 	// Calculate the attenuation
@@ -117,5 +129,5 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color)
 	
 	DiffuseColor  *= Attenuation;
 	SpecularColor *= Attenuation;
-	return vec3(((g_Ambient * Attenuation) + DiffuseColor + SpecularColor) * u_Color);
+	return vec3(((g_Ambient * Attenuation) + DiffuseColor + SpecularColor) * g_Color);
 }

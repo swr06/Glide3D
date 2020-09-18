@@ -120,7 +120,7 @@ namespace Glide3D
 	{
 		m_DefaultShader.Use();
 		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
-		m_DefaultShader.SetVector3f("u_Color", glm::vec3(1.0f, 0.5f, 0.31f));
+		m_DefaultShader.SetInteger("u_AlbedoMap", 0);
 		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 		SetLightUniforms(m_DefaultShader);
@@ -131,47 +131,65 @@ namespace Glide3D
 	*/
 	void Renderer::RenderObjects(const std::vector<Entity>& entities)
 	{
-		unsigned int entity_num = 0;
+		unsigned int entity_num = entities.size();
 
-		const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
-		const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
-		std::vector<glm::mat4> ModelMatrices;
+		Object* object = entities[0].p_Object;
 
-		for (auto& e : entities)
+		if (object)
 		{
-			ModelMatrices.push_back(e.p_Transform.GetTransformationMatrix());
-			entity_num++;
-		}
+			const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
+			const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
+			std::vector<glm::mat4> ModelMatrices;
 
-		bool indexed = false;
-		bool can_render = true; // Flag to assure that the size of the vertices is over zero
+			for (auto& e : entities)
+			{
+				ModelMatrices.push_back(e.p_Transform.GetTransformationMatrix());
+				entity_num++;
+			}
 
-		if (Indices.size() > 0)
-		{
-			m_IBO.BufferData(Indices.size() * sizeof(GLuint), (void*)&Indices.front(), GL_STATIC_DRAW);
-			indexed = true;
-		}
+			bool indexed = false;
+			bool can_render = true; // Flag to assure that the size of the vertices is over zero
 
-		if (Vertices.size() > 0)
-		{
-			m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
-		}
-		
-		m_MatrixVBO.BufferData(ModelMatrices.size() * 4 * 4 * sizeof(GLfloat), &ModelMatrices.front(), GL_STATIC_DRAW);
-		m_VAO.Bind();
+			if (Indices.size() > 0)
+			{
+				m_IBO.BufferData(Indices.size() * sizeof(GLuint), (void*)&Indices.front(), GL_STATIC_DRAW);
+				indexed = true;
+			}
 
-		if (indexed)
-		{
-			glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size());
+			if (Vertices.size() > 0)
+			{
+				m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
+			}
+
+			m_MatrixVBO.BufferData(ModelMatrices.size() * 16 * sizeof(GLfloat), (void*)&ModelMatrices.front(), GL_STATIC_DRAW);
+			m_VAO.Bind();
+
+			if (object->p_AlbedoMap)
+			{
+				object->p_AlbedoMap->Bind(0);
+			}
+
+			/* These uniforms vary from Object to object */
+			m_DefaultShader.SetVector3f("u_Color", object->p_DefaultColor);
+			m_DefaultShader.SetInteger("u_HasAlbedoMap", static_cast<int>(object->p_AlbedoMap->GetTextureID() != 0));
+
+			if (indexed)
+			{
+				glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size());
+			}
+
+			else
+			{
+				glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size());
+			}
+
+			m_VAO.Unbind();
 		}
 
 		else
 		{
-			glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size());
+			Logger::Log("Attempted to draw an entity without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
 		}
-
-		m_VAO.Unbind();
-
 		return;
 	}
 

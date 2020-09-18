@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stb_image.h"
+#include <unordered_map>
 #include <glad/glad.h>
 
 #include <string>
@@ -22,16 +23,12 @@ namespace GLClasses
 	{
 	public:
 
-		Texture(string path, bool flip = true, GLenum type = GL_TEXTURE_2D,
-			GLenum min_filter = GL_NEAREST, GLenum mag_filter = GL_NEAREST,
-			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT,
-			array<GLfloat, 8> TextureCoords = { 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
-		, bool clean_up = true);
+		Texture(const string& path, bool flip = false, GLenum type = GL_TEXTURE_2D,
+			GLenum min_filter = GL_LINEAR, GLenum mag_filter = GL_LINEAR,
+			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT	, bool clean_up = true);
 
 		Texture()
 		{
-			m_Texture = new GLuint;
-			m_TextureCoords = { 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 			m_clean_up = true;
 			m_width = 0;
 			m_height = 0;
@@ -44,10 +41,9 @@ namespace GLClasses
 
 		~Texture()
 		{
-			if (this->m_delete_texture == 1 && this->m_Texture != nullptr)
+			if (this->m_delete_texture == 1 && m_Texture == 0)
 			{
-				glDeleteTextures(1, m_Texture);
-				m_Texture = nullptr;
+				glDeleteTextures(1, &m_Texture);
 			}
 
 			else
@@ -56,11 +52,9 @@ namespace GLClasses
 			}
 		}
 
-		void CreateTexture(string path, bool flip = true, GLenum type = GL_TEXTURE_2D,
-			GLenum min_filter = GL_NEAREST, GLenum mag_filter = GL_NEAREST,
-			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT, array<GLfloat, 8> TextureCoords = { 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }, bool clean_up = true);
-
-		void IntCreateTexture(GLuint id, array<GLfloat, 8> tex_coords, int w, int h, bool delete_texture);
+		void CreateTexture(const string& path, bool flip = false, GLenum type = GL_TEXTURE_2D,
+			GLenum min_filter = GL_LINEAR, GLenum mag_filter = GL_LINEAR,
+			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT, bool clean_up = true);
 
 		inline int GetWidth() const
 		{
@@ -75,7 +69,12 @@ namespace GLClasses
 		inline void Bind(int slot = 0) const
 		{
 			glActiveTexture(GL_TEXTURE0 + slot);
-			glBindTexture(this->m_type, *(this->m_Texture));
+			glBindTexture(this->m_type, m_Texture);
+		}
+
+		inline bool IsCreated() const
+		{
+			return m_Texture != 0;
 		}
 
 		inline void Unbind() const
@@ -85,17 +84,12 @@ namespace GLClasses
 
 		inline GLuint GetTextureID() const
 		{
-			return *m_Texture;
+			return m_Texture;
 		};
 
 		inline string GetTexturePath() const
 		{
 			return m_path;
-		}
-
-		array<GLfloat, 8> GetTextureCoords() const
-		{
-			return m_TextureCoords;
 		}
 
 		int m_delete_texture;
@@ -108,10 +102,9 @@ namespace GLClasses
 		int m_height;
 		int m_BPP;
 		GLenum m_intformat;
-		GLuint* m_Texture;
+		GLuint m_Texture = 0;
 		GLenum m_type;
 		string m_path;
-		array<GLfloat, 8> m_TextureCoords;
 	};
 
 	ExtractedImageData ExtractTextureData(const std::string& path);

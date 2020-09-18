@@ -94,23 +94,36 @@ int main()
 	
 	camera.SetPosition(glm::vec3(0, 0, -2));
 
-	Object teapot;
-	Object suzanne;
-	FileLoader::LoadOBJFile(&suzanne, "Resources/suzanne.objm");
-	FileLoader::LoadOBJFile(&teapot, "Resources/teapot.objm");
-	Entity pot(&teapot);
+	Object object_1;
+	Object object_2;
+	Object object_3;
+
+	// Load all the OBJ files
+	FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
+	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
+	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
+	object_3.p_AlbedoMap->CreateTexture("Resources/12305_Backpack_v1_diffuse.jpg");
+
+	Entity pot(&object_1);
+	Entity suzanne(&object_2);
+	Entity backpack(&object_3);
+
+	// Pot Object
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
 	pot.GetTransform().Scale(glm::vec3(0.1f));
-	Entity suzanne_(&suzanne);
-	suzanne_.GetTransform().Translate(glm::vec3(20, 0, 0));
+
+	// Suzanne Object
+	suzanne.GetTransform().Translate(glm::vec3(20, 0, 0));
+
+	// Backpack
+	backpack.GetTransform().Scale(glm::vec3(0.1f, 0.1f, 0.1f));
+	backpack.GetTransform().Translate(glm::vec3(24, 0, 0));
+	backpack.GetTransform().Rotate(-90.0f);
+	backpack.GetTransform().Rotate(-55.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	PointLight light;
 	light.m_Position = glm::vec3(15.0f, 1.1f, 13.0f);
-	//light.m_SpecularExponent = 32;
 	light.m_SpecularStrength = 5;
-	//light.m_Constant = 1.0f;
-	//light.m_Linear = 0.09f;
-	//light.m_Quadratic = 0.032f;
 
 	renderer.AddPointLight(light);
 	//renderer.AddDirectionalLight(light);
@@ -161,7 +174,8 @@ int main()
 
 		renderer.RenderObjects({ entity, entity1, entity2, entity3 });
 		renderer.RenderObjects({ pot });
-		renderer.RenderObjects({ suzanne_ });
+		renderer.RenderObjects({ suzanne });
+		renderer.RenderObjects({ backpack });
 		cube_renderer.RenderCube(glm::vec3(15.0f, 1.1f, 13.0f), nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
 

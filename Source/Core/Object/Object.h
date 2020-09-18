@@ -16,6 +16,9 @@ namespace Glide3D
 	class Object
 	{
 	public :
+		Object();
+		~Object();
+
 		std::vector<Vertex> p_Vertices;
 		std::vector<GLuint> p_Indices;
 		std::string p_MeshName;
@@ -23,5 +26,7 @@ namespace Glide3D
 		GLClasses::Texture* p_LightMap;
 		GLClasses::Texture* p_AlbedoMap;
 		GLClasses::Texture* p_NormalMap;
+
+		glm::vec3 p_DefaultColor;
 	};
 }
