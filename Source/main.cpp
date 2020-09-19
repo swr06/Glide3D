@@ -130,6 +130,7 @@ int main()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
+
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		renderer.StartRender(&camera);

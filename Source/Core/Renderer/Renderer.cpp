@@ -21,17 +21,29 @@ namespace Glide3D
 		m_VBO.VertexAttribPointer(2, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
 		m_MatrixVBO.Bind();
 
-		// Structure padding shouldn't be an issue since the size is 16
-		m_MatrixVBO.VertexAttribPointer(3, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)0); // column 1
-		m_MatrixVBO.VertexAttribPointer(4, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 4)); // column 2
-		m_MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 8)); // column 3
-		m_MatrixVBO.VertexAttribPointer(6, 4, GL_FLOAT, 0, 4 * 4 * sizeof(GLfloat), (void*)(sizeof(GLfloat) * 12)); // column 4
+		constexpr float matrix_stride = 32 * sizeof(GLfloat);
+
+		// Structure padding shouldn't be an issue since the size is 32 * 4 bytes 
+		m_MatrixVBO.VertexAttribPointer(3, 4, GL_FLOAT, 0, matrix_stride, (void*)0); // column 1
+		m_MatrixVBO.VertexAttribPointer(4, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 4)); // column 2
+		m_MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 8)); // column 3
+		m_MatrixVBO.VertexAttribPointer(6, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 12)); // column 4
+														  
+		// Normal matrices								   
+		m_MatrixVBO.VertexAttribPointer(7, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 16)); // column 1
+		m_MatrixVBO.VertexAttribPointer(8, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 20)); // column 2
+		m_MatrixVBO.VertexAttribPointer(9, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 24)); // column 3
+		m_MatrixVBO.VertexAttribPointer(10, 4, GL_FLOAT,0, matrix_stride, (void*)(sizeof(GLfloat) * 28)); // column 4
 
 		// Set the matrix attributes to be per-instance
 		glVertexAttribDivisor(3, 1);
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);
 		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(7, 1);
+		glVertexAttribDivisor(8, 1);
+		glVertexAttribDivisor(9, 1);
+		glVertexAttribDivisor(10, 1);
 
 		m_VAO.Unbind();
 
@@ -139,11 +151,13 @@ namespace Glide3D
 		{
 			const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
 			const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
-			std::vector<glm::mat4> ModelMatrices;
+			std::vector<glm::mat4> Matrices;
 
 			for (auto& e : entities)
 			{
-				ModelMatrices.push_back(e.p_Transform.GetTransformationMatrix());
+				const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
+				Matrices.push_back(model);
+				Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
 				entity_num++;
 			}
 
@@ -161,7 +175,7 @@ namespace Glide3D
 				m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
 			}
 
-			m_MatrixVBO.BufferData(ModelMatrices.size() * 16 * sizeof(GLfloat), (void*)&ModelMatrices.front(), GL_STATIC_DRAW);
+			m_MatrixVBO.BufferData(Matrices.size() * 16 * sizeof(GLfloat), (void*)&Matrices.front(), GL_STATIC_DRAW);
 			m_VAO.Bind();
 
 			if (object->p_AlbedoMap)

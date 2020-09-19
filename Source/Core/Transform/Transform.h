@@ -15,8 +15,12 @@ namespace Glide3D
 		void Scale(const glm::vec3& scale) noexcept;
 
 		const glm::mat4& GetTransformationMatrix() const;
+		const glm::mat3& GetNormalMatrix() const;
 
 	private :
 		glm::mat4 m_TransformationMatrix = glm::mat4(1.0f);
+		glm::mat3 m_NormalMatrix = glm::mat3(1.0f);
+
+		inline void ComputeNormalMatrix();
 	};
 }
