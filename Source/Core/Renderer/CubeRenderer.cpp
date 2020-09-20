@@ -72,6 +72,8 @@ namespace Glide3D
 
     void CubeRenderer::RenderCube(const glm::vec3& position, GLClasses::Texture* texture, float rotation, const glm::mat4& projection, const glm::mat4& view, GLClasses::Shader* shader)
 	{
+        glDisable(GL_CULL_FACE);
+
         GLClasses::Shader* use_shader;
 
         if (shader == nullptr)
