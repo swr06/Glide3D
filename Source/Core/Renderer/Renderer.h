@@ -43,11 +43,7 @@ namespace Glide3D
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
 
 	private :
-		GLClasses::VertexArray m_VAO;
-		GLClasses::VertexBuffer m_VBO;
-		GLClasses::VertexBuffer m_MatrixVBO;
-		GLClasses::IndexBuffer m_IBO;
-		GLClasses::Shader m_DefaultShader;
+		GLClasses::Shader m_RendererShader;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;

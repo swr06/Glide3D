@@ -5,47 +5,10 @@
 
 namespace Glide3D
 {
-	Renderer::Renderer(GLFWwindow* window) : m_VBO(GL_ARRAY_BUFFER), m_MatrixVBO(GL_ARRAY_BUFFER), 
+	Renderer::Renderer(GLFWwindow* window) : 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
 	{
 		bool IndexBufferInitialized = false;
-
-		/*
-		Setup all the opengl buffer and array objects
-		*/
-		m_VAO.Bind();
-		m_IBO.Bind();
-		m_VBO.Bind();
-		m_VBO.VertexAttribPointer(0, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, position)));
-		m_VBO.VertexAttribPointer(1, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, normals)));
-		m_VBO.VertexAttribPointer(2, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
-		m_MatrixVBO.Bind();
-
-		constexpr float matrix_stride = 32 * sizeof(GLfloat);
-
-		// Structure padding shouldn't be an issue since the size is 32 * 4 bytes 
-		m_MatrixVBO.VertexAttribPointer(3, 4, GL_FLOAT, 0, matrix_stride, (void*)0); // column 1
-		m_MatrixVBO.VertexAttribPointer(4, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 4)); // column 2
-		m_MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 8)); // column 3
-		m_MatrixVBO.VertexAttribPointer(6, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 12)); // column 4
-														  
-		// Normal matrices								   
-		m_MatrixVBO.VertexAttribPointer(7, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 16)); // column 1
-		m_MatrixVBO.VertexAttribPointer(8, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 20)); // column 2
-		m_MatrixVBO.VertexAttribPointer(9, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 24)); // column 3
-		m_MatrixVBO.VertexAttribPointer(10, 4, GL_FLOAT,0, matrix_stride, (void*)(sizeof(GLfloat) * 28)); // column 4
-
-		// Set the matrix attributes to be per-instance
-		glVertexAttribDivisor(3, 1);
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-		glVertexAttribDivisor(7, 1);
-		glVertexAttribDivisor(8, 1);
-		glVertexAttribDivisor(9, 1);
-		glVertexAttribDivisor(10, 1);
-
-		m_VAO.Unbind();
 
 		/* Framebuffer stuff */
 
@@ -65,8 +28,8 @@ namespace Glide3D
 		m_FBOVAO.Unbind();
 
 		/* Create and compile the shaders */
-		m_DefaultShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
-		m_DefaultShader.CompileShaders();
+		m_RendererShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
+		m_RendererShader.CompileShaders();
 		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferVert.glsl", "Core/Shaders/FramebufferFrag.glsl");
 		m_FBOShader.CompileShaders();
 	}
@@ -130,12 +93,12 @@ namespace Glide3D
 
 	void Renderer::StartRender(const FPSCamera* camera)
 	{
-		m_DefaultShader.Use();
-		m_DefaultShader.SetFloat("u_AmbientStrength", 0.75f);
-		m_DefaultShader.SetInteger("u_AlbedoMap", 0);
-		m_DefaultShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
-		m_DefaultShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
-		SetLightUniforms(m_DefaultShader);
+		m_RendererShader.Use();
+		m_RendererShader.SetFloat("u_AmbientStrength", 0.75f);
+		m_RendererShader.SetInteger("u_AlbedoMap", 0);
+		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
+		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
+		SetLightUniforms(m_RendererShader);
 	}
 
 	/*
@@ -161,22 +124,8 @@ namespace Glide3D
 				entity_num++;
 			}
 
-			bool indexed = false;
+			const bool& indexed = object->p_Indexed;
 			bool can_render = true; // Flag to assure that the size of the vertices is over zero
-
-			if (Indices.size() > 0)
-			{
-				m_IBO.BufferData(Indices.size() * sizeof(GLuint), (void*)&Indices.front(), GL_STATIC_DRAW);
-				indexed = true;
-			}
-
-			if (Vertices.size() > 0)
-			{
-				m_VBO.BufferData(Vertices.size() * sizeof(Vertex), (void*)&Vertices.front(), GL_STATIC_DRAW);
-			}
-
-			m_MatrixVBO.BufferData(Matrices.size() * 16 * sizeof(GLfloat), (void*)&Matrices.front(), GL_STATIC_DRAW);
-			m_VAO.Bind();
 
 			if (object->p_AlbedoMap)
 			{
@@ -184,9 +133,15 @@ namespace Glide3D
 			}
 
 			/* These uniforms vary from Object to object */
-			m_DefaultShader.SetVector3f("u_Color", object->p_DefaultColor);
-			m_DefaultShader.SetInteger("u_HasAlbedoMap", static_cast<int>(object->p_AlbedoMap->GetTextureID() != 0));
+			m_RendererShader.SetVector3f("u_Color", object->p_DefaultColor);
+			m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(object->p_AlbedoMap->GetTextureID() != 0));
 
+			GLClasses::VertexArray& VAO = object->p_VertexArray;
+			GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+			
+			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+			VAO.Bind();
+			
 			if (indexed)
 			{
 				glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size());
@@ -197,7 +152,7 @@ namespace Glide3D
 				glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size());
 			}
 
-			m_VAO.Unbind();
+			VAO.Unbind();
 		}
 
 		else

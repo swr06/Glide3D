@@ -138,6 +138,9 @@ namespace Glide3D
 			}
 
 			ProcessAssimpNode(Scene->mRootNode, Scene, object, filepath);
+
+			object->Buffer();
+			return;
 		}
 	}
 }
