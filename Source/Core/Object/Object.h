@@ -28,5 +28,6 @@ namespace Glide3D
 		GLClasses::Texture* p_NormalMap;
 
 		glm::vec3 p_DefaultColor;
+		bool p_CanFacecull = true;
 	};
 }
