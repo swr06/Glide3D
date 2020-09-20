@@ -103,6 +103,8 @@ int main()
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 
+	object_1.p_CanFacecull = false;
+
 	Entity pot(&object_1);
 	Entity suzanne(&object_2);
 	Entity backpack(&object_3);

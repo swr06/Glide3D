@@ -112,6 +112,16 @@ namespace Glide3D
 
 		if (object)
 		{
+			if (object->p_CanFacecull)
+			{
+				glEnable(GL_CULL_FACE);
+			}
+
+			else
+			{
+				glDisable(GL_CULL_FACE);
+			}
+
 			const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
 			const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
 			std::vector<glm::mat4> Matrices;

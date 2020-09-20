@@ -67,7 +67,9 @@ namespace Glide3D
 			p_Vertices.push_back({glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(texture_coordinates[5][2], texture_coordinates[5][3]) });
 			p_Vertices.push_back({glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(texture_coordinates[5][4], texture_coordinates[5][5]) });
 			p_Vertices.push_back({glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(texture_coordinates[5][6], texture_coordinates[5][7])});
-		
+			
+			p_CanFacecull = false; // Todo : Change winding order so it can facecull
+
 			// Upload the data to the gpu
 			Buffer();
 		}
@@ -120,6 +122,8 @@ namespace Glide3D
 			p_Vertices.push_back({ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)});
 			p_Vertices.push_back({ glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)});
 			p_Vertices.push_back({ glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)});
+
+			p_CanFacecull = false; // Todo : Change winding order so it can facecull
 
 			// Upload the data to the gpu
 			Buffer();
