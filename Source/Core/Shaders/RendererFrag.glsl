@@ -49,7 +49,10 @@ uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform PointLight u_ScenePointLights[MAX_POINT_LIGHTS];
 uniform int u_SceneDirectionalLightCount = 0;
 uniform int u_ScenePointLightCount = 0;
-uniform int u_HasAlbedoMap;
+
+/* Flags */
+uniform int u_HasAlbedoMap = 0;
+uniform int u_HasNormalMap = 0;
 
 // Function prototypes
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color);
@@ -60,16 +63,28 @@ vec3 g_Color;
 
 void main()
 {
+	vec3 Normal;
 	bool light_cast = false;
 
-	if (u_HasAlbedoMap == 0)
+	if (u_HasAlbedoMap == 1)
 	{
-		g_Color = u_Color;
+		g_Color = vec3(texture(u_AlbedoMap, v_TexCoords));
 	}
 
 	else
 	{
-		g_Color = vec3(texture(u_AlbedoMap, v_TexCoords));
+		g_Color = u_Color;
+	}
+
+	if (u_HasNormalMap == 1)
+	{
+		Normal = vec3(texture(u_NormalMap, v_TexCoords));
+		Normal = normalize(Normal * 2.0f - 1.0f);
+	}
+
+	else
+	{
+		Normal = normalize(v_Normal);
 	}
 
 	// Calculate the ambient light only once
@@ -78,12 +93,12 @@ void main()
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
-		FinalColor += CalculateDirectionalLight(u_SceneDirectionalLights[i], normalize(v_Normal), u_SceneDirectionalLights[i].m_SpecularColor);
+		FinalColor += CalculateDirectionalLight(u_SceneDirectionalLights[i], Normal, u_SceneDirectionalLights[i].m_SpecularColor);
 	}
 
 	for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 	{
-		FinalColor += CalculatePointLight(u_ScenePointLights[i], normalize(v_Normal), u_ScenePointLights[i].m_SpecularColor);
+		FinalColor += CalculatePointLight(u_ScenePointLights[i], Normal, u_ScenePointLights[i].m_SpecularColor);
 	}
 	 
 	o_Color = vec4(FinalColor.xyz, 1.0f);

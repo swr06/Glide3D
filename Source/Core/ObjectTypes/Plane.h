@@ -16,8 +16,24 @@ namespace Glide3D
 			p_Vertices.push_back({ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(texture_coordinates[2][2], texture_coordinates[2][3]) });
 			p_Vertices.push_back({ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(texture_coordinates[2][4], texture_coordinates[2][5]) });
 			p_Vertices.push_back({ glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(texture_coordinates[2][6], texture_coordinates[2][7]) });
-			
+			p_Indices = { 0,1,2,2,3,0 };
+
 			p_CanFacecull = false; 
+
+			// Upload the data to the gpu
+			Buffer();
+		}
+
+		PlaneObject()
+		{
+			// Top Face
+			p_Vertices.push_back({ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f) });
+			p_Vertices.push_back({ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f) });
+			p_Vertices.push_back({ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f) });
+			p_Vertices.push_back({ glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f) });
+			p_Indices = { 0,1,2,2,3,0 };
+
+			p_CanFacecull = false;
 
 			// Upload the data to the gpu
 			Buffer();

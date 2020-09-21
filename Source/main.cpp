@@ -11,6 +11,7 @@
 #include "Core/ObjectTypes/Cube.h"
 #include "Core/Entity/Entity.h"
 #include "Core/GL_Classes/Framebuffer.h"
+#include "Core/ObjectTypes/Plane.h"
 #include "Core/Model Loader/OBJFileLoader.h"
 
 #include <glm/glm.hpp>
@@ -97,6 +98,7 @@ int main()
 	Object object_1;
 	Object object_2;
 	Object object_3;
+	CubeObject object_4;
 
 	// Load all the OBJ files
 	FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
@@ -104,10 +106,13 @@ int main()
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 
 	object_1.p_CanFacecull = false;
+	object_4.p_AlbedoMap->CreateTexture("Resources/brickwall.jpg", true);
+	object_4.p_NormalMap->CreateTexture("Resources/brickwall_normal.jpg", true);
 
 	Entity pot(&object_1);
 	Entity suzanne(&object_2);
 	Entity backpack(&object_3);
+	Entity brickwall(&object_4);
 
 	// Pot Object
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
@@ -117,17 +122,21 @@ int main()
 	suzanne.GetTransform().Translate(glm::vec3(20, 0, 0));
 
 	// Backpack
-	backpack.GetTransform().Scale(glm::vec3(0.1f, 0.1f, 0.1f));
 	backpack.GetTransform().Translate(glm::vec3(24, 0, 0));
+	backpack.GetTransform().Scale(glm::vec3(0.1f, 0.1f, 0.1f));
 	backpack.GetTransform().Rotate(-90.0f);
 	backpack.GetTransform().Rotate(-55.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
-	PointLight light;
-	light.m_Position = glm::vec3(15.0f, 1.1f, 13.0f);
-	light.m_SpecularStrength = 5;
+	// Brick Wall
+	brickwall.GetTransform().Translate(glm::vec3(27, 0, 0));
+	brickwall.GetTransform().Scale(glm::vec3(10,10,0.5f));
 
-	renderer.AddPointLight(light);
-	//renderer.AddDirectionalLight(light);
+	DirectionalLight light;
+	light.m_Position = glm::vec3(15.0f, 1.1f, 13.0f);
+	light.m_SpecularStrength = 1.0f;
+	light.m_SpecularExponent = 32;
+
+	renderer.AddDirectionalLight(light);
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -178,6 +187,7 @@ int main()
 		renderer.RenderObjects({ pot });
 		renderer.RenderObjects({ suzanne });
 		renderer.RenderObjects({ backpack });
+		renderer.RenderObjects({ brickwall });
 		cube_renderer.RenderCube(glm::vec3(15.0f, 1.1f, 13.0f), nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
 

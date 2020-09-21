@@ -96,6 +96,7 @@ namespace Glide3D
 		m_RendererShader.Use();
 		m_RendererShader.SetFloat("u_AmbientStrength", 0.75f);
 		m_RendererShader.SetInteger("u_AlbedoMap", 0);
+		m_RendererShader.SetInteger("u_NormalMap", 1);
 		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 		SetLightUniforms(m_RendererShader);
@@ -137,14 +138,20 @@ namespace Glide3D
 			const bool& indexed = object->p_Indexed;
 			bool can_render = true; // Flag to assure that the size of the vertices is over zero
 
-			if (object->p_AlbedoMap)
+			if (object->p_AlbedoMap && object->p_AlbedoMap->GetTextureID() != 0)
 			{
 				object->p_AlbedoMap->Bind(0);
+			}
+
+			if (object->p_NormalMap && object->p_NormalMap->GetTextureID() != 0)
+			{
+				object->p_NormalMap->Bind(1);
 			}
 
 			/* These uniforms vary from Object to object */
 			m_RendererShader.SetVector3f("u_Color", object->p_DefaultColor);
 			m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(object->p_AlbedoMap->GetTextureID() != 0));
+			m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(object->p_NormalMap->GetTextureID() != 0));
 
 			GLClasses::VertexArray& VAO = object->p_VertexArray;
 			GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
