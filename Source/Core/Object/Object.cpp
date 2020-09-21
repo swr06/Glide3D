@@ -59,13 +59,17 @@ namespace Glide3D
 	{
 		if (p_Vertices.size() > 0)
 		{
+			p_VertexCount = p_Vertices.size();
 			p_VertexBuffer.BufferData(p_Vertices.size() * sizeof(Vertex), &p_Vertices.front(), GL_STATIC_DRAW);
+			p_Vertices.clear();
 		}
 
 		if (p_Indices.size() > 0)
 		{
+			p_IndicesCount = p_Indices.size();
 			p_IndexBuffer.BufferData(p_Indices.size() * sizeof(GLuint), &p_Indices.front(), GL_STATIC_DRAW);
 			p_Indexed = true;
+			p_Indices.clear(); 
 		}
 
 		else

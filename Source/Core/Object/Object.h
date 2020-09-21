@@ -40,6 +40,9 @@ namespace Glide3D
 		GLClasses::VertexBuffer p_MatrixBuffer; // Internal. Should not be accessed
 		GLClasses::IndexBuffer p_IndexBuffer;
 
+		std::uint32_t p_VertexCount = 0;
+		std::uint32_t p_IndicesCount = 0;
+
 		glm::vec3 p_DefaultColor;
 		bool p_CanFacecull = true;
 		bool p_Indexed = false;

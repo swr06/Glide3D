@@ -161,12 +161,12 @@ namespace Glide3D
 			
 			if (indexed)
 			{
-				glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, entities.size());
+				glDrawElementsInstanced(GL_TRIANGLES, object->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
 			}
 
 			else
 			{
-				glDrawArraysInstanced(GL_TRIANGLES, 0, Vertices.size(), entities.size());
+				glDrawArraysInstanced(GL_TRIANGLES, 0, object->p_VertexCount, entities.size());
 			}
 
 			VAO.Unbind();
@@ -176,6 +176,7 @@ namespace Glide3D
 		{
 			Logger::Log("Attempted to draw an entity without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
 		}
+
 		return;
 	}
 

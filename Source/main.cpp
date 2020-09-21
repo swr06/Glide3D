@@ -99,11 +99,13 @@ int main()
 	Object object_2;
 	Object object_3;
 	CubeObject object_4;
+	Object object_5;
 
 	// Load all the OBJ files
 	FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
+	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
 
 	object_1.p_CanFacecull = false;
 	object_4.p_AlbedoMap->CreateTexture("Resources/brickwall.jpg", true);
@@ -113,6 +115,7 @@ int main()
 	Entity suzanne(&object_2);
 	Entity backpack(&object_3);
 	Entity brickwall(&object_4);
+	Entity sphere(&object_5);
 
 	// Pot Object
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
@@ -127,6 +130,10 @@ int main()
 	backpack.GetTransform().Rotate(-90.0f);
 	backpack.GetTransform().Rotate(-55.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
+	// The sphere
+	sphere.GetTransform().Translate(glm::vec3(1, 0, 0));
+	sphere.GetTransform().Scale(glm::vec3(2, 2, 2));
+
 	// Brick Wall
 	brickwall.GetTransform().Translate(glm::vec3(27, 0, 0));
 	brickwall.GetTransform().Scale(glm::vec3(10,10,0.5f));
@@ -140,8 +147,7 @@ int main()
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-
-
+	
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		renderer.StartRender(&camera);
@@ -187,6 +193,7 @@ int main()
 		renderer.RenderObjects({ pot });
 		renderer.RenderObjects({ suzanne });
 		renderer.RenderObjects({ backpack });
+		renderer.RenderObjects({ sphere });
 		renderer.RenderObjects({ brickwall });
 		cube_renderer.RenderCube(glm::vec3(15.0f, 1.1f, 13.0f), nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
