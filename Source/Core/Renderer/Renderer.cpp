@@ -191,6 +191,7 @@ namespace Glide3D
 	void Renderer::RenderFBO(const GLClasses::Framebuffer& fbo)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 

@@ -70,6 +70,9 @@ namespace Glide3D
 			
 			p_CanFacecull = false; // Todo : Change winding order so it can facecull
 
+			// Calculate tangent normals
+			CalculateTangentNormals();
+
 			// Upload the data to the gpu
 			Buffer();
 		}
@@ -124,6 +127,9 @@ namespace Glide3D
 			p_Vertices.push_back({ glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)});
 
 			p_CanFacecull = false; // Todo : Change winding order so it can facecull
+
+			// Calculate tangent normals
+			CalculateTangentNormals();
 
 			// Upload the data to the gpu
 			Buffer();

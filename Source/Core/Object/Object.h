@@ -27,6 +27,11 @@ namespace Glide3D
 		*/
 		void Buffer();
 
+		/*
+		Calculates the tangent and bitangents based on the texture coordinates to en
+		*/
+		void CalculateTangentNormals();
+
 		std::vector<Vertex> p_Vertices;
 		std::vector<GLuint> p_Indices;
 		std::string p_MeshName;

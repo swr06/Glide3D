@@ -87,6 +87,7 @@ namespace Glide3D
 				vertices.push_back(vt);
 			}
 
+			/* Push back the indices */
 			for (int i = 0; i < mesh->mNumFaces; i++)
 			{
 				aiFace face = mesh->mFaces[i];
@@ -96,6 +97,8 @@ namespace Glide3D
 					indices.push_back(face.mIndices[j]);
 				}
 			}
+
+			object->CalculateTangentNormals();
 
 			/* Load material maps 
 			- Albedo map

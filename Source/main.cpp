@@ -21,6 +21,7 @@
 using namespace Glide3D;
 
 FPSCamera camera(45, 800.0f / 600.0f, 0.1f, 1000, 0.25f);
+bool wireframe = false;
 
 class MyApp : public Application
 {
@@ -64,6 +65,11 @@ public:
 				glfwSwapInterval(0);
 			}
 
+		}
+
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_M)
+		{
+			wireframe = !wireframe;
 		}
 	}
 
@@ -155,7 +161,7 @@ int main()
 		
 		// Clear the framebuffer
 		FBO.Bind();
-		FBO.OnUpdate(app.GetWidth(), app.GetHeight());
+		FBO.OnUpdate(app.GetWidth(), app.GetHeight(), wireframe);
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{

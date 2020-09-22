@@ -69,7 +69,7 @@ void main()
 
 	if (u_HasAlbedoMap == 1)
 	{
-		g_Color = vec3(TextureBiCubic(u_AlbedoMap, v_TexCoords));
+		g_Color = vec3(texture(u_AlbedoMap, v_TexCoords));
 	}
 
 	else
@@ -79,7 +79,7 @@ void main()
 
 	if (u_HasNormalMap == 1)
 	{
-		Normal = vec3(TextureBiCubic(u_NormalMap, v_TexCoords));
+		Normal = vec3(texture(u_NormalMap, v_TexCoords));
 		Normal = normalize(Normal * 2.0f - 1.0f);
 	}
 

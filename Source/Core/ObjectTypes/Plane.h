@@ -20,6 +20,9 @@ namespace Glide3D
 
 			p_CanFacecull = false; 
 
+			// Calculate tangent normals
+			CalculateTangentNormals();
+
 			// Upload the data to the gpu
 			Buffer();
 		}
@@ -34,6 +37,9 @@ namespace Glide3D
 			p_Indices = { 0,1,2,2,3,0 };
 
 			p_CanFacecull = false;
+
+			// Calculate tangent normals
+			CalculateTangentNormals();
 
 			// Upload the data to the gpu
 			Buffer();

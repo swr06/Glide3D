@@ -24,9 +24,19 @@ namespace GLClasses
 
 		width and height should be the dimensions of the window
 		*/
-		void OnUpdate(int width, int height) 
+		void OnUpdate(int width, int height, bool wireframe = false) 
 		{
 			this->Bind();
+
+			if (wireframe)
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			}
+
+			else
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			}
 
 			if (width != m_FBWidth || height != m_FBHeight)
 			{
