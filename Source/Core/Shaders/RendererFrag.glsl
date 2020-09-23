@@ -115,7 +115,7 @@ Calculates phong lighting with a bunch of parameters
 */
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color, int use_blinn)
 {
-	vec3 LightDirection = normalize(light.m_Position - normal);
+	vec3 LightDirection = normalize(light.m_Position - v_FragPosition);
 
 	float Diffuse = max(dot(normal, LightDirection), 0.0f);
 
@@ -143,7 +143,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn)
 {
-	vec3 LightDirection = normalize(light.m_Position - normal);
+	vec3 LightDirection = normalize(light.m_Position - v_FragPosition);
 
 	float Diffuse = max(dot(normal, LightDirection), 0.0f);
 
@@ -154,7 +154,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int
 	if (use_blinn == 1)
 	{
 		vec3 Halfway = normalize(LightDirection + ViewDir);  
-        Specular = pow(max(dot(normal, Halfway), 0.0), 16.0);
+        Specular = pow(max(dot(normal, Halfway), 0.0), light.m_SpecularExponent);
 	}
 
 	else
