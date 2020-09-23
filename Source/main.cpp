@@ -145,7 +145,10 @@ int main()
 	brickwall.GetTransform().Scale(glm::vec3(10,10,0.5f));
 
 	DirectionalLight light;
-	light.m_Position = glm::vec3(15.0f, 1.1f, 13.0f);
+
+	glm::vec3 light_pos = glm::vec3(22.0f, 8.0f, 2.0f);
+
+	light.m_Position = light_pos; // 15   1.1  13
 	light.m_SpecularStrength = 1.0f;
 	light.m_SpecularExponent = 32;
 
@@ -201,7 +204,7 @@ int main()
 		renderer.RenderObjects({ backpack });
 		renderer.RenderObjects({ sphere });
 		renderer.RenderObjects({ brickwall });
-		cube_renderer.RenderCube(glm::vec3(15.0f, 1.1f, 13.0f), nullptr, 0, camera.GetViewProjection());
+		cube_renderer.RenderCube(light_pos, nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
 
 		renderer.EndRender();

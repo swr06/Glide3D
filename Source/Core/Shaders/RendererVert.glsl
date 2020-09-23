@@ -20,6 +20,7 @@ layout (location = 10) in vec4 NormalColumn2;
 layout (location = 11) in vec4 NormalColumn3;
 layout (location = 12) in vec4 NormalColumn4;
 
+out mat3 v_TBNMatrix;
 out vec2 v_TexCoords;
 out vec3 v_FragPosition;
 out vec3 v_Normal;
@@ -46,4 +47,10 @@ void main()
 	v_TexCoords = a_TexCoords;
 	v_Normal = mat3(NormalMatrix) * a_Normal;  
 	v_FragPosition = vec3(ModelMatrix * vec4(a_Position, 1.0f)); // For lighting calculations
+
+	/* Construct the TBN Matrix */
+	vec3 T = normalize(vec3(ModelMatrix * vec4(a_Tangent, 0.0)));
+	vec3 B = normalize(vec3(ModelMatrix * vec4(a_Bitangent, 0.0)));
+	vec3 N = normalize(vec3(ModelMatrix * vec4(a_Normal, 0.0)));
+	v_TBNMatrix = mat3(T, B, N);
 }

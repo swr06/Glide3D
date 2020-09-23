@@ -14,6 +14,7 @@ Lighting is based on the phong lighting model.
 in vec2 v_TexCoords;
 in vec3 v_FragPosition;
 in vec3 v_Normal;
+in mat3 v_TBNMatrix;
 
 out vec4 o_Color;
 
@@ -80,7 +81,9 @@ void main()
 	if (u_HasNormalMap == 1)
 	{
 		Normal = vec3(texture(u_NormalMap, v_TexCoords));
-		Normal = normalize(Normal * 2.0f - 1.0f);
+		Normal = Normal * 2.0f - 1.0f;
+		Normal = v_TBNMatrix * Normal; 
+		Normal = normalize(Normal);
 	}
 
 	else
@@ -161,7 +164,6 @@ vec4 cubic(float v)
 
 vec4 TextureBiCubic(sampler2D sampler, vec2 texCoords)
 {
-
    vec2 texSize = textureSize(sampler, 0);
    vec2 invTexSize = 1.0 / texSize;
 
