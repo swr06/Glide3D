@@ -157,7 +157,7 @@ int main()
 	glm::vec3 light_pos = glm::vec3(15.0f, 5.0f, 13.0f);
 
 	light.m_Position = light_pos; 
-	light.m_SpecularStrength = 1.00f;
+	light.m_SpecularStrength = 1.0f;
 	light.m_SpecularExponent = 32;
 
 	renderer.AddDirectionalLight(light);

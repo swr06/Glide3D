@@ -33,6 +33,7 @@ struct DirectionalLight
 	vec3 m_SpecularColor;
 	float m_SpecularStrength;
 	int m_SpecularExponent;
+	int m_IsBlinn;
 };
 
 struct PointLight
@@ -44,6 +45,7 @@ struct PointLight
 	float m_Quadratic;
 	float m_SpecularStrength;
 	int m_SpecularExponent;
+	int m_IsBlinn;
 };
 
 uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
@@ -56,8 +58,8 @@ uniform int u_HasAlbedoMap = 0;
 uniform int u_HasNormalMap = 0;
 
 // Function prototypes
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color);
-vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color);
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color, int use_blinn);
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn);
 vec4 TextureBiCubic(sampler2D sampler, vec2 texCoords);
 
 vec3 g_Ambient;
@@ -70,7 +72,7 @@ void main()
 
 	if (u_HasAlbedoMap == 1)
 	{
-		g_Color = vec3(texture(u_AlbedoMap, v_TexCoords));
+		g_Color = vec3(TextureBiCubic(u_AlbedoMap, v_TexCoords));
 	}
 
 	else
@@ -97,12 +99,12 @@ void main()
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
-		FinalColor += CalculateDirectionalLight(u_SceneDirectionalLights[i], Normal, u_SceneDirectionalLights[i].m_SpecularColor);
+		FinalColor += CalculateDirectionalLight(u_SceneDirectionalLights[i], Normal, u_SceneDirectionalLights[i].m_SpecularColor, u_SceneDirectionalLights[i].m_IsBlinn);
 	}
 
 	for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 	{
-		FinalColor += CalculatePointLight(u_ScenePointLights[i], Normal, u_ScenePointLights[i].m_SpecularColor);
+		FinalColor += CalculatePointLight(u_ScenePointLights[i], Normal, u_ScenePointLights[i].m_SpecularColor, u_ScenePointLights[i].m_IsBlinn);
 	}
 	 
 	o_Color = vec4(FinalColor.xyz, 1.0f);
@@ -111,7 +113,7 @@ void main()
 /*
 Calculates phong lighting with a bunch of parameters
 */
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color)
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color, int use_blinn)
 {
 	vec3 LightDirection = normalize(light.m_Position - normal);
 
@@ -119,8 +121,19 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 
 	// Calculating the specular highlight
 	vec3 ViewDir = normalize(u_ViewerPosition - v_FragPosition); // Get the direction of the fragment
-	vec3 ReflectDir = reflect(-LightDirection, normal);  
-	float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+	float Specular;
+
+	if (use_blinn == 1)
+	{
+		vec3 Halfway = normalize(LightDirection + ViewDir);  
+        Specular = pow(max(dot(normal, Halfway), 0.0), light.m_SpecularExponent);
+	}
+
+	else
+	{
+		vec3 ReflectDir = reflect(-LightDirection, normal);		
+		Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+	}
 	
 	vec3 DiffuseColor = Diffuse * g_Color; // To be replaced with diffuse map
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color ; // To be also sampled with specular map
@@ -128,7 +141,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 	return vec3((g_Ambient + DiffuseColor + SpecularColor) * g_Color);  
 }
 
-vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color)
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn)
 {
 	vec3 LightDirection = normalize(light.m_Position - normal);
 
@@ -136,8 +149,19 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color)
 
 	// Calculating the specular highlight
 	vec3 ViewDir = normalize(u_ViewerPosition - v_FragPosition); // Get the direction of the fragment
-	vec3 ReflectDir = reflect(-LightDirection, normal);  
-	float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+	float Specular;
+
+	if (use_blinn == 1)
+	{
+		vec3 Halfway = normalize(LightDirection + ViewDir);  
+        Specular = pow(max(dot(normal, Halfway), 0.0), 16.0);
+	}
+
+	else
+	{
+		vec3 ReflectDir = reflect(-LightDirection, normal);		
+		float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+	}
 
 	vec3 DiffuseColor = Diffuse * g_Color;
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color;    

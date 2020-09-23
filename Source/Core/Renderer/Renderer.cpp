@@ -74,6 +74,7 @@ namespace Glide3D
 			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i].m_SpecularColor);
 			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i].m_SpecularExponent);
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i].m_SpecularStrength);
+			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i].m_IsBlinn);
 		}
 
 		for (int i = 0; i < m_PointLights.size(); i++)
@@ -88,13 +89,14 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_Linear", m_PointLights[i].m_Linear);
 			shader.SetFloat(name + ".m_Constant", m_PointLights[i].m_Constant);
 			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i].m_Quadratic);
+			shader.SetInteger(name + ".m_IsBlinn", (int)m_PointLights[i].m_IsBlinn);
 		}
 	}
 
 	void Renderer::StartRender(const FPSCamera* camera)
 	{
 		m_RendererShader.Use();
-		m_RendererShader.SetFloat("u_AmbientStrength", 0.75f);
+		m_RendererShader.SetFloat("u_AmbientStrength", 0.25f);
 		m_RendererShader.SetInteger("u_AlbedoMap", 0);
 		m_RendererShader.SetInteger("u_NormalMap", 1);
 		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
