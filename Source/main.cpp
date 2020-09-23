@@ -91,12 +91,13 @@ int main()
 
 	CubeObject cube;
 	Entity entity(&cube);
-	entity.GetTransform().Translate(glm::vec3(4, 0, 0));
 	Entity entity1(&cube);
-	entity1.GetTransform().Translate(glm::vec3(6, 0, 0));
 	Entity entity2(&cube);
-	entity2.GetTransform().Translate(glm::vec3(8, 0, 0));
 	Entity entity3(&cube);
+
+	entity.GetTransform().Translate(glm::vec3(4, 0, 0));
+	entity1.GetTransform().Translate(glm::vec3(6, 0, 0));
+	entity2.GetTransform().Translate(glm::vec3(8, 0, 0));
 	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
 	
 	camera.SetPosition(glm::vec3(0, 0, -2));
@@ -105,6 +106,7 @@ int main()
 	Object object_2;
 	Object object_3;
 	CubeObject object_4;
+	CubeObject floor_obj;
 	Object object_5;
 
 	// Load all the OBJ files
@@ -112,6 +114,7 @@ int main()
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
+	floor_obj.p_AlbedoMap->CreateTexture("Resources/marble.jpg");
 
 	object_1.p_CanFacecull = false;
 	object_4.p_AlbedoMap->CreateTexture("Resources/brickwall.jpg", true);
@@ -122,6 +125,7 @@ int main()
 	Entity backpack(&object_3);
 	Entity brickwall(&object_4);
 	Entity sphere(&object_5);
+	Entity floor_entity(&floor_obj);
 
 	// Pot Object
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
@@ -144,12 +148,16 @@ int main()
 	brickwall.GetTransform().Translate(glm::vec3(27, 0, 0));
 	brickwall.GetTransform().Scale(glm::vec3(10,10,0.5f));
 
+	// The floor
+	floor_entity.GetTransform().Translate(glm::vec3(-100, -4, -100));
+	floor_entity.GetTransform().Scale (glm::vec3(200, 2, 200));
+
 	DirectionalLight light;
 
-	glm::vec3 light_pos = glm::vec3(22.0f, 8.0f, 2.0f);
+	glm::vec3 light_pos = glm::vec3(15.0f, 5.0f, 13.0f);
 
-	light.m_Position = light_pos; // 15   1.1  13
-	light.m_SpecularStrength = 1.0f;
+	light.m_Position = light_pos; 
+	light.m_SpecularStrength = 1.00f;
 	light.m_SpecularExponent = 32;
 
 	renderer.AddDirectionalLight(light);
@@ -204,6 +212,7 @@ int main()
 		renderer.RenderObjects({ backpack });
 		renderer.RenderObjects({ sphere });
 		renderer.RenderObjects({ brickwall });
+		renderer.RenderObjects({ floor_entity });
 		cube_renderer.RenderCube(light_pos, nullptr, 0, camera.GetViewProjection());
 		renderer.RenderFBO(FBO);
 
