@@ -20,7 +20,7 @@
 
 using namespace Glide3D;
 
-FPSCamera camera(45, 800.0f / 600.0f, 0.1f, 1000, 0.25f);
+FPSCamera camera(45, 800.0f / 600.0f, 0.1, 1000, 0.25f);
 bool wireframe = false;
 
 class MyApp : public Application
@@ -151,16 +151,26 @@ int main()
 	// The floor
 	floor_entity.GetTransform().Translate(glm::vec3(-100, -4, -100));
 	floor_entity.GetTransform().Scale (glm::vec3(200, 2, 200));
-
-	DirectionalLight light;
-
 	glm::vec3 light_pos = glm::vec3(15.0f, 5.0f, 13.0f);
 
-	light.m_Position = light_pos; 
-	light.m_SpecularStrength = 1.0f;
-	light.m_SpecularExponent = 32;
+	DirectionalLight d_light;
 
-	renderer.AddDirectionalLight(light);
+	d_light.m_Position = light_pos; 
+	d_light.m_SpecularStrength = 1.0f;
+	d_light.m_SpecularExponent = 32;
+	d_light.m_IsBlinn = true;
+
+	PointLight p_light; // -73 8 81 
+	p_light.m_Position = glm::vec3(-73 ,8, 81);
+	p_light.m_SpecularStrength = 1.0f;
+	p_light.m_SpecularExponent = 32;
+	p_light.m_IsBlinn = true;
+	p_light.m_Linear = 0.09f;
+	p_light.m_Quadratic = 0.0032f;
+	p_light.m_Constant = 0.1f;
+
+	renderer.AddDirectionalLight(d_light);
+	renderer.AddPointLight(p_light);
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
