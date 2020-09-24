@@ -9,26 +9,26 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
   - Blinn-Phong
   - Directional light
   - Point light
+- Normal mapping 
+- Parallax mapping
 - Cubemaps
 - Cubemap reflections
 - Shadow mapping
   - PCF Shadowing
-  - Cascaded shadow maps
 - Screen space reflections
 - Anti Aliasing 
 - Post Processing pipeline
 - Gamma correction
-- Normal mapping 
+- Bloom
+- SSAO (Ambient Occlusion)
 
 # Advanced Features (That will come later..)
 - Defferred shading
-- Bloom
-- SSAO (Ambient Occlusion)
+- PBR (Highly unlikely)
 
 # Requirements 
 - CPU : Any Dual Core CPU or better
 - GPU : OpenGL 4.0+ capable gpu 
-- RAM : 1 GB or higher
 
 # Note 
 Since my school has started, development may be slower as I have to finish my school work. :)
