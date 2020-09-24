@@ -10,12 +10,18 @@ namespace GLClasses
 	class Framebuffer
 	{
 	public :
-		Framebuffer(unsigned int w, unsigned int h);
+		Framebuffer(unsigned int w, unsigned int h, bool color_attachment, bool depth_stencil_attachment);
 		~Framebuffer();
 
 		void Bind() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+		}
+
+
+		void Unbind() const
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
 		/*
@@ -69,5 +75,38 @@ namespace GLClasses
 		GLuint m_DepthStencilBuffer;
 		int m_FBWidth;
 		int m_FBHeight;
+		bool m_HasColorBuffer = false;
+		bool m_HasDepthStencilBuffer = false;
+	};
+
+	/*
+	Can be used as a shadow map
+	*/
+	class DepthMap
+	{
+	public :
+		DepthMap(unsigned int w, unsigned int h);
+
+		void Bind() const
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+		}
+
+		void Unbind() const
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+
+		void OnUpdate()
+		{
+			Bind();
+			glClear(GL_DEPTH_BUFFER_BIT);
+		}
+
+	private :
+		GLuint m_DepthMap;
+		GLuint m_DepthMapFBO;
+		int m_Width;
+		int m_Height;
 	};
 }

@@ -6,7 +6,8 @@
 
 namespace GLClasses
 {
-    Framebuffer::Framebuffer(unsigned int w, unsigned int h) : m_FBO(0), m_FBWidth(w), m_FBHeight(h)
+    Framebuffer::Framebuffer(unsigned int w, unsigned int h, bool color_attachment, bool depth_stencil_attachment) : 
+        m_FBO(0), m_FBWidth(w), m_FBHeight(h), m_HasDepthStencilBuffer(depth_stencil_attachment), m_HasColorBuffer(color_attachment)
     {
         CreateFramebuffer(w, h);
     }
@@ -40,4 +41,25 @@ namespace GLClasses
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+
+    /*
+    Depth Map
+    */
+
+    DepthMap::DepthMap(unsigned int w, unsigned int h)
+    {
+        glGenTextures(1, &m_DepthMap);
+        glBindTexture(GL_TEXTURE_2D, m_DepthMap);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMap, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
