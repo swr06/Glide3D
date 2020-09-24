@@ -10,7 +10,7 @@ namespace GLClasses
 	class Framebuffer
 	{
 	public :
-		Framebuffer(unsigned int w, unsigned int h, bool color_attachment, bool depth_stencil_attachment);
+		Framebuffer(unsigned int w, unsigned int h);
 		~Framebuffer();
 
 		void Bind() const
@@ -75,8 +75,6 @@ namespace GLClasses
 		GLuint m_DepthStencilBuffer;
 		int m_FBWidth;
 		int m_FBHeight;
-		bool m_HasColorBuffer = false;
-		bool m_HasDepthStencilBuffer = false;
 	};
 
 	/*

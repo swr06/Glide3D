@@ -6,8 +6,8 @@
 
 namespace GLClasses
 {
-    Framebuffer::Framebuffer(unsigned int w, unsigned int h, bool color_attachment, bool depth_stencil_attachment) : 
-        m_FBO(0), m_FBWidth(w), m_FBHeight(h), m_HasDepthStencilBuffer(depth_stencil_attachment), m_HasColorBuffer(color_attachment)
+    Framebuffer::Framebuffer(unsigned int w, unsigned int h) : 
+        m_FBO(0), m_FBWidth(w), m_FBHeight(h)
     {
         CreateFramebuffer(w, h);
     }
