@@ -2,19 +2,19 @@
 A Tiny 3D Game Engine. This purpose of this engine is purely educational (To learn more about Computer Graphics)
 
 # Planned Features
-- 3D Object rendering (such as cubes, cones and spheres) 
-- OBJ Model loading
+- 3D Object rendering (such as cubes, cones and spheres)  ✔
+- OBJ Model loading ✔
 - Lighting
-  - Phong Lighting model
-  - Blinn-Phong
-  - Directional light
-  - Point light
-- Normal mapping 
+  - Phong Lighting model ✔
+  - Blinn-Phong ✔
+  - Directional light ✔
+  - Point light ✔
+- Normal mapping  ✔
 - Parallax mapping
-- Cubemaps
+- Cubemaps ✔
 - Cubemap reflections
-- Shadow mapping
-  - PCF Shadowing
+- Shadow mapping ✔
+  - PCF Shadowing ✔
 - Screen space reflections
 - Anti Aliasing 
 - Post Processing pipeline
