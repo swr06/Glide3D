@@ -140,51 +140,57 @@ namespace Glide3D
 				glDisable(GL_CULL_FACE);
 			}
 
-			const std::vector<Vertex>& Vertices = entities[0].p_Object->p_Vertices;
-			const std::vector<GLuint>& Indices = entities[0].p_Object->p_Indices;
-			std::vector<glm::mat4> Matrices;
-
-			for (auto& e : entities)
+			for (auto& e : object->p_Meshes)
 			{
-				const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
-				Matrices.push_back(model);
-				Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
+				Mesh* mesh = &e;
+
+				const std::vector<Vertex>& Vertices = mesh->p_Vertices;
+				const std::vector<GLuint>& Indices = mesh->p_Indices;
+				bool indexed = mesh->p_Indexed;
+
+				std::vector<glm::mat4> Matrices;
+
+				for (auto& e : entities)
+				{
+					const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
+					Matrices.push_back(model);
+					Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
+				}
+
+
+				if (mesh->p_AlbedoMap && mesh->p_AlbedoMap->GetTextureID() != 0)
+				{
+					mesh->p_AlbedoMap->Bind(0);
+				}
+
+				if (mesh->p_NormalMap && mesh->p_NormalMap->GetTextureID() != 0)
+				{
+					mesh->p_NormalMap->Bind(1);
+				}
+
+				/* These uniforms vary from Object to object */
+				m_RendererShader.SetVector3f("u_Color", object->p_DefaultColor);
+				m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap->GetTextureID() != 0));
+				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap->GetTextureID() != 0));
+
+				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+
+				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+				VAO.Bind();
+
+				if (indexed)
+				{
+					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+				}
+
+				else
+				{
+					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+				}
+
+				VAO.Unbind();
 			}
-
-			const bool& indexed = object->p_Indexed;
-
-			if (object->p_AlbedoMap && object->p_AlbedoMap->GetTextureID() != 0)
-			{
-				object->p_AlbedoMap->Bind(0);
-			}
-
-			if (object->p_NormalMap && object->p_NormalMap->GetTextureID() != 0)
-			{
-				object->p_NormalMap->Bind(1);
-			}
-
-			/* These uniforms vary from Object to object */
-			m_RendererShader.SetVector3f("u_Color", object->p_DefaultColor);
-			m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(object->p_AlbedoMap->GetTextureID() != 0));
-			m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(object->p_NormalMap->GetTextureID() != 0));
-
-			GLClasses::VertexArray& VAO = object->p_VertexArray;
-			GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
-
-			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
-			VAO.Bind();
-
-			if (indexed)
-			{
-				glDrawElementsInstanced(GL_TRIANGLES, object->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
-			}
-
-			else
-			{
-				glDrawArraysInstanced(GL_TRIANGLES, 0, object->p_VertexCount, entities.size());
-			}
-
-			VAO.Unbind();
 		}
 
 		m_RenderEntities.clear();

@@ -1,11 +1,78 @@
 #include "Object.h"
+#include <cstdlib>
+#include <cstdio>
 
 namespace Glide3D
 {
-	Object::Object() : p_DefaultColor(glm::vec3(1.0f, 0.5f, 0.31f)), p_VertexBuffer(GL_ARRAY_BUFFER), p_MatrixBuffer(GL_ARRAY_BUFFER)
+	Object::Object() : p_DefaultColor(glm::vec3(1.0f, 0.5f, 0.31f))
 	{
-		p_Texture = new GLClasses::Texture();
-		p_LightMap = new GLClasses::Texture();
+
+	}
+
+	Object::~Object()
+	{
+
+	}
+
+	void Object::Buffer()
+	{
+		for (auto& e : p_Meshes)
+		{
+			e.Buffer();
+		}
+	}
+
+	void Object::AddTextureMapToMesh(const std::string& path, TextureType tex_type, bool flip)
+	{
+		if (p_Meshes.size() > 0)
+		{
+			Mesh* mesh = &p_Meshes.back();
+
+			switch (tex_type)
+			{
+			case TextureType::Albedo : 
+			{
+				mesh->p_AlbedoMap->CreateTexture(path, flip);
+				break;
+			}
+
+			case TextureType::Specular:
+			{
+				mesh->p_LightMap->CreateTexture(path, flip);
+				break;
+			}
+
+			case TextureType::Normal:
+			{
+				mesh->p_NormalMap->CreateTexture(path, flip);
+				break;
+			}
+
+			default : 
+			{
+				Logger::Log("Invalid argument passed to Object::AddTextureToMesh()!");
+				break;
+			}
+			}
+		}
+
+		else
+		{
+			Logger::Log("Can't add texture path : " + path + " When there are no meshes in the object!");
+		}
+	}
+
+	void Object::CalculateTangentNormals()
+	{
+		for (auto& e : p_Meshes)
+		{
+			e.CalculateTangentNormals();
+		}
+	}
+
+	Mesh::Mesh() : p_VertexBuffer(GL_ARRAY_BUFFER), p_MatrixBuffer(GL_ARRAY_BUFFER)
+	{
+		p_LightMap  = new GLClasses::Texture();
 		p_AlbedoMap = new GLClasses::Texture();
 		p_NormalMap = new GLClasses::Texture();
 
@@ -49,15 +116,14 @@ namespace Glide3D
 		p_VertexArray.Unbind();
 	}
 
-	Object::~Object()
+	Mesh::~Mesh()
 	{
-		delete p_Texture;
 		delete p_LightMap;
 		delete p_AlbedoMap;
 		delete p_NormalMap;
 	}
 
-	void Object::Buffer()
+	void Mesh::Buffer()
 	{
 		if (p_Vertices.size() > 0)
 		{
@@ -71,16 +137,16 @@ namespace Glide3D
 			p_IndicesCount = p_Indices.size();
 			p_IndexBuffer.BufferData(p_Indices.size() * sizeof(GLuint), &p_Indices.front(), GL_STATIC_DRAW);
 			p_Indexed = true;
-			p_Indices.clear(); 
+			p_Indices.clear();
 		}
 
 		else
-		{ 
+		{
 			p_Indexed = false;
 		}
 	}
 
-	void Object::CalculateTangentNormals()
+	void Mesh::CalculateTangentNormals()
 	{
 		std::vector<Vertex>& vertices = p_Vertices;
 		int tris = ceil(vertices.size() / 3);

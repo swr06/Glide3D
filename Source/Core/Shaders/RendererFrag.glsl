@@ -72,7 +72,7 @@ void main()
 
 	if (u_HasAlbedoMap == 1)
 	{
-		g_Color = vec3(TextureBiCubic(u_AlbedoMap, v_TexCoords));
+		g_Color = vec3(texture(u_AlbedoMap, v_TexCoords));
 	}
 
 	else

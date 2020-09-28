@@ -12,7 +12,7 @@ namespace Glide3D
 {
 	namespace FileLoader
 	{
-		void LoadMaterialTexture(aiMesh* mesh, aiMaterial* mat, aiTextureType type, Object* object, const std::string& path)
+		void LoadMaterialTexture(aiMesh* mesh, aiMaterial* mat, aiTextureType type, Mesh* _mesh, const std::string& path)
 		{
 			std::filesystem::path pth(path);
 
@@ -29,19 +29,19 @@ namespace Glide3D
 				{
 				case aiTextureType_DIFFUSE:
 				{
-					object->p_AlbedoMap->CreateTexture(texture_path);
+					_mesh->p_AlbedoMap->CreateTexture(texture_path);
 					break;
 				}
 
 				case aiTextureType_SPECULAR:
 				{
-					object->p_LightMap->CreateTexture(texture_path);
+					_mesh->p_LightMap->CreateTexture(texture_path);
 					break;
 				}
 
 				case aiTextureType_HEIGHT:
 				{
-					object->p_NormalMap->CreateTexture(texture_path);
+					_mesh->p_NormalMap->CreateTexture(texture_path);
 					break;
 				}
 				}
@@ -50,8 +50,11 @@ namespace Glide3D
 
 		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth)
 		{
-			std::vector<Vertex>& vertices = object->p_Vertices;
-			std::vector<GLuint>& indices = object->p_Indices;
+			object->p_Meshes.emplace_back();
+			Mesh* _mesh = &(object->p_Meshes.back());
+
+			std::vector<Vertex>& vertices = _mesh->p_Vertices;
+			std::vector<GLuint>& indices = _mesh->p_Indices;
 
 			for (int i = 0; i < mesh->mNumVertices; i++)
 			{
@@ -114,9 +117,9 @@ namespace Glide3D
 
 			// process materials
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, object, pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, object, pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, object, pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, _mesh, pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, _mesh, pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, _mesh, pth);
 		}
 
 		void ProcessAssimpNode(aiNode* Node, const aiScene* Scene, Object* object, const std::string& pth)

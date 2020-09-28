@@ -114,11 +114,11 @@ int main()
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
-	floor_obj.p_AlbedoMap->CreateTexture("Resources/marble.jpg");
+	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
 	object_1.p_CanFacecull = false;
-	object_4.p_AlbedoMap->CreateTexture("Resources/brickwall.jpg", true);
-	object_4.p_NormalMap->CreateTexture("Resources/brickwall_normal.jpg", true);
+	object_4.AddTextureMapToMesh("Resources/brickwall.jpg", TextureType::Albedo, true);
+	object_4.AddTextureMapToMesh("Resources/brickwall_normal.jpg", TextureType::Normal, true);
 
 	Entity pot(&object_1);
 	Entity suzanne(&object_2);
