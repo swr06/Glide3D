@@ -93,7 +93,30 @@ namespace Glide3D
 		}
 	}
 
-	void Renderer::StartRender(const FPSCamera* camera)
+	/*
+	Adds a group of the same entity at different positions using instanced rendering
+	*/
+	void Renderer::AddEntityToRenderQueue(const std::vector<Entity>& entities)
+	{
+		const Object* object = entities[0].p_Object;
+
+		if (object)
+		{
+			m_RenderEntities.push_back(entities);
+		}
+
+		else
+		{
+			Logger::Log("Attempted to add an entity to the render list without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
+		}
+
+		return;
+	}
+	
+	/*
+	Renders all the entities to the window
+	*/
+	void Renderer::Render(const FPSCamera* camera)
 	{
 		m_RendererShader.Use();
 		m_RendererShader.SetFloat("u_AmbientStrength", 0.25f);
@@ -102,19 +125,11 @@ namespace Glide3D
 		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 		SetLightUniforms(m_RendererShader);
-	}
 
-	/*
-	Renders a group of the same entity at different positions using instanced rendering
-	*/
-	void Renderer::RenderObjects(const std::vector<Entity>& entities)
-	{
-		unsigned int entity_num = entities.size();
-
-		Object* object = entities[0].p_Object;
-
-		if (object)
+		for (auto& entities : m_RenderEntities)
 		{
+			Object* object = entities[0].p_Object;
+
 			if (object->p_CanFacecull)
 			{
 				glEnable(GL_CULL_FACE);
@@ -134,11 +149,9 @@ namespace Glide3D
 				const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
 				Matrices.push_back(model);
 				Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
-				entity_num++;
 			}
 
 			const bool& indexed = object->p_Indexed;
-			bool can_render = true; // Flag to assure that the size of the vertices is over zero
 
 			if (object->p_AlbedoMap && object->p_AlbedoMap->GetTextureID() != 0)
 			{
@@ -157,10 +170,10 @@ namespace Glide3D
 
 			GLClasses::VertexArray& VAO = object->p_VertexArray;
 			GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
-			
+
 			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 			VAO.Bind();
-			
+
 			if (indexed)
 			{
 				glDrawElementsInstanced(GL_TRIANGLES, object->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
@@ -174,17 +187,10 @@ namespace Glide3D
 			VAO.Unbind();
 		}
 
-		else
-		{
-			Logger::Log("Attempted to draw an entity without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
-		}
+		m_RenderEntities.clear();
+		glUseProgram(0);
 
 		return;
-	}
-
-	void Renderer::EndRender()
-	{
-		glUseProgram(0);
 	}
 
 	/*

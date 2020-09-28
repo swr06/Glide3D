@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
@@ -36,9 +37,8 @@ namespace Glide3D
 		void AddPointLight(const PointLight& light);
 
 		// Rendering
-		void StartRender(const FPSCamera* camera);
-		void RenderObjects(const std::vector<Entity>& entities);
-		void EndRender();
+		void AddEntityToRenderQueue(const std::vector<Entity>& entities);
+		void Render(const FPSCamera* camera);
 
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
 
@@ -52,6 +52,7 @@ namespace Glide3D
 		GLClasses::SSBO m_LightSSBO;
 		std::vector<DirectionalLight> m_DirectionalLights;
 		std::vector<PointLight> m_PointLights;
+		std::vector<std::vector<Entity>> m_RenderEntities;
 
 		void SetLightUniforms(GLClasses::Shader& shader);
 	};

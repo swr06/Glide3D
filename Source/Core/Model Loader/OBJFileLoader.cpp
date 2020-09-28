@@ -27,7 +27,7 @@ namespace Glide3D
 			{
 				switch (type)
 				{
-				case aiTextureType_DIFFUSE :
+				case aiTextureType_DIFFUSE:
 				{
 					object->p_AlbedoMap->CreateTexture(texture_path);
 					break;
@@ -52,7 +52,7 @@ namespace Glide3D
 		{
 			std::vector<Vertex>& vertices = object->p_Vertices;
 			std::vector<GLuint>& indices = object->p_Indices;
-			
+
 			for (int i = 0; i < mesh->mNumVertices; i++)
 			{
 				Vertex vt;
@@ -65,9 +65,9 @@ namespace Glide3D
 				if (mesh->HasNormals())
 				{
 					vt.normals = glm::vec3(
-					(float)mesh->mNormals[i].x,
-					(float)mesh->mNormals[i].y,
-					(float)mesh->mNormals[i].z
+						(float)mesh->mNormals[i].x,
+						(float)mesh->mNormals[i].y,
+						(float)mesh->mNormals[i].z
 					);
 				}
 
@@ -77,8 +77,16 @@ namespace Glide3D
 						(float)mesh->mTextureCoords[0][i].x,
 						(float)mesh->mTextureCoords[0][i].y
 					);
-				} 
-				
+
+					vt.tangent.x = mesh->mTangents[i].x;
+					vt.tangent.y = mesh->mTangents[i].y;
+					vt.tangent.z = mesh->mTangents[i].z;
+
+					vt.bitangent.x = mesh->mBitangents[i].x;
+					vt.bitangent.y = mesh->mBitangents[i].y;
+					vt.bitangent.z = mesh->mBitangents[i].z;
+				}
+
 				else
 				{
 					vt.tex_coords = glm::vec2(0.0f, 0.0f);
@@ -98,9 +106,7 @@ namespace Glide3D
 				}
 			}
 
-			object->CalculateTangentNormals();
-
-			/* Load material maps 
+			/* Load material maps
 			- Albedo map
 			- Specular map
 			- Normal map
@@ -110,7 +116,7 @@ namespace Glide3D
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, object, pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, object, pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, object, pth); 
+			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, object, pth);
 		}
 
 		void ProcessAssimpNode(aiNode* Node, const aiScene* Scene, Object* object, const std::string& pth)
@@ -130,18 +136,33 @@ namespace Glide3D
 		void LoadOBJFile(Object* object, const std::string& filepath)
 		{
 			Assimp::Importer importer;
-			const aiScene* Scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs);
+			//const aiScene* Scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+			const aiScene* Scene = importer.ReadFile
+			(
+				filepath,
+				aiProcess_JoinIdenticalVertices |
+				aiProcess_Triangulate |
+				aiProcess_GenSmoothNormals |
+				aiProcess_CalcTangentSpace |
+				aiProcess_ImproveCacheLocality |
+				aiProcess_RemoveRedundantMaterials |
+				aiProcess_GenUVCoords |
+				aiProcess_FlipUVs |
+				aiProcess_SortByPType |
+				aiProcess_FindDegenerates |
+				aiProcess_FindInvalidData |
+				aiProcess_OptimizeMeshes
+			);
 
 			if (!Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode)
 			{
 				std::stringstream str;
 				str << "ERROR LOADING ASSIMP MODEL (" << filepath << ") || ASSIMP ERROR : " << importer.GetErrorString();
 				Logger::Log(str.str());
-				return;
+				return; 
 			}
 
 			ProcessAssimpNode(Scene->mRootNode, Scene, object, filepath);
-
 			object->Buffer();
 			return;
 		}

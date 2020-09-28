@@ -75,7 +75,7 @@ namespace Glide3D
 		}
 
 		else
-		{
+		{ 
 			p_Indexed = false;
 		}
 	}
@@ -83,9 +83,10 @@ namespace Glide3D
 	void Object::CalculateTangentNormals()
 	{
 		std::vector<Vertex>& vertices = p_Vertices;
+		int tris = ceil(vertices.size() / 3);
 
 		/* Calculate tangents and bi tangents */
-		for (int i = 0; i < vertices.size(); i += 3)
+		for (int i = 0; i < tris; i++)
 		{
 			const Vertex& v0 = vertices[i];
 			const Vertex& v1 = vertices[i + 1];

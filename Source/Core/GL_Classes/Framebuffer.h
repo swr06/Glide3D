@@ -95,9 +95,10 @@ namespace GLClasses
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void OnUpdate()
+		void OnUpdate(int w, int h) const
 		{
 			Bind();
+			glViewport(0, 0, w, h);
 			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 

@@ -177,7 +177,6 @@ int main()
 	
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
-		renderer.StartRender(&camera);
 		app.OnUpdate();
 		
 		// Clear the framebuffer
@@ -216,17 +215,17 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
 		}
 
-		renderer.RenderObjects({ entity, entity1, entity2, entity3 });
-		renderer.RenderObjects({ pot });
-		renderer.RenderObjects({ suzanne });
-		renderer.RenderObjects({ backpack });
-		renderer.RenderObjects({ sphere });
-		renderer.RenderObjects({ brickwall });
-		renderer.RenderObjects({ floor_entity });
 		cube_renderer.RenderCube(light_pos, nullptr, 0, camera.GetViewProjection());
+		renderer.AddEntityToRenderQueue({ entity, entity1, entity2, entity3 });
+		renderer.AddEntityToRenderQueue({ pot });
+		renderer.AddEntityToRenderQueue({ suzanne });
+		renderer.AddEntityToRenderQueue({ backpack });
+		renderer.AddEntityToRenderQueue({ sphere });
+		renderer.AddEntityToRenderQueue({ brickwall });
+		renderer.AddEntityToRenderQueue({ floor_entity });
+		renderer.Render(&camera);
 		renderer.RenderFBO(FBO);
 
-		renderer.EndRender();
 		camera.OnUpdate();
 		camera.ResetAcceleration();
 		app.FinishFrame();
