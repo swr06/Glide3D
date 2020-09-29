@@ -175,6 +175,7 @@
     <ClInclude Include="Core\Post Processor\PostProcessor.h" />
     <ClInclude Include="Core\Renderer\CubeRenderer.h" />
     <ClInclude Include="Core\Renderer\Renderer.h" />
+    <ClInclude Include="Core\Skybox.h" />
     <ClInclude Include="Core\TextureAtlas.h" />
     <ClInclude Include="Core\Transform\Transform.h" />
     <ClInclude Include="Core\Utils\Defs.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="Core\Post Processor\PostProcessor.cpp" />
     <ClCompile Include="Core\Renderer\CubeRenderer.cpp" />
     <ClCompile Include="Core\Renderer\Renderer.cpp" />
+    <ClCompile Include="Core\Skybox.cpp" />
     <ClCompile Include="Core\TextureAtlas.cpp" />
     <ClCompile Include="Core\Transform\Transform.cpp" />
     <ClCompile Include="Dependencies\glad\src\glad.c" />
@@ -218,6 +220,8 @@
     <None Include="Core\Shaders\FramebufferVert.glsl" />
     <None Include="Core\Shaders\RendererFrag.glsl" />
     <None Include="Core\Shaders\RendererVert.glsl" />
+    <None Include="Core\Shaders\SkyboxFrag.glsl" />
+    <None Include="Core\Shaders\SkyboxVertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

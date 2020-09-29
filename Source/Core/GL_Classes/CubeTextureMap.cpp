@@ -19,8 +19,8 @@ namespace GLClasses
 
 			if (image_data)
 			{
-  				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width,
-					height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+  				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width,
+					height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 				stbi_image_free(image_data);
 			}
 

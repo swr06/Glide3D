@@ -153,6 +153,9 @@
     <ClInclude Include="Core\GL_Classes\UBO.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Skybox.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -234,6 +237,9 @@
     <ClCompile Include="Core\GL_Classes\UBO.cpp">
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Skybox.cpp">
+      <Filter>Core\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">
@@ -252,6 +258,12 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\FramebufferVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\SkyboxFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\SkyboxVertex.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
   </ItemGroup>

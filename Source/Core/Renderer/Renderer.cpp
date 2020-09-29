@@ -116,12 +116,21 @@ namespace Glide3D
 	/*
 	Renders all the entities to the window
 	*/
-	void Renderer::Render(const FPSCamera* camera)
+	void Renderer::Render(FPSCamera* camera)
 	{
+		if (m_EnvironmentMap)
+		{
+			m_EnvironmentMap->RenderSkybox(camera);
+			m_EnvironmentMap->GetTexture().Bind(4);
+		}
+
 		m_RendererShader.Use();
 		m_RendererShader.SetFloat("u_AmbientStrength", 0.25f);
 		m_RendererShader.SetInteger("u_AlbedoMap", 0);
 		m_RendererShader.SetInteger("u_NormalMap", 1);
+		m_RendererShader.SetInteger("u_LightMap", 2);
+		m_RendererShader.SetInteger("u_Parallax", 3);
+		m_RendererShader.SetInteger("u_EnvironmentMap", 4);
 		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 		SetLightUniforms(m_RendererShader);

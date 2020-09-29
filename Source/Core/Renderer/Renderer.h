@@ -23,6 +23,7 @@
 #include "../GL_Classes/Shader.h"
 #include "../GL_Classes/SSBO.h"
 #include "../GL_Classes/Framebuffer.h"
+#include "../Skybox.h"
 
 #include "../Lighting/Light.h"
 
@@ -38,9 +39,14 @@ namespace Glide3D
 
 		// Rendering
 		void AddEntityToRenderQueue(const std::vector<Entity>& entities);
-		void Render(const FPSCamera* camera);
+		void Render(FPSCamera* camera);
 
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
+
+		inline void SetEnvironmentMap(Skybox& envmap) noexcept
+		{
+			m_EnvironmentMap = &envmap;
+		}
 
 	private :
 		GLClasses::Shader m_RendererShader;
@@ -53,6 +59,7 @@ namespace Glide3D
 		std::vector<DirectionalLight> m_DirectionalLights;
 		std::vector<PointLight> m_PointLights;
 		std::vector<std::vector<Entity>> m_RenderEntities;
+		Skybox* m_EnvironmentMap = nullptr;
 
 		void SetLightUniforms(GLClasses::Shader& shader);
 	};

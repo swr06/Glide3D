@@ -169,6 +169,16 @@ int main()
 	p_light.m_Quadratic = 0.0032f;
 	p_light.m_Constant = 0.1f;
 
+	Skybox skybox({
+		"Resources/skybox/px.png",
+		"Resources/skybox/nx.png",
+		"Resources/skybox/py.png",
+		"Resources/skybox/ny.png",
+		"Resources/skybox/pz.png",
+		"Resources/skybox/nz.png"
+	});
+
+	renderer.SetEnvironmentMap(skybox);
 	renderer.AddDirectionalLight(d_light);
 	renderer.AddPointLight(p_light);
 
