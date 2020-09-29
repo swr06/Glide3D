@@ -151,19 +151,19 @@ int main()
 	// The floor
 	floor_entity.GetTransform().Translate(glm::vec3(-100, -4, -100));
 	floor_entity.GetTransform().Scale (glm::vec3(200, 2, 200));
-	glm::vec3 light_pos = glm::vec3(15.0f, 5.0f, 13.0f);
+	glm::vec3 light_pos = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
 	DirectionalLight d_light;
 
-	d_light.m_Position = light_pos; 
+	d_light.m_Direction = light_pos; 
 	d_light.m_SpecularStrength = 1.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
 
 	PointLight p_light; // -73 8 81 
 	p_light.m_Position = glm::vec3(-73 ,8, 81);
-	p_light.m_SpecularStrength = 1.0f;
-	p_light.m_SpecularExponent = 32;
+	p_light.m_SpecularStrength = 0.1f;
+	p_light.m_SpecularExponent = 0.1;
 	p_light.m_IsBlinn = true;
 	p_light.m_Linear = 0.09f;
 	p_light.m_Quadratic = 0.0032f;

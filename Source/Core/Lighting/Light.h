@@ -7,7 +7,7 @@ namespace Glide3D
 {
 	struct DirectionalLight
 	{
-		glm::vec3 m_Position = glm::vec3(1.0f);
+		glm::vec3 m_Direction = glm::vec3(1.0f);
 		glm::vec3 m_SpecularColor = glm::vec3(1.0f);
 		float m_SpecularStrength = 1.0f;
 		int m_SpecularExponent = 32;

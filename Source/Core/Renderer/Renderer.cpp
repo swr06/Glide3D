@@ -70,7 +70,7 @@ namespace Glide3D
 			std::string name("u_SceneDirectionalLights[");
 			name = name + std::to_string(i) + "]";
 
-			shader.SetVector3f(name + ".m_Position", m_DirectionalLights[i].m_Position);
+			shader.SetVector3f(name + ".m_Direction", m_DirectionalLights[i].m_Direction);
 			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i].m_SpecularColor);
 			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i].m_SpecularExponent);
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i].m_SpecularStrength);
@@ -113,7 +113,7 @@ namespace Glide3D
 		return;
 	}
 	
-	/*
+	/* 
 	Renders all the entities to the window
 	*/
 	void Renderer::Render(FPSCamera* camera)
