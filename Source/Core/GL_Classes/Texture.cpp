@@ -110,7 +110,7 @@ namespace GLClasses
 	{
 		ExtractedImageData return_val;
 
-		return_val.image_data = stbi_load(path.c_str(), &return_val.width, &return_val.height, &return_val.channels, 4);
+		return_val.image_data = stbi_load(path.c_str(), &return_val.width, &return_val.height, &return_val.channels, 0);
 		return return_val;
 	}
 }
