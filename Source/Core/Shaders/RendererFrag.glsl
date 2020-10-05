@@ -111,7 +111,7 @@ void main()
 	}
 
 	vec3 I = normalize(v_FragPosition - u_ViewerPosition);
-    vec3 R = reflect(I, normalize(v_Normal));
+    vec3 R = reflect(I, Normal);
     vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
 	
 	o_Color = vec4(FinalColor.xyz, 1.0f);

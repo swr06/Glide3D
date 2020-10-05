@@ -106,8 +106,9 @@ int main()
 	Object object_2;
 	Object object_3;
 	CubeObject object_4;
-	CubeObject beacon;
 	CubeObject floor_obj;
+	CubeObject block;
+	CubeObject block_1;
 	Object object_5;
 
 	// Load all the OBJ files
@@ -121,12 +122,19 @@ int main()
 	object_4.AddTextureMapToMesh("Resources/brickwall.jpg", TextureType::Albedo, true);
 	object_4.AddTextureMapToMesh("Resources/brickwall_normal.jpg", TextureType::Normal, true);
 
+	block.AddTextureMapToMesh("Resources/end_bricks.png", TextureType::Albedo, true);
+	block.AddTextureMapToMesh("Resources/end_bricks_n.png", TextureType::Normal, true);
+	block_1.AddTextureMapToMesh("Resources/bricks.png", TextureType::Albedo, true);
+	block_1.AddTextureMapToMesh("Resources/bricks_n.png", TextureType::Normal, true);
+
 	Entity pot(&object_1);
 	Entity suzanne(&object_2);
 	Entity backpack(&object_3);
 	Entity brickwall(&object_4);
 	Entity sphere(&object_5);
 	Entity floor_entity(&floor_obj);
+	Entity block0_entity(&block);
+	Entity block1_entity(&block_1);
 
 	// Pot Object
 	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
@@ -152,11 +160,20 @@ int main()
 	// The floor
 	floor_entity.GetTransform().Translate(glm::vec3(-100, -4, -100));
 	floor_entity.GetTransform().Scale (glm::vec3(200, 2, 200));
-	glm::vec3 light_pos = glm::vec3(0.00349f, -0.59832f, -0.80124f);
+
+	// The blocks
+	block0_entity.GetTransform().Translate(glm::vec3(40, 0, 0));
+	block0_entity.GetTransform().Scale(glm::vec3(2,2,2));
+	block1_entity.GetTransform().Translate(glm::vec3(45, 0, 0));
+	block1_entity.GetTransform().Scale(glm::vec3(2, 2, 2));
+
+
+
+	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
 	DirectionalLight d_light;
 
-	d_light.m_Direction = light_pos; 
+	d_light.m_Direction = light_dir;
 	d_light.m_SpecularStrength = 1.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
@@ -232,6 +249,8 @@ int main()
 		renderer.AddEntityToRenderQueue({ backpack });
 		renderer.AddEntityToRenderQueue({ sphere });
 		renderer.AddEntityToRenderQueue({ brickwall });
+		renderer.AddEntityToRenderQueue({ block0_entity });
+		renderer.AddEntityToRenderQueue({ block1_entity });
 		renderer.AddEntityToRenderQueue({ floor_entity });
 		renderer.Render(&camera);
 		renderer.RenderFBO(FBO);

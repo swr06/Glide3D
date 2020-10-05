@@ -146,8 +146,10 @@ namespace Glide3D
 		int tris = ceil(vertices.size() / 3);
 
 		/* Calculate tangents and bi tangents */
-		for (int i = 0; i < tris; i++)
+		for (int i = 0; i < vertices.size(); i+=3)
 		{
+			if (i >= vertices.size()) { break; }
+
 			const Vertex& v0 = vertices[i];
 			const Vertex& v1 = vertices[i + 1];
 			const Vertex& v2 = vertices[i + 2];
