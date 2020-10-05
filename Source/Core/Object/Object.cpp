@@ -32,19 +32,19 @@ namespace Glide3D
 			{
 			case TextureType::Albedo : 
 			{
-				mesh->p_AlbedoMap->CreateTexture(path, flip);
+				mesh->p_AlbedoMap.CreateTexture(path, flip);
 				break;
 			}
 
 			case TextureType::Specular:
 			{
-				mesh->p_LightMap->CreateTexture(path, flip);
+				mesh->p_LightMap.CreateTexture(path, flip);
 				break;
 			}
 
 			case TextureType::Normal:
 			{
-				mesh->p_NormalMap->CreateTexture(path, flip);
+				mesh->p_NormalMap.CreateTexture(path, flip);
 				break;
 			}
 
@@ -72,10 +72,6 @@ namespace Glide3D
 
 	Mesh::Mesh() : p_VertexBuffer(GL_ARRAY_BUFFER), p_MatrixBuffer(GL_ARRAY_BUFFER)
 	{
-		p_LightMap  = new GLClasses::Texture();
-		p_AlbedoMap = new GLClasses::Texture();
-		p_NormalMap = new GLClasses::Texture();
-
 		/*
 		Setup all the ogl objects
 		*/
@@ -118,9 +114,7 @@ namespace Glide3D
 
 	Mesh::~Mesh()
 	{
-		delete p_LightMap;
-		delete p_AlbedoMap;
-		delete p_NormalMap;
+
 	}
 
 	void Mesh::Buffer()

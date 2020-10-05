@@ -106,6 +106,7 @@ int main()
 	Object object_2;
 	Object object_3;
 	CubeObject object_4;
+	CubeObject beacon;
 	CubeObject floor_obj;
 	Object object_5;
 
@@ -225,7 +226,6 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
 		}
 
-		cube_renderer.RenderCube(light_pos, nullptr, 0, camera.GetViewProjection());
 		renderer.AddEntityToRenderQueue({ entity, entity1, entity2, entity3 });
 		renderer.AddEntityToRenderQueue({ pot });
 		renderer.AddEntityToRenderQueue({ suzanne });

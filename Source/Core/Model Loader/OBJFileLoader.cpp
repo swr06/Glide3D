@@ -29,19 +29,19 @@ namespace Glide3D
 				{
 				case aiTextureType_DIFFUSE:
 				{
-					_mesh->p_AlbedoMap->CreateTexture(texture_path);
+					_mesh->p_AlbedoMap.CreateTexture(texture_path);
 					break;
 				}
 
 				case aiTextureType_SPECULAR:
 				{
-					_mesh->p_LightMap->CreateTexture(texture_path);
+					_mesh->p_LightMap.CreateTexture(texture_path);
 					break;
 				}
 
 				case aiTextureType_HEIGHT:
 				{
-					_mesh->p_NormalMap->CreateTexture(texture_path);
+					_mesh->p_NormalMap.CreateTexture(texture_path);
 					break;
 				}
 				}

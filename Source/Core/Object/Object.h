@@ -32,9 +32,9 @@ namespace Glide3D
 		std::vector<Vertex> p_Vertices;
 		std::vector<GLuint> p_Indices;
 		std::string p_MeshName;
-		GLClasses::Texture* p_LightMap;
-		GLClasses::Texture* p_AlbedoMap;
-		GLClasses::Texture* p_NormalMap;
+		GLClasses::Texture p_LightMap;
+		GLClasses::Texture p_AlbedoMap;
+		GLClasses::Texture p_NormalMap;
 
 		GLClasses::VertexBuffer p_VertexBuffer;
 		GLClasses::VertexArray p_VertexArray;

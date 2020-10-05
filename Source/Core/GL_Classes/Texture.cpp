@@ -35,7 +35,7 @@ namespace GLClasses
 			else
 				stbi_set_flip_vertically_on_load(false);
 
-			GLenum internalformat = GL_RGBA;
+			GLenum internalformat = 0;
 
 			m_delete_texture = true;
 			m_clean_up = clean_up;
@@ -50,7 +50,22 @@ namespace GLClasses
 			glTexParameteri(type, GL_TEXTURE_MIN_FILTER, min_filter);
 			glTexParameteri(type, GL_TEXTURE_MAG_FILTER, mag_filter);
 
-			unsigned char* image = stbi_load(path.c_str(), &m_width, &m_height, &m_BPP, 4);
+			unsigned char* image = stbi_load(path.c_str(), &m_width, &m_height, &m_BPP, 0);
+
+			if (m_BPP == 1)
+			{
+				internalformat = GL_RED;
+			}
+
+			else if (m_BPP == 3)
+			{
+				internalformat = GL_RGB;
+			}
+
+			else if (m_BPP == 4)
+			{
+				internalformat = GL_RGBA;
+			}
 
 			if (image)
 			{
@@ -69,7 +84,7 @@ namespace GLClasses
 					CreatedTextures[path] = data;
 				}
 
-				glTexImage2D(type, 0, GL_RGBA, m_width, m_height, 0, internalformat, GL_UNSIGNED_BYTE, image);
+				glTexImage2D(type, 0, internalformat, m_width, m_height, 0, internalformat, GL_UNSIGNED_BYTE, image);
 				glGenerateMipmap(type);
 
 				if (clean_up)

@@ -167,20 +167,20 @@ namespace Glide3D
 				}
 
 
-				if (mesh->p_AlbedoMap && mesh->p_AlbedoMap->GetTextureID() != 0)
+				if (mesh->p_AlbedoMap.GetTextureID() != 0)
 				{
-					mesh->p_AlbedoMap->Bind(0);
+					mesh->p_AlbedoMap.Bind(0);
 				}
 
-				if (mesh->p_NormalMap && mesh->p_NormalMap->GetTextureID() != 0)
+				if (mesh->p_NormalMap.GetTextureID() != 0)
 				{
-					mesh->p_NormalMap->Bind(1);
+					mesh->p_NormalMap.Bind(1);
 				}
 
 				/* These uniforms vary from Object to object */
 				m_RendererShader.SetVector3f("u_Color", object->p_DefaultColor);
-				m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap->GetTextureID() != 0));
-				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap->GetTextureID() != 0));
+				m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
+				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
 
 				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;

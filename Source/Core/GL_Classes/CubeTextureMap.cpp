@@ -17,10 +17,27 @@ namespace GLClasses
 			stbi_set_flip_vertically_on_load(false);
 			image_data = stbi_load(cube_face_paths[i].c_str(), &width, &height, &channels, 0);
 
+			GLenum format;
+
+			if (channels == 1)
+			{
+				format = GL_RED;
+			}
+
+			else if (channels == 3)
+			{
+				format = GL_RGB;
+			}
+
+			else if (channels == 4)
+			{
+				format = GL_RGBA;
+			}
+
 			if (image_data)
 			{
-  				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width,
-					height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+  				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width,
+					height, 0, format, GL_UNSIGNED_BYTE, image_data);
 				stbi_image_free(image_data);
 			}
 
