@@ -105,14 +105,14 @@ namespace GLClasses
 		void OnUpdate()
 		{
 			Bind();
-			glViewport(0, 0, 2048, 2048);
+			glViewport(0, 0, m_Width, m_Height);
 			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 
 	private:
 		GLuint m_DepthMap = 0;
 		GLuint m_DepthMapFBO = 0;
-		int m_Width;
-		int m_Height;
+		int m_Width = 0;
+		int m_Height = 0;
 	};
 }

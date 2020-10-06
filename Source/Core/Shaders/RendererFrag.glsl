@@ -15,6 +15,7 @@ in vec2 v_TexCoords;
 in vec3 v_FragPosition;
 in vec3 v_Normal;
 in mat3 v_TBNMatrix;
+in vec4 v_LightFragPos;
 
 out vec4 o_Color;
 
@@ -26,6 +27,7 @@ uniform vec3 u_ViewerPosition;
 uniform sampler2D u_AlbedoMap; // Or the diffuse map.
 uniform sampler2D u_SpecularMap; 
 uniform sampler2D u_NormalMap;
+uniform sampler2D u_LightDirectionalDepthMap;
 uniform sampler2D u_LightMap;
 uniform sampler2D u_ParallaxMap;
 uniform samplerCube u_EnvironmentMap;
@@ -118,6 +120,38 @@ void main()
 	//o_Color = mix(o_Color, reflect_color, 0.3f);
 }
 
+
+float ShadowCalculation(vec4 fls)
+{
+    vec3 ProjectionCoordinates = fls.xyz / fls.w;
+    ProjectionCoordinates = ProjectionCoordinates * 0.5f + 0.5f;
+	float shadow = 0.0;
+
+	if(ProjectionCoordinates.z > 1.0)
+	{
+        shadow = 0.0;
+		return shadow;
+	}
+
+    float ClosestDepth = texture(u_LightDirectionalDepthMap, ProjectionCoordinates.xy).r; 
+    float Depth = ProjectionCoordinates.z;
+    float bias = 0.005f;
+
+	vec2 texelsz = 1.0 / textureSize(u_LightDirectionalDepthMap, 0);
+
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcf = texture(u_LightDirectionalDepthMap, ProjectionCoordinates.xy + vec2(x, y) * texelsz).r; 
+			shadow += Depth - bias > pcf ? 1.0 : 0.0;        
+		}    
+	}
+
+	shadow /= 9.0;
+    return 1.0 - shadow;
+}
+
 /*
 Calculates phong lighting with a bunch of parameters
 */
@@ -146,8 +180,9 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 	
 	vec3 DiffuseColor = Diffuse * g_Color; // To be replaced with diffuse map
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color ; // To be also sampled with specular map
+	float shadow = ShadowCalculation(v_LightFragPos);
 
-	return vec3((g_Ambient + DiffuseColor + SpecularColor) * g_Color);  
+	return vec3((g_Ambient + shadow) * (DiffuseColor + SpecularColor) * g_Color);  
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn)

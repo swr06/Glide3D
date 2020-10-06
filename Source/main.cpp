@@ -174,7 +174,7 @@ int main()
 	DirectionalLight d_light;
 
 	d_light.m_Direction = light_dir;
-	d_light.m_ShadowPosition = glm::vec3(14.0f);
+	d_light.m_ShadowPosition = glm::vec3(10.0f);
 	d_light.m_SpecularStrength = 0.0f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;

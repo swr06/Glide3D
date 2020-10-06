@@ -46,7 +46,7 @@ namespace GLClasses
     Depth Map
     */
 
-    DepthBuffer::DepthBuffer(unsigned int w, unsigned int h)
+    DepthBuffer::DepthBuffer(unsigned int w, unsigned int h) : m_Width(w), m_Height(h)
     {
         glGenTextures(1, &m_DepthMap);
         glBindTexture(GL_TEXTURE_2D, m_DepthMap);

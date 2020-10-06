@@ -24,9 +24,11 @@ out mat3 v_TBNMatrix;
 out vec2 v_TexCoords;
 out vec3 v_FragPosition;
 out vec3 v_Normal;
+out vec4 v_LightFragPos;
 
 uniform mat4 u_ViewProjection;
 uniform vec3 u_ViewerPosition;
+uniform mat4 u_LightSpaceVP;
 
 void main()
 {
@@ -54,4 +56,6 @@ void main()
 	vec3 B = normalize(vec3(ModelMatrix * vec4(a_Bitangent, 0.0)));
 	vec3 N = normalize(vec3(ModelMatrix * vec4(a_Normal, 0.0)));
 	v_TBNMatrix = mat3(T, B, N);
+	
+	v_LightFragPos = u_LightSpaceVP * vec4(v_FragPosition, 1.0f);
 }

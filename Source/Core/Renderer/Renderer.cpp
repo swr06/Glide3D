@@ -126,6 +126,8 @@ namespace Glide3D
 			m_EnvironmentMap->GetTexture().Bind(4);
 		}
 
+		glm::mat4 lvp;
+
 		/* Render the depth maps of each light */
 
 		m_DepthShader.Use();
@@ -140,22 +142,13 @@ namespace Glide3D
 			glm::mat4 v = glm::mat4(1.0f);
 			v = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
 			glm::mat4 vp = p * v;
+			lvp = vp;
 
 			m_DepthShader.SetMatrix4("u_ViewProjection", vp);
 
 			for (auto& entities : m_RenderEntities)
 			{
 				Object* object = entities[0].p_Object;
-
-				if (object->p_CanFacecull)
-				{
-					glEnable(GL_CULL_FACE);
-				}
-
-				else
-				{
-					glDisable(GL_CULL_FACE);
-				}
 
 				for (auto& e : object->p_Meshes)
 				{
@@ -204,16 +197,22 @@ namespace Glide3D
 		fbo.Bind();
 
 		m_RendererShader.Use();
-		m_RendererShader.SetFloat("u_AmbientStrength", 0.25f);
+		m_RendererShader.SetFloat("u_AmbientStrength", 1.0f);
 		m_RendererShader.SetInteger("u_AlbedoMap", 0);
 		m_RendererShader.SetInteger("u_NormalMap", 1);
 		m_RendererShader.SetInteger("u_LightMap", 2);
 		m_RendererShader.SetInteger("u_Parallax", 3);
 		m_RendererShader.SetInteger("u_EnvironmentMap", 4);
-		m_RendererShader.SetInteger("u_DirectionalLightDepthMap", 5);
+		m_RendererShader.SetInteger("u_LightDirectionalDepthMap", 6);
 		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
+
+		m_RendererShader.SetMatrix4("u_LightSpaceVP", lvp);
+
 		SetLightUniforms(m_RendererShader);
+
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0].m_DepthBuffer.GetDepthTexture());
 
 		for (auto& entities : m_RenderEntities)
 		{
@@ -303,8 +302,7 @@ namespace Glide3D
 		m_FBOShader.SetInteger("u_FramebufferTexture", 1);
 		glActiveTexture(GL_TEXTURE1);
 
-		//glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
-		glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0].m_DepthBuffer.GetDepthTexture());
+		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
 
 		m_FBOVAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);

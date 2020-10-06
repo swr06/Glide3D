@@ -8,7 +8,7 @@ namespace Glide3D
 {
 	struct DirectionalLight
 	{
-		DirectionalLight() : m_DepthBuffer(2048, 2048) {}
+		DirectionalLight() : m_DepthBuffer(4096, 4096) {}
 
 		glm::vec3 m_Direction = glm::vec3(1.0f);
 		glm::vec3 m_SpecularColor = glm::vec3(1.0f);
