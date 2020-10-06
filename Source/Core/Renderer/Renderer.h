@@ -39,7 +39,7 @@ namespace Glide3D
 
 		// Rendering
 		void AddEntityToRenderQueue(const std::vector<Entity>& entities);
-		void Render(FPSCamera* camera);
+		void Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo);
 
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
 
@@ -54,6 +54,7 @@ namespace Glide3D
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
 		GLClasses::Shader m_FBOShader;
+		GLClasses::Shader m_DepthShader;
 		GLFWwindow* m_Window;
 		GLClasses::SSBO m_LightSSBO;
 		std::vector<DirectionalLight> m_DirectionalLights;

@@ -115,7 +115,7 @@ void main()
     vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
 	
 	o_Color = vec4(FinalColor.xyz, 1.0f);
-	o_Color = mix(o_Color, reflect_color, 0.3f);
+	//o_Color = mix(o_Color, reflect_color, 0.3f);
 }
 
 /*

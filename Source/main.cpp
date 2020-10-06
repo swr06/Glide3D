@@ -99,7 +99,7 @@ int main()
 	entity1.GetTransform().Translate(glm::vec3(6, 0, 0));
 	entity2.GetTransform().Translate(glm::vec3(8, 0, 0));
 	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
-	
+
 	camera.SetPosition(glm::vec3(0, 0, -2));
 
 	Object object_1;
@@ -155,15 +155,15 @@ int main()
 
 	// Brick Wall
 	brickwall.GetTransform().Translate(glm::vec3(27, 0, 0));
-	brickwall.GetTransform().Scale(glm::vec3(10,10,0.5f));
+	brickwall.GetTransform().Scale(glm::vec3(10, 10, 0.5f));
 
 	// The floor
 	floor_entity.GetTransform().Translate(glm::vec3(-100, -4, -100));
-	floor_entity.GetTransform().Scale (glm::vec3(200, 2, 200));
+	floor_entity.GetTransform().Scale(glm::vec3(200, 2, 200));
 
 	// The blocks
 	block0_entity.GetTransform().Translate(glm::vec3(40, 0, 0));
-	block0_entity.GetTransform().Scale(glm::vec3(2,2,2));
+	block0_entity.GetTransform().Scale(glm::vec3(2, 2, 2));
 	block1_entity.GetTransform().Translate(glm::vec3(45, 0, 0));
 	block1_entity.GetTransform().Scale(glm::vec3(2, 2, 2));
 
@@ -174,12 +174,13 @@ int main()
 	DirectionalLight d_light;
 
 	d_light.m_Direction = light_dir;
-	d_light.m_SpecularStrength = 1.0f;
-	d_light.m_SpecularExponent = 32;
+	d_light.m_ShadowPosition = glm::vec3(14.0f);
+	d_light.m_SpecularStrength = 0.0f;
+	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
 
 	PointLight p_light; // -73 8 81 
-	p_light.m_Position = glm::vec3(-73 ,8, 81);
+	p_light.m_Position = glm::vec3(-73, 8, 81);
 	p_light.m_SpecularStrength = 0.1f;
 	p_light.m_SpecularExponent = 0.1;
 	p_light.m_IsBlinn = true;
@@ -194,7 +195,7 @@ int main()
 		"Resources/skybox/ny.png",
 		"Resources/skybox/pz.png",
 		"Resources/skybox/nz.png"
-	});
+		});
 
 	renderer.SetEnvironmentMap(skybox);
 	renderer.AddDirectionalLight(d_light);
@@ -202,11 +203,11 @@ int main()
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	
+
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
-		
+
 		// Clear the framebuffer
 		FBO.Bind();
 		FBO.OnUpdate(app.GetWidth(), app.GetHeight(), wireframe);
@@ -252,7 +253,7 @@ int main()
 		renderer.AddEntityToRenderQueue({ block0_entity });
 		renderer.AddEntityToRenderQueue({ block1_entity });
 		renderer.AddEntityToRenderQueue({ floor_entity });
-		renderer.Render(&camera);
+		renderer.Render(&camera, FBO);
 		renderer.RenderFBO(FBO);
 
 		camera.OnUpdate();

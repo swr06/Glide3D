@@ -32,6 +32,8 @@ namespace Glide3D
 		m_RendererShader.CompileShaders();
 		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferVert.glsl", "Core/Shaders/FramebufferFrag.glsl");
 		m_FBOShader.CompileShaders();
+		m_DepthShader.CreateShaderProgramFromFile("Core/Shaders/DepthVert.glsl", "Core/Shaders/DepthFrag.glsl");
+		m_DepthShader.CompileShaders();
 	}
 
 	void Renderer::AddDirectionalLight(const DirectionalLight& light)
@@ -54,7 +56,7 @@ namespace Glide3D
 			std::stringstream s;
 			s << "Max POINT lights allowed is : " << MAX_POINT_LIGHTS << " || Light could not be added!";
 			Logger::Log(s.str());
-			assert(0);
+			throw s.str().c_str();
 		}
 
 		m_PointLights.push_back(light);
@@ -116,13 +118,90 @@ namespace Glide3D
 	/* 
 	Renders all the entities to the window
 	*/
-	void Renderer::Render(FPSCamera* camera)
+	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
 		if (m_EnvironmentMap)
 		{
 			m_EnvironmentMap->RenderSkybox(camera);
 			m_EnvironmentMap->GetTexture().Bind(4);
 		}
+
+		/* Render the depth maps of each light */
+
+		m_DepthShader.Use();
+
+		for (auto& e : m_DirectionalLights)
+		{
+			e.m_DepthBuffer.Bind();
+			e.m_DepthBuffer.OnUpdate();
+
+			/* Create the view projection matrix for the light */
+			glm::mat4 p = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 1.0f, 100.0f);
+			glm::mat4 v = glm::mat4(1.0f);
+			v = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::mat4 vp = p * v;
+
+			m_DepthShader.SetMatrix4("u_ViewProjection", vp);
+
+			for (auto& entities : m_RenderEntities)
+			{
+				Object* object = entities[0].p_Object;
+
+				if (object->p_CanFacecull)
+				{
+					glEnable(GL_CULL_FACE);
+				}
+
+				else
+				{
+					glDisable(GL_CULL_FACE);
+				}
+
+				for (auto& e : object->p_Meshes)
+				{
+					Mesh* mesh = &e;
+
+					const std::vector<Vertex>& Vertices = mesh->p_Vertices;
+					const std::vector<GLuint>& Indices = mesh->p_Indices;
+					bool indexed = mesh->p_Indexed;
+
+					std::vector<glm::mat4> Matrices;
+
+					for (auto& e : entities)
+					{
+						const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
+						Matrices.push_back(model);
+						Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
+					}
+
+					GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+					GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+
+					MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+					VAO.Bind();
+
+					if (indexed)
+					{
+						glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+					}
+
+					else
+					{
+						glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+					}
+
+					VAO.Unbind();
+				}
+			}
+
+			e.m_DepthBuffer.Unbind();
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		/* Light depth map rendering ends here */
+
+		fbo.Bind();
 
 		m_RendererShader.Use();
 		m_RendererShader.SetFloat("u_AmbientStrength", 0.25f);
@@ -131,6 +210,7 @@ namespace Glide3D
 		m_RendererShader.SetInteger("u_LightMap", 2);
 		m_RendererShader.SetInteger("u_Parallax", 3);
 		m_RendererShader.SetInteger("u_EnvironmentMap", 4);
+		m_RendererShader.SetInteger("u_DirectionalLightDepthMap", 5);
 		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
 		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 		SetLightUniforms(m_RendererShader);
@@ -222,7 +302,10 @@ namespace Glide3D
 		m_FBOShader.Use();
 		m_FBOShader.SetInteger("u_FramebufferTexture", 1);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
+
+		//glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
+		glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0].m_DepthBuffer.GetDepthTexture());
+
 		m_FBOVAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		m_FBOVAO.Unbind();

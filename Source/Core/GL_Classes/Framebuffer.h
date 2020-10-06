@@ -16,6 +16,7 @@ namespace GLClasses
 		void Bind() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+			glViewport(0, 0, m_FBWidth, m_FBHeight);
 		}
 
 
@@ -51,7 +52,6 @@ namespace GLClasses
 				m_FBWidth = width;
 				m_FBHeight = height;
 
-				glViewport(0, 0, width, height);
 			}
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,10 +80,17 @@ namespace GLClasses
 	/*
 	Can be used as a shadow map
 	*/
-	class DepthMap
+	class DepthBuffer
 	{
 	public :
-		DepthMap(unsigned int w, unsigned int h);
+	public:
+		DepthBuffer(unsigned int w, unsigned int h);
+		~DepthBuffer();
+
+		inline GLuint GetDepthTexture() const
+		{
+			return m_DepthMap;
+		}
 
 		void Bind() const
 		{
@@ -95,16 +102,16 @@ namespace GLClasses
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void OnUpdate(int w, int h) const
+		void OnUpdate()
 		{
 			Bind();
-			glViewport(0, 0, w, h);
+			glViewport(0, 0, 2048, 2048);
 			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 
-	private :
-		GLuint m_DepthMap;
-		GLuint m_DepthMapFBO;
+	private:
+		GLuint m_DepthMap = 0;
+		GLuint m_DepthMapFBO = 0;
 		int m_Width;
 		int m_Height;
 	};
