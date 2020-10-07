@@ -150,7 +150,7 @@ namespace Glide3D
 
 		for (auto& e : m_DirectionalLights)
 		{
-			if (m_CurrentFrame % e.m_UpdateRate == 0 || m_CurrentFrame == 0)
+			if (std::fmod(m_CurrentFrame, e.m_UpdateRate) == 0.0f || m_CurrentFrame == 0)
 			{
 				e.m_DepthBuffer.Bind();
 				e.m_DepthBuffer.OnUpdate();

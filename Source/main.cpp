@@ -178,7 +178,7 @@ int main()
 	d_light.m_SpecularStrength = 0.0f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 4;
+	d_light.m_UpdateRate = 1;
 
 	DirectionalLight d_light2;
 
@@ -272,8 +272,11 @@ int main()
 		app.FinishFrame(); 
 
 		//suzanne.GetTransform().Translate(glm::vec3(0.05f, 0.008f, 0.0f));
-		const glm::vec3& pos = suzanne.GetTransform().GetPosition();
-		suzanne.GetTransform().SetPosition(glm::vec3(pos.x + 0.1, pos.y, pos.z));
+		float x = 15 * sin(glfwGetTime());
+		float y = 2;
+		float z = 15 * cos(glfwGetTime());
+
+		suzanne.GetTransform().SetPosition(glm::vec3(x, y, z));
 		
 		if (renderer.GetCurrentFrame() % 60 == 0)
 		{
