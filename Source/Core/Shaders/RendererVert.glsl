@@ -1,5 +1,8 @@
 #version 330 core
 
+#define MAX_DIRECTIONAL_LIGHTS 2
+#define MAX_POINT_LIGHTS 100
+
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TexCoords;
@@ -24,11 +27,13 @@ out mat3 v_TBNMatrix;
 out vec2 v_TexCoords;
 out vec3 v_FragPosition;
 out vec3 v_Normal;
-out vec4 v_LightFragPos;
+
+out vec4 v_DirectionalLightFragPositions[MAX_DIRECTIONAL_LIGHTS];
 
 uniform mat4 u_ViewProjection;
 uniform vec3 u_ViewerPosition;
-uniform mat4 u_LightSpaceVP;
+uniform mat4 u_DirectionalLightSpaceVP[MAX_DIRECTIONAL_LIGHTS];
+uniform int u_NumDirectionalLights = 0;
 
 void main()
 {
@@ -56,6 +61,9 @@ void main()
 	vec3 B = normalize(vec3(ModelMatrix * vec4(a_Bitangent, 0.0)));
 	vec3 N = normalize(vec3(ModelMatrix * vec4(a_Normal, 0.0)));
 	v_TBNMatrix = mat3(T, B, N);
-	
-	v_LightFragPos = u_LightSpaceVP * vec4(v_FragPosition, 1.0f);
+
+	for (int i = 0 ; i < u_NumDirectionalLights ; i++)
+	{
+		v_DirectionalLightFragPositions[i] = u_DirectionalLightSpaceVP[i] * vec4(v_FragPosition, 1.0f);
+	}
 }

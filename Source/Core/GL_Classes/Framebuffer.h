@@ -95,6 +95,7 @@ namespace GLClasses
 		void Bind() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+			glViewport(0, 0, m_Width, m_Height);
 		}
 
 		void Unbind() const
@@ -105,7 +106,6 @@ namespace GLClasses
 		void OnUpdate()
 		{
 			Bind();
-			glViewport(0, 0, m_Width, m_Height);
 			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 

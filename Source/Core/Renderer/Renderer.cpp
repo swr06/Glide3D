@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-#define MAX_DIRECTIONAL_LIGHTS 4
+#define MAX_DIRECTIONAL_LIGHTS 2
 #define MAX_POINT_LIGHTS 100
 
 namespace Glide3D
@@ -65,6 +65,7 @@ namespace Glide3D
 	void Renderer::SetLightUniforms(GLClasses::Shader& shader)
 	{
 		shader.SetInteger("u_SceneDirectionalLightCount", m_DirectionalLights.size(), 0);
+		shader.SetInteger("u_NumDirectionalLights", m_DirectionalLights.size(), 0);
 		shader.SetInteger("u_ScenePointLightCount", m_PointLights.size(), 0);
 
 		for (int i = 0; i < m_DirectionalLights.size(); i++)
@@ -72,11 +73,16 @@ namespace Glide3D
 			std::string name("u_SceneDirectionalLights[");
 			name = name + std::to_string(i) + "]";
 
+			std::string matname = "u_DirectionalLightSpaceVP[" + std::to_string(i) + "]";
+			shader.SetMatrix4(matname,
+				m_DirectionalLights[i].m_LightSpaceViewProjection, 0);
+
 			shader.SetVector3f(name + ".m_Direction", m_DirectionalLights[i].m_Direction);
 			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i].m_SpecularColor);
 			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i].m_SpecularExponent);
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i].m_SpecularStrength);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i].m_IsBlinn);
+			shader.SetInteger(name + ".m_DepthMap", (int)5 + i); // 5 slots are used for the materials
 		}
 
 		for (int i = 0; i < m_PointLights.size(); i++)
@@ -92,6 +98,15 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_Constant", m_PointLights[i].m_Constant);
 			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i].m_Quadratic);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_PointLights[i].m_IsBlinn);
+		}
+	}
+
+	void Renderer::BindLightingMaps()
+	{
+		for (int i = 0 ; i < m_DirectionalLights.size() ; i++)
+		{
+			glActiveTexture(GL_TEXTURE5 + i);
+			glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[i].m_DepthBuffer.GetDepthTexture());
 		}
 	}
 
@@ -129,68 +144,71 @@ namespace Glide3D
 		glm::mat4 lvp;
 
 		/* Render the depth maps of each light */
-
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		m_DepthShader.Use();
 
 		for (auto& e : m_DirectionalLights)
 		{
-			e.m_DepthBuffer.Bind();
-			e.m_DepthBuffer.OnUpdate();
-
-			/* Create the view projection matrix for the light */
-			glm::mat4 p = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 1.0f, 100.0f);
-			glm::mat4 v = glm::mat4(1.0f);
-			v = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
-			glm::mat4 vp = p * v;
-			lvp = vp;
-
-			m_DepthShader.SetMatrix4("u_ViewProjection", vp);
-
-			for (auto& entities : m_RenderEntities)
+			if (m_CurrentFrame % e.m_UpdateRate == 0 || m_CurrentFrame == 0)
 			{
-				Object* object = entities[0].p_Object;
+				e.m_DepthBuffer.Bind();
+				e.m_DepthBuffer.OnUpdate();
+				glDisable(GL_CULL_FACE);
 
-				for (auto& e : object->p_Meshes)
+				/* Create the view projection matrix for the light */
+
+				glm::mat4 p = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.25f, 50.0f);
+				glm::mat4 v = glm::mat4(1.0f);
+				glm::mat4& vp = e.m_LightSpaceViewProjection;
+
+				v = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
+				vp = p * v;
+
+				m_DepthShader.SetMatrix4("u_ViewProjection", vp);
+
+				for (auto& entities : m_RenderEntities)
 				{
-					Mesh* mesh = &e;
+					Object* object = entities[0].p_Object;
 
-					const std::vector<Vertex>& Vertices = mesh->p_Vertices;
-					const std::vector<GLuint>& Indices = mesh->p_Indices;
-					bool indexed = mesh->p_Indexed;
-
-					std::vector<glm::mat4> Matrices;
-
-					for (auto& e : entities)
+					for (auto& e : object->p_Meshes)
 					{
-						const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
-						Matrices.push_back(model);
-						Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
+						Mesh* mesh = &e;
+
+						const std::vector<Vertex>& Vertices = mesh->p_Vertices;
+						const std::vector<GLuint>& Indices = mesh->p_Indices;
+						bool indexed = mesh->p_Indexed;
+
+						std::vector<glm::mat4> Matrices;
+
+						for (auto& e : entities)
+						{
+							const glm::mat4& model = e.p_Transform.GetTransformationMatrix();
+							Matrices.push_back(model);
+							Matrices.push_back(glm::mat4(e.p_Transform.GetNormalMatrix()));
+						}
+
+						GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+						GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+
+						MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+						VAO.Bind();
+
+						if (indexed)
+						{
+							glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+						}
+
+						else
+						{
+							glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+						}
+
+						VAO.Unbind();
 					}
-
-					GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-					GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
-
-					MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
-					VAO.Bind();
-
-					if (indexed)
-					{
-						glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
-					}
-
-					else
-					{
-						glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
-					}
-
-					VAO.Unbind();
 				}
 			}
-
-			e.m_DepthBuffer.Unbind();
 		}
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		/* Light depth map rendering ends here */
 
@@ -203,30 +221,16 @@ namespace Glide3D
 		m_RendererShader.SetInteger("u_LightMap", 2);
 		m_RendererShader.SetInteger("u_Parallax", 3);
 		m_RendererShader.SetInteger("u_EnvironmentMap", 4);
-		m_RendererShader.SetInteger("u_LightDirectionalDepthMap", 6);
-		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  // -3 1 -12 (Insert another light)
+		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  
 		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
 
-		m_RendererShader.SetMatrix4("u_LightSpaceVP", lvp);
-
 		SetLightUniforms(m_RendererShader);
+		BindLightingMaps();
 
-		glActiveTexture(GL_TEXTURE6);
-		glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0].m_DepthBuffer.GetDepthTexture());
 
 		for (auto& entities : m_RenderEntities)
 		{
 			Object* object = entities[0].p_Object;
-
-			if (object->p_CanFacecull)
-			{
-				glEnable(GL_CULL_FACE);
-			}
-
-			else
-			{
-				glDisable(GL_CULL_FACE);
-			}
 
 			for (auto& e : object->p_Meshes)
 			{
@@ -284,6 +288,8 @@ namespace Glide3D
 		m_RenderEntities.clear();
 		glUseProgram(0);
 
+		m_CurrentFrame++;
+
 		return;
 	}
 
@@ -303,6 +309,7 @@ namespace Glide3D
 		glActiveTexture(GL_TEXTURE1);
 
 		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
+		//glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0].m_DepthBuffer.GetDepthTexture());
 
 		m_FBOVAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -178,6 +178,16 @@ int main()
 	d_light.m_SpecularStrength = 0.0f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
+	d_light.m_UpdateRate = 4;
+
+	DirectionalLight d_light2;
+
+	d_light2.m_Direction = glm::vec3(-0.0066f, -0.6427f, 0.7660f);
+	d_light2.m_ShadowPosition = glm::vec3(16.0f, 16.0f, -19.0f);
+	d_light2.m_SpecularStrength = 0.0f;
+	d_light2.m_SpecularExponent = 0;
+	d_light2.m_IsBlinn = true;
+	d_light.m_UpdateRate = 4;
 
 	PointLight p_light; // -73 8 81 
 	p_light.m_Position = glm::vec3(-73, 8, 81);
@@ -198,7 +208,8 @@ int main()
 		});
 
 	renderer.SetEnvironmentMap(skybox);
-	renderer.AddDirectionalLight(d_light);
+	//renderer.AddDirectionalLight(d_light);
+	renderer.AddDirectionalLight(d_light2);
 	renderer.AddPointLight(p_light);
 
 	glDisable(GL_BLEND);
@@ -241,7 +252,7 @@ int main()
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
-			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
+			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed)); 
 		}
 
 		renderer.AddEntityToRenderQueue({ entity, entity1, entity2, entity3 });
@@ -258,7 +269,15 @@ int main()
 
 		camera.OnUpdate();
 		camera.ResetAcceleration();
-		app.FinishFrame();
+		app.FinishFrame(); 
+
+		if (renderer.GetCurrentFrame() % 60 == 0)
+		{
+			const glm::vec3& vec = camera.GetPosition();
+			std::cout << "\nCAMERA POSITION : X : " << vec.x << "   |  Y : " << vec.y << "  Z  : " << vec.z;
+			const glm::vec3& vec1 = camera.GetFront();
+			std::cout << "\nCAMERA ROTATION : X : " << vec1.x << "   |  Y : " << vec1.y << "  Z  : " << vec1.z;
+		}
 
 		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
 	}

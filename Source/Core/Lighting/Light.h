@@ -8,15 +8,18 @@ namespace Glide3D
 {
 	struct DirectionalLight
 	{
-		DirectionalLight() : m_DepthBuffer(4096, 4096) {}
+		DirectionalLight() : m_DepthBuffer(4096, 4096) { }
 
 		glm::vec3 m_Direction = glm::vec3(1.0f);
 		glm::vec3 m_SpecularColor = glm::vec3(1.0f);
 		glm::vec3 m_ShadowPosition = glm::vec3(1.0f); // Places the light at this position to render the shadow or depth map
 		float m_SpecularStrength = 1.0f;
-		int m_SpecularExponent = 32;
+		int m_SpecularExponent = 4.0f;
 		bool m_IsBlinn = true;
+		unsigned int m_UpdateRate = 4;
 		GLClasses::DepthBuffer m_DepthBuffer;
+
+		glm::mat4 m_LightSpaceViewProjection;
 	};
 
 	struct PointLight

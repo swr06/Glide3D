@@ -56,11 +56,12 @@ namespace GLClasses
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         float col[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, col);
+
         glGenFramebuffers(1, &m_DepthMapFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMap, 0);
+
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
 

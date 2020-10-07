@@ -4,7 +4,7 @@
 The renderer's fragment shader which includes a phong lighting model
 */
 
-#define MAX_DIRECTIONAL_LIGHTS 4
+#define MAX_DIRECTIONAL_LIGHTS 2
 #define MAX_POINT_LIGHTS 100
 
 /*
@@ -15,7 +15,7 @@ in vec2 v_TexCoords;
 in vec3 v_FragPosition;
 in vec3 v_Normal;
 in mat3 v_TBNMatrix;
-in vec4 v_LightFragPos;
+in vec4 v_DirectionalLightFragPositions[MAX_DIRECTIONAL_LIGHTS];
 
 out vec4 o_Color;
 
@@ -39,6 +39,8 @@ struct DirectionalLight
 	float m_SpecularStrength;
 	int m_SpecularExponent;
 	int m_IsBlinn;
+	int m_DirectionalLightElement;
+	sampler2D m_DepthMap;
 };
 
 struct PointLight
@@ -66,9 +68,11 @@ uniform int u_HasNormalMap = 0;
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specular_color, int use_blinn);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn);
 vec4 TextureBiCubic(sampler2D sampler, vec2 texCoords);
+float ShadowCalculation(vec4 light_fragpos, sampler2D map);
 
 vec3 g_Ambient;
 vec3 g_Color;
+float g_Shadow = 0.0f;
 
 void main()
 {
@@ -98,6 +102,15 @@ void main()
 		Normal = normalize(v_Normal);
 	}
 
+	// Calculate the shadow once per fragment
+
+	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
+	{
+		g_Shadow += 1.0 - ShadowCalculation(v_DirectionalLightFragPositions[i], u_SceneDirectionalLights[i].m_DepthMap);
+	}
+
+	//g_Shadow = 1.0 - g_Shadow;
+
 	// Calculate the ambient light only once
 	vec3 FinalColor = vec3(0.0f, 0.0f, 0.0f);
 	g_Ambient = u_AmbientStrength * g_Color;
@@ -121,9 +134,9 @@ void main()
 }
 
 
-float ShadowCalculation(vec4 fls)
+float ShadowCalculation(vec4 light_fragpos, sampler2D map)
 {
-    vec3 ProjectionCoordinates = fls.xyz / fls.w;
+    vec3 ProjectionCoordinates = light_fragpos.xyz / light_fragpos.w;
     ProjectionCoordinates = ProjectionCoordinates * 0.5f + 0.5f;
 	float shadow = 0.0;
 
@@ -133,23 +146,23 @@ float ShadowCalculation(vec4 fls)
 		return shadow;
 	}
 
-    float ClosestDepth = texture(u_LightDirectionalDepthMap, ProjectionCoordinates.xy).r; 
+    float ClosestDepth = texture(map, ProjectionCoordinates.xy).r; 
     float Depth = ProjectionCoordinates.z;
     float bias = 0.005f;
 
-	vec2 texelsz = 1.0 / textureSize(u_LightDirectionalDepthMap, 0);
+	vec2 texelsz = 1.0 / textureSize(map, 0);
 
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcf = texture(u_LightDirectionalDepthMap, ProjectionCoordinates.xy + vec2(x, y) * texelsz).r; 
+			float pcf = texture(map, ProjectionCoordinates.xy + vec2(x, y) * texelsz).r; 
 			shadow += Depth - bias > pcf ? 1.0 : 0.0;        
 		}    
 	}
 
 	shadow /= 9.0;
-    return 1.0 - shadow;
+    return shadow;
 }
 
 /*
@@ -180,9 +193,8 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 	
 	vec3 DiffuseColor = Diffuse * g_Color; // To be replaced with diffuse map
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color ; // To be also sampled with specular map
-	float shadow = ShadowCalculation(v_LightFragPos);
 
-	return vec3((g_Ambient + shadow) * (DiffuseColor + SpecularColor) * g_Color);  
+	return vec3((g_Ambient + g_Shadow) * (DiffuseColor + SpecularColor) * g_Color);  
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn)
