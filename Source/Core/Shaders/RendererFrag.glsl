@@ -102,18 +102,19 @@ void main()
 		Normal = normalize(v_Normal);
 	}
 
+	g_Ambient = u_AmbientStrength * g_Color;
+
 	// Calculate the shadow once per fragment
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
-		g_Shadow += 1.0 - ShadowCalculation(v_DirectionalLightFragPositions[i], u_SceneDirectionalLights[i].m_DepthMap);
+		g_Shadow += ShadowCalculation(v_DirectionalLightFragPositions[i], u_SceneDirectionalLights[i].m_DepthMap);
 	}
 
-	//g_Shadow = 1.0 - g_Shadow;
+	g_Ambient = g_Ambient + 1.0f - g_Shadow;
 
 	// Calculate the ambient light only once
 	vec3 FinalColor = vec3(0.0f, 0.0f, 0.0f);
-	g_Ambient = u_AmbientStrength * g_Color;
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
@@ -130,6 +131,7 @@ void main()
     vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
 	
 	o_Color = vec4(FinalColor.xyz, 1.0f);
+
 	//o_Color = mix(o_Color, reflect_color, 0.3f);
 }
 
@@ -194,7 +196,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 	vec3 DiffuseColor = Diffuse * g_Color; // To be replaced with diffuse map
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * specular_color ; // To be also sampled with specular map
 
-	return vec3((g_Ambient + g_Shadow) * (DiffuseColor + SpecularColor) * g_Color);  
+	return vec3(g_Ambient * (DiffuseColor + SpecularColor) * g_Color);  
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int use_blinn)

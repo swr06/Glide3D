@@ -208,8 +208,8 @@ int main()
 		});
 
 	renderer.SetEnvironmentMap(skybox);
-	//renderer.AddDirectionalLight(d_light);
-	renderer.AddDirectionalLight(d_light2);
+	renderer.AddDirectionalLight(d_light);
+	//renderer.AddDirectionalLight(d_light2);
 	renderer.AddPointLight(p_light);
 
 	glDisable(GL_BLEND);
@@ -271,6 +271,10 @@ int main()
 		camera.ResetAcceleration();
 		app.FinishFrame(); 
 
+		//suzanne.GetTransform().Translate(glm::vec3(0.05f, 0.008f, 0.0f));
+		const glm::vec3& pos = suzanne.GetTransform().GetPosition();
+		suzanne.GetTransform().SetPosition(glm::vec3(pos.x + 0.1, pos.y, pos.z));
+		
 		if (renderer.GetCurrentFrame() % 60 == 0)
 		{
 			const glm::vec3& vec = camera.GetPosition();

@@ -4,6 +4,7 @@ namespace Glide3D
 {
 	void Transform::Translate(const glm::vec3& position) noexcept
 	{
+		m_Position += position;
 		m_TransformationMatrix = glm::translate(m_TransformationMatrix, position);
 		ComputeNormalMatrix();
 	}
@@ -17,6 +18,14 @@ namespace Glide3D
 	void Transform::Scale(const glm::vec3& scale) noexcept
 	{
 		m_TransformationMatrix = glm::scale(m_TransformationMatrix, scale);
+		ComputeNormalMatrix();
+	}
+
+	void Transform::SetPosition(const glm::vec3& position) noexcept
+	{
+		m_TransformationMatrix = glm::translate(m_TransformationMatrix, -m_Position);
+		m_Position = position;
+		m_TransformationMatrix = glm::translate(m_TransformationMatrix, m_Position);
 		ComputeNormalMatrix();
 	}
 

@@ -83,9 +83,26 @@ namespace GLClasses
 	class DepthBuffer
 	{
 	public :
-	public:
 		DepthBuffer(unsigned int w, unsigned int h);
 		~DepthBuffer();
+		DepthBuffer(const DepthBuffer&) = delete;
+		DepthBuffer operator=(DepthBuffer const&) = delete;
+
+		DepthBuffer& operator=(DepthBuffer&& other) {
+			std::swap(*this, other); // will re-use the move constructor
+			return *this;
+		}
+
+		DepthBuffer(DepthBuffer&& v)
+		{
+			std::swap(m_DepthMap, v.m_DepthMap);
+			m_DepthMapFBO = v.m_DepthMapFBO;
+			m_Width = v.m_Width;
+			m_Height = v.m_Height;
+
+			v.m_DepthMap = 0;
+			v.m_DepthMapFBO = 0;
+		}
 
 		inline GLuint GetDepthTexture() const
 		{

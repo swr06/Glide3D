@@ -36,7 +36,7 @@ namespace Glide3D
 		m_DepthShader.CompileShaders();
 	}
 
-	void Renderer::AddDirectionalLight(const DirectionalLight& light)
+	void Renderer::AddDirectionalLight(DirectionalLight& light)
 	{
 		if (m_DirectionalLights.size() + 1 > MAX_DIRECTIONAL_LIGHTS)
 		{
@@ -46,7 +46,7 @@ namespace Glide3D
 			assert(0);
 		}
 
-		m_DirectionalLights.push_back(light);
+		m_DirectionalLights.emplace_back(std::move(light));
 	}
 
 	void Renderer::AddPointLight(const PointLight& light)
@@ -158,7 +158,7 @@ namespace Glide3D
 
 				/* Create the view projection matrix for the light */
 
-				glm::mat4 p = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.25f, 50.0f);
+				glm::mat4 p = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.25f, 70.0f);
 				glm::mat4 v = glm::mat4(1.0f);
 				glm::mat4& vp = e.m_LightSpaceViewProjection;
 
@@ -213,9 +213,10 @@ namespace Glide3D
 		/* Light depth map rendering ends here */
 
 		fbo.Bind();
+		glDisable(GL_CULL_FACE);
 
 		m_RendererShader.Use();
-		m_RendererShader.SetFloat("u_AmbientStrength", 1.0f);
+		m_RendererShader.SetFloat("u_AmbientStrength", 0.2f);
 		m_RendererShader.SetInteger("u_AlbedoMap", 0);
 		m_RendererShader.SetInteger("u_NormalMap", 1);
 		m_RendererShader.SetInteger("u_LightMap", 2);
@@ -309,7 +310,6 @@ namespace Glide3D
 		glActiveTexture(GL_TEXTURE1);
 
 		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
-		//glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0].m_DepthBuffer.GetDepthTexture());
 
 		m_FBOVAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);

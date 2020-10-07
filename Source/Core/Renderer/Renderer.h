@@ -34,7 +34,7 @@ namespace Glide3D
 	public :
 		Renderer(GLFWwindow* window);
 
-		void AddDirectionalLight(const DirectionalLight& light);
+		void AddDirectionalLight(DirectionalLight& light);
 		void AddPointLight(const PointLight& light);
 
 		// Rendering
