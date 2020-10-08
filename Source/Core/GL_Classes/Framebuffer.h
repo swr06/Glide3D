@@ -13,6 +13,28 @@ namespace GLClasses
 		Framebuffer(unsigned int w, unsigned int h);
 		~Framebuffer();
 
+		Framebuffer(const Framebuffer&) = delete;
+		Framebuffer operator=(Framebuffer const&) = delete;
+
+		Framebuffer& operator=(Framebuffer&& other)
+		{
+			std::swap(*this, other);
+			return *this;
+		}
+
+		Framebuffer(Framebuffer&& v)
+		{
+			m_FBO = v.m_FBO;
+			m_TextureAttachment = v.m_TextureAttachment;
+			m_DepthStencilBuffer = v.m_DepthStencilBuffer;
+			m_FBWidth = v.m_FBWidth;
+			m_FBHeight = v.m_FBHeight;
+
+			v.m_FBO = 0;
+			v.m_TextureAttachment = 0;
+			v.m_DepthStencilBuffer = 0;
+		}
+
 		void Bind() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
@@ -58,6 +80,18 @@ namespace GLClasses
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
+		void SetSize(uint32_t width, uint32_t height)
+		{
+			if (width != m_FBWidth || height != m_FBHeight)
+			{
+				glDeleteFramebuffers(1, &m_FBO);
+				m_FBO = 0;
+				CreateFramebuffer(width, height);
+				m_FBWidth = width;
+				m_FBHeight = height;
+			}
+		}
+
 		GLuint GetTexture() const 
 		{
 			return m_TextureAttachment;
@@ -92,14 +126,15 @@ namespace GLClasses
 		DepthBuffer(const DepthBuffer&) = delete;
 		DepthBuffer operator=(DepthBuffer const&) = delete;
 
-		DepthBuffer& operator=(DepthBuffer&& other) {
-			std::swap(*this, other); // will re-use the move constructor
+		DepthBuffer& operator=(DepthBuffer&& other)
+		{
+			std::swap(*this, other); 
 			return *this;
 		}
 
 		DepthBuffer(DepthBuffer&& v)
 		{
-			std::swap(m_DepthMap, v.m_DepthMap);
+			m_DepthMap = v.m_DepthMap;
 			m_DepthMapFBO = v.m_DepthMapFBO;
 			m_Width = v.m_Width;
 			m_Height = v.m_Height;

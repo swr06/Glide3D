@@ -11,6 +11,14 @@ namespace GLClasses
 		SSBO();
 		~SSBO();
 
+		SSBO(const SSBO&) = delete;
+		SSBO operator=(SSBO const&) = delete;
+		SSBO(SSBO&& v)
+		{
+			m_SSBO = v.m_SSBO;
+			v.m_SSBO = 0;
+		}
+
 		void Bind()
 		{
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBO);

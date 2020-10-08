@@ -12,6 +12,14 @@ namespace Glide3D
 		UBO(GLsizeiptr size);
 		~UBO();
 
+		UBO(const UBO&) = delete;
+		UBO operator=(UBO const&) = delete;
+		UBO(UBO&& v)
+		{
+			m_UBO = v.m_UBO;
+			v.m_UBO = 0;
+		}
+
 		void Bind() const
 		{
 			glBindBuffer(GL_UNIFORM_BUFFER, m_UBO);

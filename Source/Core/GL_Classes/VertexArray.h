@@ -15,6 +15,15 @@ namespace GLClasses
 		VertexArray();
 		~VertexArray();
 
+		VertexArray(const VertexArray&) = delete;
+		VertexArray operator=(VertexArray const&) = delete;
+		VertexArray(VertexArray&& v)
+		{
+			type = v.type;
+			array_id = v.array_id;
+			v.array_id = 0;
+		}
+
 		void Bind();
 		void Unbind();
 

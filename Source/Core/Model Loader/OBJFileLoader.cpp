@@ -50,11 +50,9 @@ namespace Glide3D
 
 		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth)
 		{
-			object->p_Meshes.emplace_back();
-			Mesh* _mesh = &(object->p_Meshes.back());
-
-			std::vector<Vertex>& vertices = _mesh->p_Vertices;
-			std::vector<GLuint>& indices = _mesh->p_Indices;
+			Mesh _mesh;
+			std::vector<Vertex>& vertices = _mesh.p_Vertices;
+			std::vector<GLuint>& indices = _mesh.p_Indices;
 
 			for (int i = 0; i < mesh->mNumVertices; i++)
 			{
@@ -115,11 +113,13 @@ namespace Glide3D
 			- Normal map
 			*/
 
+			object->p_Meshes.emplace_back(std::move(_mesh));
+
 			// process materials
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, _mesh, pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, _mesh, pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, _mesh, pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->p_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->p_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, &object->p_Meshes.back(), pth);
 		}
 
 		void ProcessAssimpNode(aiNode* Node, const aiScene* Scene, Object* object, const std::string& pth)

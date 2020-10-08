@@ -52,6 +52,22 @@ namespace GLClasses
 			}
 		}
 
+		Texture(const Texture&) = delete;
+		Texture operator=(Texture const&) = delete;
+		Texture(Texture&& v)
+		{
+			m_clean_up = v.m_clean_up;
+			m_width = v.m_width;
+			m_height = v.m_height;
+			m_BPP = v.m_BPP;
+			m_intformat = v.m_intformat;
+			m_Texture = v.m_Texture;
+			m_type = v.m_type;
+			m_path = v.m_path;
+
+			v.m_Texture = 0;
+		}
+
 		void CreateTexture(const string& path, bool flip = false, GLenum type = GL_TEXTURE_2D,
 			GLenum min_filter = GL_LINEAR, GLenum mag_filter = GL_LINEAR,
 			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT, bool clean_up = true);

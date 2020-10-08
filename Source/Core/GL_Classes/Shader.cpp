@@ -128,11 +128,6 @@ namespace GLClasses
 		m_FragmentPath = "PASSED_VIA_DATA";
 	}
 
-	GLuint Shader::GetProgramID()
-	{
-		return m_Program;
-	}
-
 	void Shader::SetFloat(const std::string& name, GLfloat value, GLboolean useShader)
 	{
 		if (useShader)
