@@ -16,6 +16,15 @@ namespace GLClasses
 		VertexBuffer(GLenum type);
 		~VertexBuffer();
 
+		VertexBuffer(const VertexBuffer&) = delete;
+		VertexBuffer operator=(VertexBuffer const&) = delete;
+		VertexBuffer(VertexBuffer&& v)
+		{
+			buffer_id = v.buffer_id;
+			type = v.type;
+			v.buffer_id = 0;
+		}
+
 		void BufferData(GLsizeiptr size, void* data, GLenum usage);
 		void BufferSubData(GLintptr offset, GLsizeiptr size, void* data);
 		void Bind();

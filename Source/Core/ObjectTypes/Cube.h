@@ -21,9 +21,9 @@ namespace Glide3D
 
 		CubeObject(const std::array<PlaneTextureCoordinates, 6>& texture_coordinates)
 		{
-			p_Meshes.emplace_back();
-			std::vector<Vertex>& vertices = p_Meshes.back().p_Vertices;
-			std::vector<GLuint>& indices = p_Meshes.back().p_Indices;
+			Mesh mesh;
+			std::vector<Vertex>& vertices = mesh.p_Vertices;
+			std::vector<GLuint>& indices = mesh.p_Indices;
 
 			// Define the indices for the cube with the format (0, 1, 2, 2, 3, 0)
 			indices =
@@ -86,6 +86,8 @@ namespace Glide3D
 
 			p_CanFacecull = false; // Todo : Change winding order so it can facecull
 
+			p_Meshes.emplace_back(std::move(mesh));
+
 			// Calculate tangent normals
 			CalculateTangentNormals();
 
@@ -95,8 +97,9 @@ namespace Glide3D
 
 		CubeObject()
 		{
-			p_Meshes.emplace_back();
-			std::vector<Vertex>& vertices = p_Meshes.back().p_Vertices;
+			Mesh mesh;
+			std::vector<Vertex>& vertices = mesh.p_Vertices;
+			std::vector<GLuint>& indices = mesh.p_Indices;
 
 			// Forward Face
 			vertices.push_back({ glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)});
@@ -145,6 +148,8 @@ namespace Glide3D
 			vertices.push_back({ glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)});
 			vertices.push_back({ glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)});
 			vertices.push_back({ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) });
+
+			p_Meshes.emplace_back(std::move(mesh));
 
 			p_CanFacecull = false; // Todo : Change winding order so it can facecull
 

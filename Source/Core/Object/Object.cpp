@@ -112,11 +112,6 @@ namespace Glide3D
 		p_VertexArray.Unbind();
 	}
 
-	Mesh::~Mesh()
-	{
-
-	}
-
 	void Mesh::Buffer()
 	{
 		if (p_Vertices.size() > 0)

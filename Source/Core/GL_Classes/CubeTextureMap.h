@@ -19,6 +19,17 @@ namespace GLClasses
 		void CreateCubeTextureMap(const std::vector<std::string>& cube_face_paths);
 		inline GLuint GetID() const { return m_TextureID; }
 
+		CubeTextureMap() {}
+		CubeTextureMap(const CubeTextureMap&) = delete;
+		CubeTextureMap operator=(CubeTextureMap const&) = delete;
+
+		CubeTextureMap(CubeTextureMap&& v)
+		{
+			m_TextureID = v.m_TextureID;
+			m_CubeFacePaths = v.m_CubeFacePaths;
+			v.m_TextureID = 0;
+		}
+
 		void Bind(int slot = 0) const 
 		{
 			glActiveTexture(GL_TEXTURE0 + slot);

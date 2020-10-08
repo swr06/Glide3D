@@ -34,17 +34,32 @@ namespace GLClasses
 				CreateShaderProgramFromString(vertex_shader, fragment_shader);
 			}
 		}
-
 		Shader() {}; 
+
+		Shader(const Shader&) = delete;
+		Shader operator=(Shader const&) = delete;
+		Shader(Shader&& v)
+		{
+			Location_map = v.Location_map;
+			m_Program = v.m_Program;
+			m_VertexData = v.m_VertexData;
+			m_VertexPath = v.m_VertexPath;
+			m_FragmentData = v.m_FragmentData;
+			m_FragmentPath = v.m_FragmentPath;
+			m_CompiledShader = v.m_CompiledShader;
+
+			v.m_Program = 0;
+		}
+
 
 		~Shader();
 
 		void CompileShaders();
 		void CreateShaderProgramFromFile(const string vertex_pth, const string fragment_pth);
 		void CreateShaderProgramFromString(const string& vertex_data, const string& fragment_data);
-		GLuint GetProgramID();
+		inline GLuint GetProgramID() const { return m_Program; };
 		
-		inline void Use()
+		inline void Use() 
 		{
 			if (m_CompiledShader == false)
 			{
@@ -69,7 +84,7 @@ namespace GLClasses
 	 private:
 
 		unordered_map<string, GLint> Location_map; // To avoid unnecessary calls to glGetUniformLocation()
-		GLuint m_Program;
+		GLuint m_Program = 0;
 		bool m_CompiledShader = false;
 
 		GLint GetUniformLocation(const std::string& uniform_name);

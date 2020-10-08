@@ -25,7 +25,6 @@ namespace Glide3D
 	{
 	public : 
 		Mesh();
-		~Mesh();
 		void Buffer();
 		void CalculateTangentNormals();
 

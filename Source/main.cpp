@@ -180,8 +180,6 @@ int main()
 	block1_entity.GetTransform().Translate(glm::vec3(45, 0, 0));
 	block1_entity.GetTransform().Scale(glm::vec3(2, 2, 2));
 
-
-
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
 	DirectionalLight d_light;
