@@ -5,6 +5,9 @@
 #include <assert.h>
 
 #include <glad/glad.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <glfw/glfw3.h>
 
 #include "Logger.h"
@@ -50,6 +53,7 @@ namespace Glide3D
 		uint64_t GetCurrentFrame();
 		unsigned int GetWidth();
 		unsigned int GetHeight();
+		void SetCursorLocked(bool locked);
 
 	protected:
 		GLFWwindow* m_Window;
@@ -62,6 +66,7 @@ namespace Glide3D
 		*/
 		virtual void OnUserUpdate(double ts) = 0;
 		virtual void OnUserCreate(double ts) = 0;
+		virtual void OnImguiRender(double ts) = 0;
 		virtual void OnEvent(Event e) = 0;
 
 	private:

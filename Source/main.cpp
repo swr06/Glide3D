@@ -22,6 +22,7 @@ using namespace Glide3D;
 
 FPSCamera camera(45, 800.0f / 600.0f, 0.1, 1000, 0.25f);
 bool wireframe = false;
+bool cursor_locked = true;
 
 class MyApp : public Application
 {
@@ -34,6 +35,15 @@ public:
 	void OnUserUpdate(double ts) override
 	{
 
+	}
+
+	void OnImguiRender(double ts) override
+	{
+		if (ImGui::Begin("My window"))
+		{
+			ImGui::Button("My button");
+			ImGui::End();
+		}
 	}
 
 	void OnEvent(Event e) override
@@ -64,7 +74,11 @@ public:
 			{
 				glfwSwapInterval(0);
 			}
+		}
 
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_ESCAPE)
+		{
+			cursor_locked = !cursor_locked;
 		}
 
 		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_M)
@@ -81,7 +95,6 @@ int main()
 {
 	app.Initialize();
 	glfwSwapInterval(1);
-	glfwSetInputMode(app.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	CubeRenderer cube_renderer;
 	Renderer renderer(app.GetWindow());
@@ -217,6 +230,7 @@ int main()
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		app.OnUpdate();
+		app.SetCursorLocked(cursor_locked);
 
 		// Clear the framebuffer
 		FBO.Bind();

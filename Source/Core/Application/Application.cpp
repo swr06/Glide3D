@@ -113,13 +113,17 @@ namespace Glide3D
 			id, _type, _severity, _source, msg);
 	}
 
-	Application::Application()
+	Application::Application() : m_CurrentFrame(0), m_Window(nullptr)
 	{
 
 	}
 
 	Application::~Application()
 	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
 		glfwDestroyWindow(m_Window);
 		Logger::Log("A GLFW window was destroyed!");
 	}
@@ -154,15 +158,28 @@ namespace Glide3D
 			glfwTerminate();
 		}
 
+		// Set up event callbacks
+
 		glfwSetKeyCallback(m_Window, KeyCallback);
 		glfwSetMouseButtonCallback(m_Window, MouseCallback);
 		glfwSetScrollCallback(m_Window, ScrollCallback);
 		glfwSetCursorPosCallback(m_Window, CursorPosCallback);
 		glfwSetFramebufferSizeCallback(m_Window, FramebufferSizeCallback);
 		glfwSetWindowUserPointer(m_Window, (void*)&m_EventQueue);
-
 		OnUserCreate(glfwGetTime());
 		glfwGetFramebufferSize(m_Window, &m_CurrentWidth, &m_CurrentHeight);
+		
+		// Set up Dear ImGui
+
+		const char* glsl_version = static_cast<const char*>("#version 130");
+		IMGUI_CHECKVERSION();
+
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		ImGui::StyleColorsDark();
+		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+		ImGui_ImplOpenGL3_Init(glsl_version);
 
 #ifndef NDEBUG
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
@@ -208,11 +225,22 @@ namespace Glide3D
 		// Poll the events
 		glfwPollEvents();
 		PollEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		OnUserUpdate(this->GetTime());
+		OnImguiRender(this->GetTime());
 	}
 
 	void Application::FinishFrame()
 	{
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(m_Window);
+
+		m_CurrentFrame += 1;
 	}
 
 	/*
@@ -258,6 +286,19 @@ namespace Glide3D
 	unsigned int Application::GetHeight()
 	{
 		return m_CurrentHeight;
+	}
+
+	void Application::SetCursorLocked(bool locked)
+	{
+		if (locked)
+		{
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+
+		else
+		{
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
 	}
 
 	// Event handling
