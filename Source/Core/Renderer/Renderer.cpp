@@ -150,7 +150,7 @@ namespace Glide3D
 
 		for (auto& e : m_DirectionalLights)
 		{
-			if (std::fmod(m_CurrentFrame, e.m_UpdateRate) == 0.0f || m_CurrentFrame == 0)
+			if (m_CurrentFrame % e.m_UpdateRate == 0 || m_CurrentFrame == 0)
 			{
 				e.m_DepthBuffer.Bind();
 				e.m_DepthBuffer.OnUpdate();
@@ -158,14 +158,10 @@ namespace Glide3D
 
 				/* Create the view projection matrix for the light */
 
-				glm::mat4 p = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.25f, 70.0f);
-				glm::mat4 v = glm::mat4(1.0f);
-				glm::mat4& vp = e.m_LightSpaceViewProjection;
+				e.m_LightSpaceView = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
+				e.m_LightSpaceViewProjection = e.m_LightSpaceProjection * e.m_LightSpaceView;
 
-				v = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
-				vp = p * v;
-
-				m_DepthShader.SetMatrix4("u_ViewProjection", vp);
+				m_DepthShader.SetMatrix4("u_ViewProjection", e.m_LightSpaceViewProjection);
 
 				for (auto& entities : m_RenderEntities)
 				{
@@ -227,7 +223,6 @@ namespace Glide3D
 
 		SetLightUniforms(m_RendererShader);
 		BindLightingMaps();
-
 
 		for (auto& entities : m_RenderEntities)
 		{

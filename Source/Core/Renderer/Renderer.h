@@ -48,7 +48,7 @@ namespace Glide3D
 			m_EnvironmentMap = &envmap;
 		}
 
-		inline unsigned long long GetCurrentFrame() const noexcept { return m_CurrentFrame; }
+		uint32_t GetCurrentFrame() const noexcept { return m_CurrentFrame; }
 
 	private :
 		GLClasses::Shader m_RendererShader;
@@ -63,7 +63,7 @@ namespace Glide3D
 		std::vector<PointLight> m_PointLights;
 		std::vector<std::vector<Entity>> m_RenderEntities;
 		Skybox* m_EnvironmentMap = nullptr;
-		unsigned long long m_CurrentFrame = 0;
+		uint32_t m_CurrentFrame = 0;
 
 		void SetLightUniforms(GLClasses::Shader& shader);
 		void BindLightingMaps();

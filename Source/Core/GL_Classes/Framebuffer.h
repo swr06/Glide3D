@@ -48,6 +48,7 @@ namespace GLClasses
 			if (width != m_FBWidth || height != m_FBHeight)
 			{
 				glDeleteFramebuffers(1, &m_FBO);
+				m_FBO = 0;
 				CreateFramebuffer(width, height);
 				m_FBWidth = width;
 				m_FBHeight = height;
@@ -66,6 +67,9 @@ namespace GLClasses
 		{
 			return m_DepthStencilBuffer;
 		}
+
+		inline unsigned int GetWidth() const noexcept { return m_FBWidth; }
+		inline unsigned int GetHeight() const noexcept { return m_FBHeight; }
 
 	private :
 		void CreateFramebuffer(int w, int h);
@@ -125,6 +129,9 @@ namespace GLClasses
 			Bind();
 			glClear(GL_DEPTH_BUFFER_BIT);
 		}
+
+		inline unsigned int GetWidth() const noexcept { return m_Width; }
+		inline unsigned int GetHeight() const noexcept { return m_Height; }
 
 	private:
 		GLuint m_DepthMap = 0;
