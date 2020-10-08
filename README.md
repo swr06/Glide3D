@@ -13,6 +13,8 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Parallax mapping
 - Cubemaps ✔
 - Cubemap reflections
+- HDR (Exposure control etc.)
+- Skeletal animations
 - Shadow mapping ✔
   - PCF Shadowing ✔
 - Screen space reflections
@@ -23,7 +25,6 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - SSAO (Ambient Occlusion)
 
 # Advanced Features (That will come later..)
-- Defferred shading
 - PBR (Highly unlikely)
 
 # Requirements 
