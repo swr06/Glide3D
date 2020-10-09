@@ -1,7 +1,7 @@
 #version 330 core
 
 in vec2 v_TexCoords;
-out vec4 o_Color;
+layout(location = 0) out vec4 o_Color;
 
 uniform sampler2D u_FramebufferTexture;
 

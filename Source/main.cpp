@@ -13,6 +13,7 @@
 #include "Core/GL_Classes/Framebuffer.h"
 #include "Core/ObjectTypes/Plane.h"
 #include "Core/Model Loader/OBJFileLoader.h"
+#include "Core/Post Processor/PostProcessor.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -205,6 +206,7 @@ int main()
 	p_light.m_Quadratic = 0.0032f;
 	p_light.m_Constant = 0.1f;
 
+
 	Skybox skybox({
 		"Resources/skybox/px.png",
 		"Resources/skybox/nx.png",
@@ -273,6 +275,7 @@ int main()
 		renderer.AddEntityToRenderQueue({ block1_entity });
 		renderer.AddEntityToRenderQueue({ floor_entity });
 		renderer.Render(&camera, FBO);
+
 		renderer.RenderFBO(FBO);
 
 		camera.OnUpdate();

@@ -92,16 +92,17 @@ namespace GLClasses
 			}
 		}
 
-		GLuint GetTexture() const 
+		inline GLuint GetTexture() const 
 		{
 			return m_TextureAttachment;
 		}
 
-		GLuint GetDepthStencilBuffer() const
+		inline GLuint GetDepthStencilBuffer() const
 		{
 			return m_DepthStencilBuffer;
 		}
 
+		inline GLuint GetFramebuffer() const noexcept { return m_FBO; }
 		inline unsigned int GetWidth() const noexcept { return m_FBWidth; }
 		inline unsigned int GetHeight() const noexcept { return m_FBHeight; }
 

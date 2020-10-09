@@ -17,7 +17,7 @@ in vec3 v_Normal;
 in mat3 v_TBNMatrix;
 in vec4 v_DirectionalLightFragPositions[MAX_DIRECTIONAL_LIGHTS];
 
-out vec4 o_Color;
+layout(location = 0) out vec4 o_Color;
 
 uniform float u_AmbientStrength;
 uniform vec4 u_Color;

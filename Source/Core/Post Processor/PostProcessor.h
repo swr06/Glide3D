@@ -31,5 +31,6 @@ namespace Glide3D
 		GLClasses::Framebuffer m_Framebuffer;
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
+		GLClasses::Shader m_BlitShader;
 	};
 }
