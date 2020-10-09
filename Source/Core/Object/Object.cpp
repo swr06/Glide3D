@@ -4,14 +4,13 @@
 
 namespace Glide3D
 {
-	Object::Object() : p_DefaultColor(glm::vec3(1.0f, 0.5f, 0.31f))
+	Object::Object()
 	{
 
 	}
 
 	Object::~Object()
 	{
-
 	}
 
 	void Object::Buffer()

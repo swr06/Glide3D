@@ -20,7 +20,7 @@
 
 using namespace Glide3D;
 
-FPSCamera camera(45, 800.0f / 600.0f, 0.1, 1000, 0.25f);
+FPSCamera camera(70, 800.0f / 600.0f, 0.2f, 1000.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
 
@@ -39,11 +39,6 @@ public:
 
 	void OnImguiRender(double ts) override
 	{
-		if (ImGui::Begin("My window"))
-		{
-			ImGui::Button("My button");
-			ImGui::End();
-		}
 	}
 
 	void OnEvent(Event e) override
@@ -100,7 +95,7 @@ int main()
 	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600);
-	const float camera_speed = 0.03f;
+	const float camera_speed = 0.1f; // 0.03
 
 	CubeObject cube;
 	Entity entity(&cube);
@@ -125,13 +120,15 @@ int main()
 	Object object_5;
 
 	// Load all the OBJ files
-	FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
+	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
+	FileLoader::LoadOBJFile(&object_1, "Resources/models/bmw/bmw.obj");
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
 	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
 	object_1.p_CanFacecull = false;
+	object_1.p_Reflectance = 0.5f;
 	object_4.AddTextureMapToMesh("Resources/brickwall.jpg", TextureType::Albedo, true);
 	object_4.AddTextureMapToMesh("Resources/brickwall_normal.jpg", TextureType::Normal, true);
 
@@ -182,22 +179,22 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
-	DirectionalLight d_light;
+	DirectionalLight d_light({ -200.0f, 200.0f, -200.0f, 200.0f, -200.0f, 200.0f }, {16000,16000 });
 
-	d_light.m_Direction = light_dir;
-	d_light.m_ShadowPosition = glm::vec3(10.0f);
-	d_light.m_SpecularStrength = 0.0f;
+	d_light.m_Direction = glm::vec3(light_dir);
+	d_light.m_ShadowPosition = glm::vec3(20.0f);
+	d_light.m_SpecularStrength = 0.2f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 4;
+	d_light.m_UpdateRate = 1000000;
 
-	DirectionalLight d_light2;
+	/*DirectionalLight d_light2;
 
 	d_light2.m_Direction = glm::vec3(-0.0066f, -0.6427f, 0.7660f);
 	d_light2.m_ShadowPosition = glm::vec3(16.0f, 16.0f, -19.0f);
 	d_light2.m_SpecularStrength = 0.0f;
 	d_light2.m_SpecularExponent = 0;
-	d_light2.m_IsBlinn = true;
+	d_light2.m_IsBlinn = true;*/
 
 	PointLight p_light; // -73 8 81 
 	p_light.m_Position = glm::vec3(-73, 8, 81);
@@ -219,7 +216,7 @@ int main()
 
 	renderer.SetEnvironmentMap(skybox);
 	renderer.AddDirectionalLight(d_light);
-	//renderer.AddDirectionalLight(d_light2);
+///renderer.AddDirectionalLight(d_light2);
 	renderer.AddPointLight(p_light);
 
 	glDisable(GL_BLEND);
@@ -282,13 +279,6 @@ int main()
 		camera.ResetAcceleration();
 		app.FinishFrame(); 
 
-		//suzanne.GetTransform().Translate(glm::vec3(0.05f, 0.008f, 0.0f));
-		float x = 15 * sin(glfwGetTime() * 0.9f);
-		float y = 2;
-		float z = 15 * cos(glfwGetTime() * 0.9f);
-
-		suzanne.GetTransform().SetPosition(glm::vec3(x, y, z));
-		
 		if (renderer.GetCurrentFrame() % 60 == 0)
 		{
 			const glm::vec3& vec = camera.GetPosition();
@@ -299,4 +289,4 @@ int main()
 
 		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
 	}
-}
+} 

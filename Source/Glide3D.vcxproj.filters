@@ -285,9 +285,6 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
       <Filter>Core\Dependencies\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Dependencies\imgui\main.cpp">
-      <Filter>Core\Dependencies\imgui</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">

@@ -210,9 +210,11 @@ namespace Glide3D
 
 		fbo.Bind();
 		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		m_RendererShader.Use();
-		m_RendererShader.SetFloat("u_AmbientStrength", 0.2f);
+		m_RendererShader.SetFloat("u_AmbientStrength", 0.7f);
 		m_RendererShader.SetInteger("u_AlbedoMap", 0);
 		m_RendererShader.SetInteger("u_NormalMap", 1);
 		m_RendererShader.SetInteger("u_LightMap", 2);
@@ -257,9 +259,10 @@ namespace Glide3D
 				}
 
 				/* These uniforms vary from Object to object */
-				m_RendererShader.SetVector3f("u_Color", object->p_DefaultColor);
+				m_RendererShader.SetVector4f("u_Color", mesh->p_Color);
 				m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
+				m_RendererShader.SetFloat("u_Reflectance", (float)object->p_Reflectance);
 
 				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;

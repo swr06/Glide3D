@@ -43,6 +43,8 @@ namespace Glide3D
 		std::uint32_t p_VertexCount = 0;
 		std::uint32_t p_IndicesCount = 0;
 		bool p_Indexed = false;
+
+		glm::vec4 p_Color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	};
 
 	/*
@@ -67,7 +69,7 @@ namespace Glide3D
 		void CalculateTangentNormals();
 
 		std::vector<Mesh> p_Meshes;
-		glm::vec3 p_DefaultColor;
 		bool p_CanFacecull = false;
+		float p_Reflectance = 0.0f; // Specifies the reflectance of the object. 0.0 being non reflective and 1.0 being fully reflective
 	};
 }

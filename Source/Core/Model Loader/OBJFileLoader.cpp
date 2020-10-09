@@ -48,7 +48,6 @@ namespace Glide3D
 			}
 		}
 
-		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth)
 		{
 			Mesh _mesh;
 			std::vector<Vertex>& vertices = _mesh.p_Vertices;
@@ -79,13 +78,19 @@ namespace Glide3D
 						(float)mesh->mTextureCoords[0][i].y
 					);
 
-					vt.tangent.x = mesh->mTangents[i].x;
-					vt.tangent.y = mesh->mTangents[i].y;
-					vt.tangent.z = mesh->mTangents[i].z;
+					if (mesh->mTangents)
+					{
+						vt.tangent.x = mesh->mTangents[i].x;
+						vt.tangent.y = mesh->mTangents[i].y;
+						vt.tangent.z = mesh->mTangents[i].z;
+					}
 
-					vt.bitangent.x = mesh->mBitangents[i].x;
-					vt.bitangent.y = mesh->mBitangents[i].y;
-					vt.bitangent.z = mesh->mBitangents[i].z;
+					if (mesh->mBitangents)
+					{
+						vt.bitangent.x = mesh->mBitangents[i].x;
+						vt.bitangent.y = mesh->mBitangents[i].y;
+						vt.bitangent.z = mesh->mBitangents[i].z;
+					}
 				}
 
 				else
@@ -113,21 +118,67 @@ namespace Glide3D
 			- Normal map
 			*/
 
-			object->p_Meshes.emplace_back(std::move(_mesh));
-
 			// process materials
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+			_mesh.p_Color = col;
+
+			object->p_Meshes.emplace_back(std::move(_mesh));
+	
 			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->p_Meshes.back(), pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->p_Meshes.back(), pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, &object->p_Meshes.back(), pth);
 		}
 
+		struct TransparentMesh
+		{
+			aiMesh* mesh;
+			aiMaterial* material;
+			glm::vec4 final_color;
+			aiNode* node;
+			aiScene* scene;
+			Object* object;
+			std::string pth;
+		};
+
+		std::vector<TransparentMesh> transparent_meshes;
+
 		void ProcessAssimpNode(aiNode* Node, const aiScene* Scene, Object* object, const std::string& pth)
 		{
+			// Process all the meshes in the node
+			// Add the transparent meshes to the transparent mesh queue and add all the opaque ones
+
 			for (int i = 0; i < Node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = Scene->mMeshes[Node->mMeshes[i]];
-				ProcessAssimpMesh(mesh, Scene, object, pth);
+				aiMaterial* material = Scene->mMaterials[mesh->mMaterialIndex];
+				aiColor4D diffuse_color;
+				aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse_color);
+
+				float transparency;
+				aiGetMaterialFloat(material, AI_MATKEY_OPACITY, &transparency);
+
+				glm::vec4 final_color;
+
+				final_color = glm::vec4(diffuse_color.r, diffuse_color.g, diffuse_color.b, diffuse_color.a) *
+					transparency;
+
+				if (transparency < 0.95f)
+				{
+					TransparentMesh m;
+					m.mesh = mesh;
+					m.material = material;
+					m.final_color = final_color;
+					m.node = Node;
+					m.scene = (aiScene*)Scene;
+					m.object = object;
+					m.pth = pth;
+
+					transparent_meshes.push_back(m);
+					continue;
+				}
+
+				ProcessAssimpMesh(mesh, Scene, object, pth, 
+					final_color);
 			}
 
 			for (int i = 0; i < Node->mNumChildren; i++)
@@ -136,10 +187,19 @@ namespace Glide3D
 			}
 		}
 
+		void ProcessTransparentMeshes()
+		{
+			for (auto& e : transparent_meshes)
+			{
+				ProcessAssimpMesh(e.mesh, (const aiScene*)e.scene, e.object, e.pth, e.final_color);
+			}
+
+			transparent_meshes.clear();
+		}
+
 		void LoadOBJFile(Object* object, const std::string& filepath)
 		{
 			Assimp::Importer importer;
-			//const aiScene* Scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 			const aiScene* Scene = importer.ReadFile
 			(
 				filepath,
@@ -160,13 +220,15 @@ namespace Glide3D
 			if (!Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode)
 			{
 				std::stringstream str;
-				str << "ERROR LOADING ASSIMP MODEL (" << filepath << ") || ASSIMP ERROR : " << importer.GetErrorString();
+				str << "ERROR LOADING ASSIMP MODEL (" << filepath << ") ||  ASSIMP ERROR : " << importer.GetErrorString();
 				Logger::Log(str.str());
 				return; 
 			}
 
 			ProcessAssimpNode(Scene->mRootNode, Scene, object, filepath);
+			ProcessTransparentMeshes();
 			object->Buffer();
+
 			return;
 		}
 	}

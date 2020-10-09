@@ -20,7 +20,7 @@ in vec4 v_DirectionalLightFragPositions[MAX_DIRECTIONAL_LIGHTS];
 out vec4 o_Color;
 
 uniform float u_AmbientStrength;
-uniform vec3 u_Color;
+uniform vec4 u_Color;
 uniform vec3 u_ViewerPosition;
 
 // Light maps
@@ -59,6 +59,7 @@ uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform PointLight u_ScenePointLights[MAX_POINT_LIGHTS];
 uniform int u_SceneDirectionalLightCount = 0;
 uniform int u_ScenePointLightCount = 0;
+uniform float u_Reflectance = 0.0f;
 
 /* Flags */
 uniform int u_HasAlbedoMap = 0;
@@ -86,7 +87,7 @@ void main()
 
 	else
 	{
-		g_Color = u_Color;
+		g_Color = vec3(u_Color.rgb);
 	}
 
 	if (u_HasNormalMap == 1)
@@ -126,13 +127,17 @@ void main()
 		FinalColor += CalculatePointLight(u_ScenePointLights[i], Normal, u_ScenePointLights[i].m_SpecularColor, u_ScenePointLights[i].m_IsBlinn);
 	}
 
-	vec3 I = normalize(v_FragPosition - u_ViewerPosition);
-    vec3 R = reflect(I, Normal);
-    vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
-	
 	o_Color = vec4(FinalColor.xyz, 1.0f);
 
-	//o_Color = mix(o_Color, reflect_color, 0.3f);
+	if (u_Reflectance > 0.002f)
+	{
+		vec3 I = normalize(v_FragPosition - u_ViewerPosition);
+		vec3 R = reflect(I, Normal);
+		vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
+		o_Color = mix(o_Color, reflect_color, u_Reflectance);
+	}
+
+	o_Color.a = u_Color.a;
 }
 
 
