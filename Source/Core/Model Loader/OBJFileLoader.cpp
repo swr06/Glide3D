@@ -48,6 +48,7 @@ namespace Glide3D
 			}
 		}
 
+		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col)
 		{
 			Mesh _mesh;
 			std::vector<Vertex>& vertices = _mesh.p_Vertices;
