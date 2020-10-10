@@ -269,8 +269,8 @@ int main()
 		renderer.AddEntityToRenderQueue({ brickwall });
 		renderer.AddEntityToRenderQueue({ block0_entity });
 		renderer.AddEntityToRenderQueue({ block1_entity });
-		renderer.AddEntityToRenderQueue({ floor_entity });*/
-		renderer.Render(&camera, FBO);
+		renderer.AddEntityToRenderQueue({ floor_entity });*/ 
+		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);
 
@@ -278,6 +278,7 @@ int main()
 		camera.ResetAcceleration();
 		app.FinishFrame(); 
 
+		// Print the camera position and rotation every 60 frames
 		if (renderer.GetCurrentFrame() % 60 == 0)
 		{
 			const glm::vec3& vec = camera.GetPosition();
