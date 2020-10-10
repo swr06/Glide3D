@@ -152,6 +152,7 @@
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\Entity\Entity.h" />
     <ClInclude Include="Core\FpsCamera.h" />
+    <ClInclude Include="Core\GL_Classes\CubeDepthMap.h" />
     <ClInclude Include="Core\GL_Classes\CubeTextureMap.h" />
     <ClInclude Include="Core\GL_Classes\Fps.h" />
     <ClInclude Include="Core\GL_Classes\Framebuffer.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\Entity\Entity.cpp" />
     <ClCompile Include="Core\FpsCamera.cpp" />
+    <ClCompile Include="Core\GL_Classes\CubeDepthMap.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeTextureMap.cpp" />
     <ClCompile Include="Core\GL_Classes\Fps.cpp" />
     <ClCompile Include="Core\GL_Classes\Framebuffer.cpp" />

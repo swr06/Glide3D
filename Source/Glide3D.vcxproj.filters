@@ -183,6 +183,9 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
       <Filter>Core\Dependencies\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\CubeDepthMap.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -284,6 +287,9 @@
     </ClCompile>
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
       <Filter>Core\Dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\CubeDepthMap.cpp">
+      <Filter>Core\GL Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
