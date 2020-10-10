@@ -4,7 +4,7 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 # Planned Features
 - 3D Object rendering (such as cubes, cones and spheres)  ✔
 - OBJ Model loading ✔
-- Lighting
+- Lighting ✔
   - Phong Lighting model ✔
   - Blinn-Phong ✔
   - Directional light ✔
@@ -12,20 +12,22 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Normal mapping  ✔
 - Parallax mapping
 - Cubemaps ✔
-- Cubemap reflections
-- HDR (Exposure control etc.)
-- Skeletal animations
+- Cubemap reflections ✔
 - Shadow mapping ✔
   - PCF Shadowing ✔
-- Screen space reflections
 - Anti Aliasing 
 - Post Processing pipeline
-- Gamma correction
+- Gamma correction ✔
 - Bloom
 - SSAO (Ambient Occlusion)
+- HDR (Exposure control etc.)
+- Skeletal animations
 
 # Advanced Features (That will come later..)
 - PBR 
+- Screen space reflections
+- Planar reflections
+- Cascaded shadow maps
 
 # Requirements 
 - CPU : Any Dual Core CPU or better
