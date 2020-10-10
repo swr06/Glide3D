@@ -1,4 +1,4 @@
-#version 330 core
+#version 440 core
 
 /*
 The renderer's fragment shader which includes a phong lighting model

@@ -105,9 +105,6 @@ int main()
 	Entity entity3(&cube);
 
 	entity.GetTransform().Translate(glm::vec3(4, 0, 0));
-	entity1.GetTransform().Translate(glm::vec3(6, 0, 0));
-	entity2.GetTransform().Translate(glm::vec3(8, 0, 0));
-	entity3.GetTransform().Translate(glm::vec3(10, 0, 0));
 
 	camera.SetPosition(glm::vec3(0, 0, -2));
 
@@ -122,14 +119,13 @@ int main()
 
 	// Load all the OBJ files
 	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
-	FileLoader::LoadOBJFile(&object_1, "Resources/models/bmw/bmw.obj");
+	FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.obj");
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
 	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
 	object_1.p_CanFacecull = false;
-	object_1.p_Reflectance = 0.5f;
 	object_4.AddTextureMapToMesh("Resources/brickwall.jpg", TextureType::Albedo, true);
 	object_4.AddTextureMapToMesh("Resources/brickwall_normal.jpg", TextureType::Normal, true);
 
@@ -138,7 +134,7 @@ int main()
 	block_1.AddTextureMapToMesh("Resources/bricks.png", TextureType::Albedo, true);
 	block_1.AddTextureMapToMesh("Resources/bricks_n.png", TextureType::Normal, true);
 
-	Entity pot(&object_1);
+	Entity sponza(&object_1);
 	Entity suzanne(&object_2);
 	Entity backpack(&object_3);
 	Entity brickwall(&object_4);
@@ -148,8 +144,8 @@ int main()
 	Entity block1_entity(&block_1);
 
 	// Pot Object
-	pot.GetTransform().Translate(glm::vec3(15, 0, 0));
-	pot.GetTransform().Scale(glm::vec3(0.1f));
+	sponza.GetTransform().Translate(glm::vec3(15, 0, 0));
+	sponza.GetTransform().Scale(glm::vec3(0.1f));
 
 	// Suzanne Object
 	suzanne.GetTransform().Translate(glm::vec3(20, 0, 0));
@@ -180,10 +176,10 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
-	DirectionalLight d_light({ -200.0f, 200.0f, -200.0f, 200.0f, -200.0f, 200.0f }, {16000,16000 });
+	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {8096,8096 });
 
-	d_light.m_Direction = glm::vec3(light_dir);
-	d_light.m_ShadowPosition = glm::vec3(20.0f);
+	d_light.m_Direction = light_dir;
+	d_light.m_ShadowPosition = glm::vec3(10, 70, 10);
 	d_light.m_SpecularStrength = 0.2f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
@@ -218,7 +214,6 @@ int main()
 
 	renderer.SetEnvironmentMap(skybox);
 	renderer.AddDirectionalLight(d_light);
-///renderer.AddDirectionalLight(d_light2);
 	renderer.AddPointLight(p_light);
 
 	glDisable(GL_BLEND);
@@ -265,15 +260,16 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed)); 
 		}
 
-		renderer.AddEntityToRenderQueue({ entity, entity1, entity2, entity3 });
-		renderer.AddEntityToRenderQueue({ pot });
+		renderer.AddEntityToRenderQueue({ entity });
+		renderer.AddEntityToRenderQueue({ sponza });
+		/*renderer.AddEntityToRenderQueue({ entity, entity1, entity2, entity3 });
 		renderer.AddEntityToRenderQueue({ suzanne });
 		renderer.AddEntityToRenderQueue({ backpack });
 		renderer.AddEntityToRenderQueue({ sphere });
 		renderer.AddEntityToRenderQueue({ brickwall });
 		renderer.AddEntityToRenderQueue({ block0_entity });
 		renderer.AddEntityToRenderQueue({ block1_entity });
-		renderer.AddEntityToRenderQueue({ floor_entity });
+		renderer.AddEntityToRenderQueue({ floor_entity });*/
 		renderer.Render(&camera, FBO);
 
 		renderer.RenderFBO(FBO);
