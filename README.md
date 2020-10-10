@@ -25,11 +25,12 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - SSAO (Ambient Occlusion)
 
 # Advanced Features (That will come later..)
-- PBR (Highly unlikely)
+- PBR 
 
 # Requirements 
 - CPU : Any Dual Core CPU or better
 - GPU : OpenGL 4.0+ capable gpu 
+- RAM : 2 GB 
 
 # Note 
 Since my school has started, development may be slower as I have to finish my school work. :)
