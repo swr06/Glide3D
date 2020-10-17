@@ -15,8 +15,9 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Cubemap reflections ✔
 - Shadow mapping ✔
   - PCF Shadowing ✔
-- Anti Aliasing 
-- Post Processing pipeline
+  - Point Shadows
+- Anti Aliasing ✔
+- Post Processing pipeline ✔
 - Gamma correction ✔
 - Bloom
 - SSAO (Ambient Occlusion)
