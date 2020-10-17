@@ -110,47 +110,24 @@ namespace Glide3D
 		}
 	}
 
-	/*
-	Adds a group of the same entity at different positions using instanced rendering
-	*/
-	void Renderer::AddEntityToRenderQueue(const std::vector<Entity>& entities)
+	void Renderer::RenderPointLightShadowMap(PointLight& pointlight)
 	{
-		const Object* object = entities[0].p_Object;
+		glm::mat4 p;
+		glm::mat4 v;
 
-		if (object)
-		{
-			m_RenderEntities.push_back(entities);
-		}
 
-		else
-		{
-			Logger::Log("Attempted to add an entity to the render list without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
-		}
-
-		return;
 	}
-	
-	/* 
-	Renders all the entities to the window
-	*/
-	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
+
+	void Renderer::RenderShadowMaps()
 	{
-		if (m_EnvironmentMap)
-		{
-			m_EnvironmentMap->RenderSkybox(camera);
-			m_EnvironmentMap->GetTexture().Bind(4);
-		}
-
-		glm::mat4 lvp;
-
 		/* Render the depth maps of each light */
-		
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		m_DepthShader.Use();
 
 		for (auto& e : m_DirectionalLights)
 		{
-			if (m_CurrentFrame % e.m_UpdateRate == 0 || m_CurrentFrame == 0)
+			if (m_CurrentFrame == 0 || (e.m_UpdateRate > 0 && m_CurrentFrame % e.m_UpdateRate == 0))
 			{
 				e.m_DepthBuffer.Bind();
 				e.m_DepthBuffer.OnUpdate();
@@ -206,9 +183,47 @@ namespace Glide3D
 			}
 		}
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glUseProgram(0);
+	}
+
+	/*
+	Adds a group of the same entity at different positions using instanced rendering
+	*/
+	void Renderer::AddEntityToRenderQueue(const std::vector<Entity>& entities)
+	{
+		const Object* object = entities[0].p_Object;
+
+		if (object)
+		{
+			m_RenderEntities.push_back(entities);
+		}
+
+		else
+		{
+			Logger::Log("Attempted to add an entity to the render list without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
+		}
+
+		return;
+	}
+	
+	/* 
+	Renders all the entities to the window
+	*/
+	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
+	{
+		RenderShadowMaps();
+		
 		/* Light depth map rendering ends here */
 
 		fbo.Bind();
+
+		if (m_EnvironmentMap)
+		{
+			m_EnvironmentMap->RenderSkybox(camera);
+			m_EnvironmentMap->GetTexture().Bind(4);
+		}
+
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -287,6 +302,7 @@ namespace Glide3D
 		m_RenderEntities.clear();
 		glUseProgram(0);
 
+		// Increment the current frame
 		m_CurrentFrame++;
 
 		return;

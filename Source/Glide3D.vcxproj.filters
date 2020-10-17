@@ -186,6 +186,12 @@
     <ClInclude Include="Core\GL_Classes\CubeDepthMap.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\CubeReflectionMap.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Utils\Timer.h">
+      <Filter>Core\Engine\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -291,6 +297,9 @@
     <ClCompile Include="Core\GL_Classes\CubeDepthMap.cpp">
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Core\GL_Classes\CubeReflectionMap.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">
@@ -321,6 +330,12 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\DepthVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\DepthCubemapFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\DepthCubemapVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
   </ItemGroup>

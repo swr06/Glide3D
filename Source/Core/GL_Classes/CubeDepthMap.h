@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-namespace Glide3D
+namespace GLClasses
 {
 	class CubeDepthMap
 	{

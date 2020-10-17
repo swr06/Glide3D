@@ -70,7 +70,7 @@ namespace Glide3D
     void Skybox::RenderSkybox(FPSCamera* camera)
     {
         glDepthMask(GL_FALSE);
-        glEnable(GL_CULL_FACE);
+        glDisable(GL_CULL_FACE);
         m_SkyboxShader.Use();
 
         m_SkyboxShader.SetMatrix4("u_Projection", camera->GetProjectionMatrix());
@@ -79,7 +79,7 @@ namespace Glide3D
 
         m_VAO.Bind();
         glActiveTexture(GL_TEXTURE0);
-        (glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMap.GetID()));
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMap.GetID());
         (glDrawArrays(GL_TRIANGLES, 0, 36));
 
         m_VAO.Unbind();

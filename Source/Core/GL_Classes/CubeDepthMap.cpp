@@ -1,6 +1,6 @@
 #include "CubeDepthMap.h"
 
-namespace Glide3D
+namespace GLClasses
 {
 	CubeDepthMap::CubeDepthMap(GLuint res)
 	{

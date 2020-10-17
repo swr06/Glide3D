@@ -86,6 +86,8 @@ namespace Glide3D
 
 			p_CanFacecull = false; // Todo : Change winding order so it can facecull
 
+			mesh.p_Color = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+
 			p_Meshes.emplace_back(std::move(mesh));
 
 			// Calculate tangent normals
@@ -148,6 +150,8 @@ namespace Glide3D
 			vertices.push_back({ glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)});
 			vertices.push_back({ glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)});
 			vertices.push_back({ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) });
+
+			mesh.p_Color = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
 			p_Meshes.emplace_back(std::move(mesh));
 

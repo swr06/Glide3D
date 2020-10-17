@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -153,6 +153,7 @@
     <ClInclude Include="Core\Entity\Entity.h" />
     <ClInclude Include="Core\FpsCamera.h" />
     <ClInclude Include="Core\GL_Classes\CubeDepthMap.h" />
+    <ClInclude Include="Core\GL_Classes\CubeReflectionMap.h" />
     <ClInclude Include="Core\GL_Classes\CubeTextureMap.h" />
     <ClInclude Include="Core\GL_Classes\Fps.h" />
     <ClInclude Include="Core\GL_Classes\Framebuffer.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Core\TextureAtlas.h" />
     <ClInclude Include="Core\Transform\Transform.h" />
     <ClInclude Include="Core\Utils\Defs.h" />
+    <ClInclude Include="Core\Utils\Timer.h" />
     <ClInclude Include="Core\Utils\Vertex.h" />
     <ClInclude Include="Dependencies\glad\include\glad\glad.h" />
     <ClInclude Include="Dependencies\glad\include\KHR\khrplatform.h" />
@@ -199,6 +201,7 @@
     <ClCompile Include="Core\Entity\Entity.cpp" />
     <ClCompile Include="Core\FpsCamera.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeDepthMap.cpp" />
+    <ClCompile Include="Core\GL_Classes\CubeReflectionMap.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeTextureMap.cpp" />
     <ClCompile Include="Core\GL_Classes\Fps.cpp" />
     <ClCompile Include="Core\GL_Classes\Framebuffer.cpp" />
@@ -232,6 +235,8 @@
   <ItemGroup>
     <None Include="Core\Shaders\CubeRendererFrag.glsl" />
     <None Include="Core\Shaders\CubeRendererVert.glsl" />
+    <None Include="Core\Shaders\DepthCubemapFrag.glsl" />
+    <None Include="Core\Shaders\DepthCubemapVert.glsl" />
     <None Include="Core\Shaders\DepthFrag.glsl" />
     <None Include="Core\Shaders\DepthVert.glsl" />
     <None Include="Core\Shaders\FramebufferFrag.glsl" />

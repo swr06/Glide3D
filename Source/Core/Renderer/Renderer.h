@@ -67,5 +67,7 @@ namespace Glide3D
 
 		void SetLightUniforms(GLClasses::Shader& shader);
 		void BindLightingMaps();
+		void RenderShadowMaps();
+		void RenderPointLightShadowMap(PointLight& pointlight);
 	};
 }

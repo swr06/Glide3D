@@ -10,6 +10,7 @@
 #include "../GL_Classes/VertexBuffer.h"
 #include "../GL_Classes/IndexBuffer.h"
 #include "../GL_Classes/VertexArray.h"
+#include "../GL_Classes/CubeReflectionMap.h"
 #include <glad/glad.h>
 
 namespace Glide3D
@@ -53,7 +54,7 @@ namespace Glide3D
 	class Object
 	{
 	public:
-		Object();
+		Object(bool has_reflection_cubemap = false, uint32_t reflection_cubemap_res = 128, uint32_t reflection_map_update_rate = 32);
 		~Object();
 
 		/*
@@ -71,5 +72,10 @@ namespace Glide3D
 		std::vector<Mesh> p_Meshes;
 		bool p_CanFacecull = false;
 		float p_Reflectance = 0.0f; // Specifies the reflectance of the object. 0.0 being non reflective and 1.0 being fully reflective
+		
+		// The cube reflection map to reflect the in game scenes
+		bool p_RenderReflectionCubemap = false;
+		GLClasses::CubeReflectionMap p_ReflectionCubemap;
+		uint32_t p_ReflectionMapUpdateRate = 30;
 	};
 }

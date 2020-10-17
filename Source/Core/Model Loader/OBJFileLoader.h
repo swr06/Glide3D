@@ -9,6 +9,7 @@
 
 #include "../Object/Object.h"
 #include "../Application/Logger.h"
+#include "../Utils/Timer.h"
 
 #include <cstdio>
 #include <cstdlib> 

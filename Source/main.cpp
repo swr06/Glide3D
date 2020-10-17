@@ -21,7 +21,7 @@
 
 using namespace Glide3D;
 
-FPSCamera camera(70, 800.0f / 600.0f, 0.2f, 1000.0f, 0.25f);
+FPSCamera camera(70, 800.0f / 600.0f, 0.1f, 400.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
 
@@ -99,6 +99,9 @@ int main()
 	const float camera_speed = 0.1f; // 0.03
 
 	CubeObject cube;
+
+	
+
 	Entity entity(&cube);
 	Entity entity1(&cube);
 	Entity entity2(&cube);
@@ -119,7 +122,8 @@ int main()
 
 	// Load all the OBJ files
 	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
-	FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.obj");
+
+	//FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.obj");
 	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
 	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
 	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
@@ -176,14 +180,14 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
-	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {8096,8096 });
+	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {6084,6084 });
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(10, 70, 10);
-	d_light.m_SpecularStrength = 0.2f;
+	d_light.m_SpecularStrength = 0.01f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 1000000;
+	d_light.m_UpdateRate = 0;
 
 	/*DirectionalLight d_light2;
 
@@ -195,8 +199,8 @@ int main()
 
 	PointLight p_light; // -73 8 81 
 	p_light.m_Position = glm::vec3(-73, 8, 81);
-	p_light.m_SpecularStrength = 0.1f;
-	p_light.m_SpecularExponent = 0.1;
+	p_light.m_SpecularStrength = 0.01f;
+	p_light.m_SpecularExponent = 1;
 	p_light.m_IsBlinn = true;
 	p_light.m_Linear = 0.09f;
 	p_light.m_Quadratic = 0.0032f;
@@ -261,15 +265,14 @@ int main()
 		}
 
 		renderer.AddEntityToRenderQueue({ entity });
-		renderer.AddEntityToRenderQueue({ sponza });
-		/*renderer.AddEntityToRenderQueue({ entity, entity1, entity2, entity3 });
+		//renderer.AddEntityToRenderQueue({ sponza });
 		renderer.AddEntityToRenderQueue({ suzanne });
 		renderer.AddEntityToRenderQueue({ backpack });
 		renderer.AddEntityToRenderQueue({ sphere });
 		renderer.AddEntityToRenderQueue({ brickwall });
 		renderer.AddEntityToRenderQueue({ block0_entity });
 		renderer.AddEntityToRenderQueue({ block1_entity });
-		renderer.AddEntityToRenderQueue({ floor_entity });*/ 
+		renderer.AddEntityToRenderQueue({ floor_entity });
 		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);

@@ -4,7 +4,9 @@
 
 namespace Glide3D
 {
-	Object::Object()
+	Object::Object(bool has_reflection_cubemap, uint32_t reflection_cubemap_res, uint32_t reflection_map_update_rate)
+		: p_RenderReflectionCubemap(has_reflection_cubemap), p_ReflectionMapUpdateRate(reflection_map_update_rate),
+		p_ReflectionCubemap(reflection_cubemap_res)
 	{
 
 	}

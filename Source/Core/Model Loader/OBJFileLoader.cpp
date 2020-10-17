@@ -3,6 +3,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <chrono>
 
 /* Model Loader
 Uses the assimp model loading library to load the models. It uses a recursive model to process the meshes and materials
@@ -142,6 +143,7 @@ namespace Glide3D
 		};
 
 		std::vector<TransparentMesh> transparent_meshes;
+		uint32_t mesh_count = 0;
 
 		void ProcessAssimpNode(aiNode* Node, const aiScene* Scene, Object* object, const std::string& pth)
 		{
@@ -150,6 +152,7 @@ namespace Glide3D
 
 			for (int i = 0; i < Node->mNumMeshes; i++)
 			{
+				mesh_count++;
 				aiMesh* mesh = Scene->mMeshes[Node->mMeshes[i]];
 				aiMaterial* material = Scene->mMaterials[mesh->mMaterialIndex];
 				aiColor4D diffuse_color;
@@ -201,6 +204,10 @@ namespace Glide3D
 		void LoadOBJFile(Object* object, const std::string& filepath)
 		{
 			Assimp::Importer importer;
+			Timer timer;
+
+			timer.Start(TimerDurationCast::Seconds);
+
 			const aiScene* Scene = importer.ReadFile
 			(
 				filepath,
@@ -229,6 +236,12 @@ namespace Glide3D
 			ProcessAssimpNode(Scene->mRootNode, Scene, object, filepath);
 			ProcessTransparentMeshes();
 			object->Buffer();
+
+			long long elapsed_time = timer.End();
+			Logger::Log("Loaded Model File " + filepath + "\n\t" + "ELAPSED TIME : " + std::to_string(elapsed_time) + " s" + 
+			"\n\tMesh Count : " + std::to_string(mesh_count));
+
+			mesh_count = 0;
 
 			return;
 		}

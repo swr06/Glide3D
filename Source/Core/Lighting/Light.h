@@ -3,6 +3,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "../GL_Classes/Framebuffer.h"
+#include "../GL_Classes/CubeDepthMap.h"
 
 namespace Glide3D
 {
@@ -21,7 +22,7 @@ namespace Glide3D
 	struct DirectionalLight
 	{
 		DirectionalLight(const OrthogonalProperties& ortho_properties = { -60.0f, 60.0f, -60.0f, 60.0f, 0.15f, 60.0f }
-			,const ShadowBufferResolution& shadow_res = std::pair<int, int>(4096, 4096))
+			, const ShadowBufferResolution& shadow_res = {(int)4096, (int)4096})
 			: m_DepthBuffer(shadow_res.first, shadow_res.second)
 		{ 
 			m_OrthagonalProperties = ortho_properties;
@@ -48,8 +49,14 @@ namespace Glide3D
 		OrthogonalProperties m_OrthagonalProperties;
 	};
 
-	struct PointLight
+	class PointLight
 	{
+	public :
+		/*PointLight(GLuint res) : m_ShaderCubeMap(res)
+		{
+
+		}*/
+
 		glm::vec3 m_Position = glm::vec3(1.0f);
 		glm::vec3 m_SpecularColor = glm::vec3(1.0f);
 		float m_Constant = 1.0f;
@@ -58,5 +65,7 @@ namespace Glide3D
 		float m_SpecularStrength = 1.0f;
 		int m_SpecularExponent = 32;
 		bool m_IsBlinn = true;
+
+		//GLClasses::CubeDepthMap m_ShaderCubeMap;
 	};
 }
