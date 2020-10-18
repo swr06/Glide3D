@@ -38,7 +38,7 @@ namespace Glide3D
 		void AddPointLight(const PointLight& light);
 
 		// Rendering
-		void AddEntityToRenderQueue(const std::vector<Entity>& entities);
+		void AddEntityToRenderQueue(const std::vector<const Entity*>& entities);
 		void Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo);
 
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
@@ -51,17 +51,20 @@ namespace Glide3D
 		uint32_t GetCurrentFrame() const noexcept { return m_CurrentFrame; }
 
 	private :
+
+		// The shader programs
 		GLClasses::Shader m_RendererShader;
+		GLClasses::Shader m_FBOShader;
+		GLClasses::Shader m_DepthShader;
+		GLClasses::Shader m_ReflectionShader;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
-		GLClasses::Shader m_FBOShader;
-		GLClasses::Shader m_DepthShader;
 		GLFWwindow* m_Window;
 		GLClasses::SSBO m_LightSSBO;
 		std::vector<DirectionalLight> m_DirectionalLights;
 		std::vector<PointLight> m_PointLights;
-		std::vector<std::vector<Entity>> m_RenderEntities;
+		std::vector<std::vector<const Entity*>> m_RenderEntities;
 		Skybox* m_EnvironmentMap = nullptr;
 		uint32_t m_CurrentFrame = 0;
 
@@ -69,5 +72,8 @@ namespace Glide3D
 		void BindLightingMaps();
 		void RenderShadowMaps();
 		void RenderPointLightShadowMap(PointLight& pointlight);
+		void RenderReflectionMaps(FPSCamera* camera);
+		void _RenderEntitesForReflectionMap();
+		void RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera);
 	};
 }

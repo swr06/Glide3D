@@ -264,15 +264,15 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed)); 
 		}
 
-		renderer.AddEntityToRenderQueue({ entity });
+		renderer.AddEntityToRenderQueue({ &entity });
 		//renderer.AddEntityToRenderQueue({ sponza });
-		renderer.AddEntityToRenderQueue({ suzanne });
-		renderer.AddEntityToRenderQueue({ backpack });
-		renderer.AddEntityToRenderQueue({ sphere });
-		renderer.AddEntityToRenderQueue({ brickwall });
-		renderer.AddEntityToRenderQueue({ block0_entity });
-		renderer.AddEntityToRenderQueue({ block1_entity });
-		renderer.AddEntityToRenderQueue({ floor_entity });
+		renderer.AddEntityToRenderQueue({ &suzanne });
+		renderer.AddEntityToRenderQueue({ &backpack });
+		renderer.AddEntityToRenderQueue({ &sphere });
+		renderer.AddEntityToRenderQueue({ &brickwall });
+		renderer.AddEntityToRenderQueue({ &block0_entity });
+		renderer.AddEntityToRenderQueue({ &block1_entity });
+		renderer.AddEntityToRenderQueue({ &floor_entity });
 		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);

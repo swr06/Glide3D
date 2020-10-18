@@ -338,5 +338,11 @@
     <None Include="Core\Shaders\DepthCubemapVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
+    <None Include="Core\Shaders\ReflectionFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\ReflectionVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

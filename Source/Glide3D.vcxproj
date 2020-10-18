@@ -241,6 +241,8 @@
     <None Include="Core\Shaders\DepthVert.glsl" />
     <None Include="Core\Shaders\FramebufferFrag.glsl" />
     <None Include="Core\Shaders\FramebufferVert.glsl" />
+    <None Include="Core\Shaders\ReflectionFrag.glsl" />
+    <None Include="Core\Shaders\ReflectionVert.glsl" />
     <None Include="Core\Shaders\RendererFrag.glsl" />
     <None Include="Core\Shaders\RendererVert.glsl" />
     <None Include="Core\Shaders\SkyboxFrag.glsl" />
