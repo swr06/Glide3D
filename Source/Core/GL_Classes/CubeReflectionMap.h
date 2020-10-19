@@ -22,8 +22,11 @@ namespace GLClasses
 		{
 			m_FBO = v.m_FBO;
 			m_CubemapTexture = v.m_CubemapTexture;
+			m_Resolution = v.m_Resolution;
+			m_DepthBuffer = v.m_DepthBuffer;
 			v.m_FBO = 0;
 			v.m_CubemapTexture = 0;
+			v.m_DepthBuffer = 0;
 		}
 
 		void Bind() const
@@ -37,7 +40,6 @@ namespace GLClasses
 			assert(!(face >= 6));
 
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubemapTexture);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, m_CubemapTexture, 0);
 		}
 
@@ -64,7 +66,8 @@ namespace GLClasses
 
 	private : 
 		GLuint m_FBO = 0;
-		GLuint m_CubemapTexture = 0; 
+		GLuint m_CubemapTexture = 0;
+		GLuint m_DepthBuffer = 0;
 		GLuint m_Resolution = 0;
 	};
 }
