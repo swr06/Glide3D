@@ -6,7 +6,7 @@
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(2048)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(512)
 	{
 		/* Framebuffer stuff */
 
@@ -313,13 +313,12 @@ namespace Glide3D
 	*/
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
-		RenderShadowMaps();
-
 		if (m_CurrentFrame == 0)
 		{
-			RenderReflectionMaps(camera);	
+			RenderReflectionMaps(camera);
 		}
 
+		RenderShadowMaps();
 		
 		/* Light depth map rendering ends here */
 
