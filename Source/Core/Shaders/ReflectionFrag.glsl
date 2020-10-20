@@ -10,7 +10,7 @@ uniform int u_HasAlbedoMap = 1;
 
 void main()
 {
-	/*if (u_HasAlbedoMap == 1)
+	if (u_HasAlbedoMap == 1)
 	{
 		o_Color = texture(u_AlbedoMap, v_TexCoords);
 	}
@@ -18,8 +18,5 @@ void main()
 	else
 	{
 		o_Color = vec4(u_DefaultColor, 1.0f);
-	}*/
-
-	o_Color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	
+	}
 }
