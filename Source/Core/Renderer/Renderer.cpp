@@ -6,7 +6,7 @@
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(2048)
 	{
 		/* Framebuffer stuff */
 
@@ -116,8 +116,20 @@ namespace Glide3D
 
 	}
 
-	void Renderer::_RenderEntitesForReflectionMap()
+	void Renderer::_RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view)
 	{
+		if (m_EnvironmentMap)
+		{
+			m_EnvironmentMap->RenderSkybox(projection, view);
+		}
+
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_DEPTH_TEST);
+
+		m_ReflectionShader.Use();
+
 		for (auto& entities : m_RenderEntities)
 		{
 			Object* object = entities[0]->p_Object;
@@ -126,8 +138,6 @@ namespace Glide3D
 			{
 				Mesh* mesh = &e;
 
-				const std::vector<Vertex>& Vertices = mesh->p_Vertices;
-				const std::vector<GLuint>& Indices = mesh->p_Indices;
 				bool indexed = mesh->p_Indexed;
 
 				std::vector<glm::mat4> Matrices;
@@ -171,35 +181,7 @@ namespace Glide3D
 
 	void Renderer::RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera)
 	{
-		const glm::vec3& entity_position = entity->p_Transform.GetPosition();
-		glm::mat4 projection_matrix;
-		const GLClasses::CubeReflectionMap& fbo = entity->p_ReflectionCubemap;
-
-		projection_matrix = glm::perspective(90.0f, camera->GetAspect(), 0.0f, 100.0f);
-		fbo.Bind();
-
-		std::array<glm::mat4, 6> view_matrices =
-		{
-			glm::lookAt(entity_position, entity_position + glm::vec3( 1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-		};
-
-		for (int i = 0; i < 6; i++)
-		{
-			fbo.BindFace(i);
-			m_ReflectionShader.SetMatrix4("u_ViewProjection", projection_matrix * view_matrices[i], 0);
-			_RenderEntitesForReflectionMap();
-		}
-
-		// Unbind everything
-		glUseProgram(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		
 
 		return;
 	}
@@ -210,15 +192,28 @@ namespace Glide3D
 		m_ReflectionShader.Use();
 		m_ReflectionShader.SetInteger("u_AlbedoMap", 0, 0);
 
-		for (auto& e : m_RenderEntities)
+		const glm::vec3& entity_position = glm::vec3(27.0f, 4.0f, 19.0f);
+		glm::mat4 projection_matrix;
+		const GLClasses::CubeReflectionMap& fbo = m_ReflectionMap;
+
+		projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 150.0f);
+		fbo.Bind();
+
+		std::array<glm::mat4, 6> view_matrices =
 		{
-			for (auto& i : e)
-			{
-				if (m_CurrentFrame == 0 || m_CurrentFrame % i->p_ReflectionProps.update_rate == 0)
-				{
-					RenderReflectionMapForEntity(i, camera);
-				}
-			}
+			glm::lookAt(entity_position, entity_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+		};
+
+		for (int i = 0; i < 6; i++)
+		{
+			fbo.BindFace(i);
+			m_ReflectionShader.SetMatrix4("u_ViewProjection", projection_matrix * view_matrices[i], 1);
+			_RenderEntitesForReflectionMap(projection_matrix, view_matrices[i]);
 		}
 
 		return;
@@ -319,6 +314,12 @@ namespace Glide3D
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
 		RenderShadowMaps();
+
+		if (m_CurrentFrame == 0)
+		{
+			RenderReflectionMaps(camera);	
+		}
+
 		
 		/* Light depth map rendering ends here */
 
@@ -327,7 +328,9 @@ namespace Glide3D
 		if (m_EnvironmentMap)
 		{
 			m_EnvironmentMap->RenderSkybox(camera);
-			m_EnvironmentMap->GetTexture().Bind(4);
+			//m_EnvironmentMap->GetTexture().Bind(4);
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 		}
 
 		glDisable(GL_CULL_FACE);
