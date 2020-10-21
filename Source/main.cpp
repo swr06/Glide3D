@@ -281,7 +281,7 @@ int main()
 		renderer.AddEntityToRenderQueue({ &brickwall });
 		renderer.AddEntityToRenderQueue({ &block0_entity });
 		renderer.AddEntityToRenderQueue({ &block1_entity });
-		//renderer.AddEntityToRenderQueue({ &floor_entity });
+		renderer.AddEntityToRenderQueue({ &floor_entity });
 		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);
