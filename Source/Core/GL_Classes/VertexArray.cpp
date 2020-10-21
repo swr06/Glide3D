@@ -15,12 +15,12 @@ namespace GLClasses
 		this->Unbind();
 	}
 
-	void VertexArray::Bind()
+	void VertexArray::Bind() const 
 	{
 		glBindVertexArray(this->array_id);
 	}
 
-	void VertexArray::Unbind()
+	void VertexArray::Unbind() const
 	{
 		glBindVertexArray(0);
 	}

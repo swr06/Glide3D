@@ -52,6 +52,9 @@
     <Filter Include="Core\Dependencies\imgui">
       <UniqueIdentifier>{1cff0c65-fd06-46f0-80d5-b4dc53b68ccb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Engine\Mesh">
+      <UniqueIdentifier>{ee378709-9d48-41ec-92be-127a81aa3211}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -192,6 +195,9 @@
     <ClInclude Include="Core\Utils\Timer.h">
       <Filter>Core\Engine\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Mesh\Mesh.h">
+      <Filter>Core\Engine\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -299,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\CubeReflectionMap.cpp">
       <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Mesh\Mesh.cpp">
+      <Filter>Core\Engine\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

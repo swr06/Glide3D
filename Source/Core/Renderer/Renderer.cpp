@@ -135,7 +135,7 @@ namespace Glide3D
 
 		for (auto& entities : m_RenderEntities)
 		{
-			Object* object = entities[0]->p_Object;
+			const Object* object = entities[0]->p_Object;
 
 			std::vector<glm::mat4> Matrices;
 
@@ -148,7 +148,7 @@ namespace Glide3D
 
 			for (auto& e : object->p_Meshes)
 			{
-				Mesh* mesh = &e;
+				const Mesh* mesh = &e;
 
 				bool indexed = mesh->p_Indexed;
 
@@ -160,8 +160,8 @@ namespace Glide3D
 				m_ReflectionShader.SetVector3f("u_DefaultColor", glm::vec3(mesh->p_Color));
 				m_ReflectionShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 
-				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+				const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
 
 				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 				VAO.Bind();
@@ -261,7 +261,7 @@ namespace Glide3D
 
 				for (auto& entities : m_RenderEntities)
 				{
-					Object* object = entities[0]->p_Object;
+					const Object* object = entities[0]->p_Object;
 
 					std::vector<glm::mat4> Matrices;
 
@@ -274,14 +274,14 @@ namespace Glide3D
 
 					for (auto& e : object->p_Meshes)
 					{
-						Mesh* mesh = &e;
+						const Mesh* mesh = &e;
 
 						const std::vector<Vertex>& Vertices = mesh->p_Vertices;
 						const std::vector<GLuint>& Indices = mesh->p_Indices;
 						bool indexed = mesh->p_Indexed;
 
-						GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-						GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+						const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+						const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
 
 						MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 						VAO.Bind();
@@ -387,7 +387,7 @@ namespace Glide3D
 
 		for (auto& entities : m_RenderEntities)
 		{
-			Object* object = entities[0]->p_Object;
+			const Object* object = entities[0]->p_Object;
 
 			std::vector<glm::mat4> Matrices;
 
@@ -400,7 +400,7 @@ namespace Glide3D
 
 			for (auto& e : object->p_Meshes)
 			{
-				Mesh* mesh = &e;
+				const Mesh* mesh = &e;
 
 				const std::vector<Vertex>& Vertices = mesh->p_Vertices;
 				const std::vector<GLuint>& Indices = mesh->p_Indices;
@@ -422,8 +422,8 @@ namespace Glide3D
 				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
 				m_RendererShader.SetFloat("u_Reflectance", (float)object->p_Reflectance);
 
-				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+				const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
 
 				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 				VAO.Bind();

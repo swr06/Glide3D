@@ -1,3 +1,12 @@
+/*
+The Glide3D Game Engine by Samuel Rasquinha
+*/
+
+/* Contributors
+kiroma 
+hazurl
+*/
+
 #include <iostream>
 
 #include <glad/glad.h>
@@ -272,7 +281,7 @@ int main()
 		renderer.AddEntityToRenderQueue({ &brickwall });
 		renderer.AddEntityToRenderQueue({ &block0_entity });
 		renderer.AddEntityToRenderQueue({ &block1_entity });
-		renderer.AddEntityToRenderQueue({ &floor_entity });
+		//renderer.AddEntityToRenderQueue({ &floor_entity });
 		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);

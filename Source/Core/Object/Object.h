@@ -13,6 +13,8 @@
 #include "../GL_Classes/CubeReflectionMap.h"
 #include <glad/glad.h>
 
+#include "../Mesh/Mesh.h"
+
 namespace Glide3D
 {
 	enum class TextureType
@@ -22,30 +24,10 @@ namespace Glide3D
 		Specular
 	};
 
-	class Mesh
+	struct ReflectionMapProperties
 	{
-	public : 
-		Mesh();
-		void Buffer();
-		void CalculateTangentNormals();
-
-		std::vector<Vertex> p_Vertices;
-		std::vector<GLuint> p_Indices;
-		std::string p_MeshName;
-		GLClasses::Texture p_LightMap;
-		GLClasses::Texture p_AlbedoMap;
-		GLClasses::Texture p_NormalMap;
-
-		GLClasses::VertexBuffer p_VertexBuffer;
-		GLClasses::VertexArray p_VertexArray;
-		GLClasses::VertexBuffer p_MatrixBuffer; // Internal. Should not be accessed
-		GLClasses::IndexBuffer p_IndexBuffer;
-
-		std::uint32_t p_VertexCount = 0;
-		std::uint32_t p_IndicesCount = 0;
-		bool p_Indexed = false;
-
-		glm::vec4 p_Color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		uint32_t res;
+		uint32_t update_rate;
 	};
 
 	/*
@@ -54,7 +36,7 @@ namespace Glide3D
 	class Object
 	{
 	public:
-		Object();
+		Object(const ReflectionMapProperties& props = {128, 30});
 		~Object();
 
 		/*
@@ -72,5 +54,6 @@ namespace Glide3D
 		std::vector<Mesh> p_Meshes;
 		bool p_CanFacecull = false;
 		float p_Reflectance = 0.4f; // Specifies the reflectance of the object. 0.0 being non reflective and 1.0 being fully reflective
+		ReflectionMapProperties p_ReflectionProps;
 	};
 }
