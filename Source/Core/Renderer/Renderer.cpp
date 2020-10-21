@@ -6,7 +6,7 @@
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(512)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128)
 	{
 		/* Framebuffer stuff */
 
@@ -178,7 +178,7 @@ namespace Glide3D
 					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
 				}
 
-				else
+				else 
 				{
 					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
 				}
@@ -330,7 +330,7 @@ namespace Glide3D
 	void Renderer::AddEntityToRenderQueue(const std::vector<const Entity*>& entities)
 	{
 		const Object* object = entities[0]->p_Object;
-
+		
 		if (object)
 		{
 			m_RenderEntities.push_back(entities);
