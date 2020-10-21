@@ -86,4 +86,27 @@ namespace Glide3D
 
         glDepthMask(GL_TRUE);
     }
+
+    void Skybox::RenderSkybox(const glm::mat4& projection, const glm::mat4& view)
+    {
+        glDepthMask(GL_FALSE);
+        glDisable(GL_CULL_FACE);
+        m_SkyboxShader.Use();
+
+        m_SkyboxShader.SetMatrix4("u_Projection", projection);
+        m_SkyboxShader.SetMatrix4("u_View", glm::mat4(glm::mat3(view))); // remove translation
+        m_SkyboxShader.SetInteger("u_Skybox", 0);
+
+        m_VAO.Bind();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMap.GetID());
+        (glDrawArrays(GL_TRIANGLES, 0, 36));
+
+        m_VAO.Unbind();
+
+        glDepthMask(GL_TRUE);
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        glUseProgram(0);
+    }
 }

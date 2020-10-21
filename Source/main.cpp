@@ -1,3 +1,12 @@
+/*
+The Glide3D Game Engine by Samuel Rasquinha
+*/
+
+/* Contributors
+kiroma 
+hazurl
+*/
+
 #include <iostream>
 
 #include <glad/glad.h>
@@ -96,7 +105,7 @@ int main()
 	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600);
-	const float camera_speed = 0.1f; // 0.03
+	const float camera_speed = 0.02f; // 0.03
 
 	CubeObject cube;
 
@@ -180,7 +189,7 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
-	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {6084,6084 });
+	DirectionalLight d_light({ -100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 100.0f }, {6084,6084 });
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(10, 70, 10);
@@ -264,7 +273,7 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed)); 
 		}
 
-		renderer.AddEntityToRenderQueue({ &entity });
+		//renderer.AddEntityToRenderQueue({ &entity });
 		//renderer.AddEntityToRenderQueue({ sponza });
 		renderer.AddEntityToRenderQueue({ &suzanne });
 		renderer.AddEntityToRenderQueue({ &backpack });

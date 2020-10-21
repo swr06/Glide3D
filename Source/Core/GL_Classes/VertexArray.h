@@ -24,8 +24,8 @@ namespace GLClasses
 			v.array_id = 0;
 		}
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 	private:
 

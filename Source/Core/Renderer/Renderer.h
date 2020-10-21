@@ -73,7 +73,10 @@ namespace Glide3D
 		void RenderShadowMaps();
 		void RenderPointLightShadowMap(PointLight& pointlight);
 		void RenderReflectionMaps(FPSCamera* camera);
-		void _RenderEntitesForReflectionMap();
+		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
 		void RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera);
+
+		// Tests
+		GLClasses::CubeReflectionMap m_ReflectionMap;
 	};
 }

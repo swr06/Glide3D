@@ -6,7 +6,7 @@
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128)
 	{
 		/* Framebuffer stuff */
 
@@ -113,32 +113,44 @@ namespace Glide3D
 	void Renderer::RenderPointLightShadowMap(PointLight& pointlight)
 	{
 		// Todo
-
 	}
 
-	void Renderer::_RenderEntitesForReflectionMap()
+	void Renderer::_RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view)
 	{
+		// Todo : Implement this with geometry shaders
+
+		if (m_EnvironmentMap)
+		{
+			m_EnvironmentMap->RenderSkybox(projection, view);
+		}
+
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+		glBlendFunc(GL_NONE, GL_NONE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+
+		m_ReflectionShader.Use();
+
 		for (auto& entities : m_RenderEntities)
 		{
-			Object* object = entities[0]->p_Object;
+			const Object* object = entities[0]->p_Object;
+
+			std::vector<glm::mat4> Matrices;
+
+			for (auto& e : entities)
+			{
+				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
+				Matrices.push_back(model);
+				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
+			}
 
 			for (auto& e : object->p_Meshes)
 			{
-				Mesh* mesh = &e;
+				const Mesh* mesh = &e;
 
-				const std::vector<Vertex>& Vertices = mesh->p_Vertices;
-				const std::vector<GLuint>& Indices = mesh->p_Indices;
 				bool indexed = mesh->p_Indexed;
-
-				std::vector<glm::mat4> Matrices;
-
-				for (auto& e : entities)
-				{
-					const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-					Matrices.push_back(model);
-					Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-				}
-
 
 				if (mesh->p_AlbedoMap.GetTextureID() != 0)
 				{
@@ -148,58 +160,46 @@ namespace Glide3D
 				m_ReflectionShader.SetVector3f("u_DefaultColor", glm::vec3(mesh->p_Color));
 				m_ReflectionShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 
-				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+				const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
 
 				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 				VAO.Bind();
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(3);
+				glDisableVertexAttribArray(4);
+				glDisableVertexAttribArray(9);
+				glDisableVertexAttribArray(10);
+				glDisableVertexAttribArray(11);
+				glDisableVertexAttribArray(12);
 
 				if (indexed)
 				{
 					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
 				}
 
-				else
+				else 
 				{
 					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
 				}
 
+				glEnableVertexAttribArray(1);
+				glEnableVertexAttribArray(3);
+				glEnableVertexAttribArray(4);
+				glEnableVertexAttribArray(9);
+				glEnableVertexAttribArray(10);
+				glEnableVertexAttribArray(11);
+				glEnableVertexAttribArray(12);
 				VAO.Unbind();
 			}
 		}
+
+		return;
 	}
 
 	void Renderer::RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera)
 	{
-		const glm::vec3& entity_position = entity->p_Transform.GetPosition();
-		glm::mat4 projection_matrix;
-		const GLClasses::CubeReflectionMap& fbo = entity->p_ReflectionCubemap;
-
-		projection_matrix = glm::perspective(90.0f, camera->GetAspect(), 0.0f, 100.0f);
-		fbo.Bind();
-
-		std::array<glm::mat4, 6> view_matrices =
-		{
-			glm::lookAt(entity_position, entity_position + glm::vec3( 1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(entity_position, entity_position + glm::vec3( 0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-		};
-
-		for (int i = 0; i < 6; i++)
-		{
-			fbo.BindFace(i);
-			m_ReflectionShader.SetMatrix4("u_ViewProjection", projection_matrix * view_matrices[i], 0);
-			_RenderEntitesForReflectionMap();
-		}
-
-		// Unbind everything
-		glUseProgram(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		// Todo
 
 		return;
 	}
@@ -210,15 +210,28 @@ namespace Glide3D
 		m_ReflectionShader.Use();
 		m_ReflectionShader.SetInteger("u_AlbedoMap", 0, 0);
 
-		for (auto& e : m_RenderEntities)
+		const glm::vec3& entity_position = glm::vec3(27.0f, 4.0f, 19.0f);
+		glm::mat4 projection_matrix;
+		const GLClasses::CubeReflectionMap& fbo = m_ReflectionMap;
+
+		projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 150.0f);
+		fbo.Bind();
+
+		std::array<glm::mat4, 6> view_matrices =
 		{
-			for (auto& i : e)
-			{
-				if (m_CurrentFrame == 0 || m_CurrentFrame % i->p_ReflectionProps.update_rate == 0)
-				{
-					RenderReflectionMapForEntity(i, camera);
-				}
-			}
+			glm::lookAt(entity_position, entity_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+		};
+
+		for (int i = 0; i < 6; i++)
+		{
+			fbo.BindFace(i);
+			m_ReflectionShader.SetMatrix4("u_ViewProjection", projection_matrix * view_matrices[i], 1);
+			_RenderEntitesForReflectionMap(projection_matrix, view_matrices[i]);
 		}
 
 		return;
@@ -248,30 +261,39 @@ namespace Glide3D
 
 				for (auto& entities : m_RenderEntities)
 				{
-					Object* object = entities[0]->p_Object;
+					const Object* object = entities[0]->p_Object;
+
+					std::vector<glm::mat4> Matrices;
+
+					for (auto& e : entities)
+					{
+						const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
+						Matrices.push_back(model);
+						Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
+					}
 
 					for (auto& e : object->p_Meshes)
 					{
-						Mesh* mesh = &e;
+						const Mesh* mesh = &e;
 
 						const std::vector<Vertex>& Vertices = mesh->p_Vertices;
 						const std::vector<GLuint>& Indices = mesh->p_Indices;
 						bool indexed = mesh->p_Indexed;
 
-						std::vector<glm::mat4> Matrices;
-
-						for (auto& e : entities)
-						{
-							const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-							Matrices.push_back(model);
-							Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-						}
-
-						GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-						GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+						const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+						const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
 
 						MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 						VAO.Bind();
+
+						glDisableVertexAttribArray(1);
+						glDisableVertexAttribArray(2);
+						glDisableVertexAttribArray(3);
+						glDisableVertexAttribArray(4);
+						glDisableVertexAttribArray(9);
+						glDisableVertexAttribArray(10);
+						glDisableVertexAttribArray(11);
+						glDisableVertexAttribArray(12);
 
 						if (indexed)
 						{
@@ -282,6 +304,15 @@ namespace Glide3D
 						{
 							glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
 						}
+
+						glEnableVertexAttribArray(1);
+						glEnableVertexAttribArray(2);
+						glEnableVertexAttribArray(3);
+						glEnableVertexAttribArray(4);
+						glEnableVertexAttribArray(9);
+						glEnableVertexAttribArray(10);
+						glEnableVertexAttribArray(11);
+						glEnableVertexAttribArray(12);
 
 						VAO.Unbind();
 					}
@@ -299,7 +330,7 @@ namespace Glide3D
 	void Renderer::AddEntityToRenderQueue(const std::vector<const Entity*>& entities)
 	{
 		const Object* object = entities[0]->p_Object;
-
+		
 		if (object)
 		{
 			m_RenderEntities.push_back(entities);
@@ -318,6 +349,11 @@ namespace Glide3D
 	*/
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
+		if (m_CurrentFrame == 0)
+		{
+			RenderReflectionMaps(camera);
+		}
+
 		RenderShadowMaps();
 		
 		/* Light depth map rendering ends here */
@@ -327,7 +363,9 @@ namespace Glide3D
 		if (m_EnvironmentMap)
 		{
 			m_EnvironmentMap->RenderSkybox(camera);
-			m_EnvironmentMap->GetTexture().Bind(4);
+			//m_EnvironmentMap->GetTexture().Bind(4);
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 		}
 
 		glDisable(GL_CULL_FACE);
@@ -349,25 +387,24 @@ namespace Glide3D
 
 		for (auto& entities : m_RenderEntities)
 		{
-			Object* object = entities[0]->p_Object;
+			const Object* object = entities[0]->p_Object;
+
+			std::vector<glm::mat4> Matrices;
+
+			for (auto& e : entities)
+			{
+				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
+				Matrices.push_back(model);
+				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
+			}
 
 			for (auto& e : object->p_Meshes)
 			{
-				Mesh* mesh = &e;
+				const Mesh* mesh = &e;
 
 				const std::vector<Vertex>& Vertices = mesh->p_Vertices;
 				const std::vector<GLuint>& Indices = mesh->p_Indices;
 				bool indexed = mesh->p_Indexed;
-
-				std::vector<glm::mat4> Matrices;
-
-				for (auto& e : entities)
-				{
-					const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-					Matrices.push_back(model);
-					Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-				}
-
 
 				if (mesh->p_AlbedoMap.GetTextureID() != 0)
 				{
@@ -385,8 +422,8 @@ namespace Glide3D
 				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
 				m_RendererShader.SetFloat("u_Reflectance", (float)object->p_Reflectance);
 
-				GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-				GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
+				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+				const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
 
 				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 				VAO.Bind();

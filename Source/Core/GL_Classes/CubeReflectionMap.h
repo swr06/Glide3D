@@ -6,6 +6,7 @@
 #include <string>
 #include <cstdio>
 #include <cassert>
+#include "../Application/Logger.h"
 
 namespace GLClasses
 {
@@ -38,9 +39,11 @@ namespace GLClasses
 		void BindFace(GLuint face) const
 		{
 			assert(!(face >= 6));
+			assert(!(m_CubemapTexture == 0));
 
-			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+			Bind();
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, m_CubemapTexture, 0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
 		void Unbind() const

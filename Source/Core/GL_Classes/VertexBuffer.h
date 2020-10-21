@@ -25,14 +25,14 @@ namespace GLClasses
 			v.buffer_id = 0;
 		}
 
-		void BufferData(GLsizeiptr size, void* data, GLenum usage);
-		void BufferSubData(GLintptr offset, GLsizeiptr size, void* data);
-		void Bind();
-		void Unbind();
+		void BufferData(GLsizeiptr size, void* data, GLenum usage) const;
+		void BufferSubData(GLintptr offset, GLsizeiptr size, void* data) const;
+		void Bind() const;
+		void Unbind() const;
 		void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized,
-			GLsizei stride, const GLvoid* pointer);
+			GLsizei stride, const GLvoid* pointer) const;
 
-		void VertexAttribIPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
+		void VertexAttribIPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer) const;
 
 	private:
 
