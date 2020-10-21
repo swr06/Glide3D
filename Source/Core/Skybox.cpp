@@ -105,5 +105,8 @@ namespace Glide3D
         m_VAO.Unbind();
 
         glDepthMask(GL_TRUE);
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        glUseProgram(0);
     }
 }

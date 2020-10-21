@@ -157,7 +157,7 @@ namespace Glide3D
 
 	void FPSCamera::RecalculateProjectionMatrix()
 	{
-		m_ProjectionMatrix = glm::perspective(m_Fov, m_Aspect, m_zNear, m_zFar);
+		m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov), m_Aspect, m_zNear, m_zFar);
 
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}

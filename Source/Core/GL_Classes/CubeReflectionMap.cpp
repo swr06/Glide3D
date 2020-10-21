@@ -26,7 +26,7 @@ namespace GLClasses
 
         glGenRenderbuffers(1, &m_DepthBuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, m_DepthBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution, resolution);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, resolution, resolution);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthBuffer);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -35,5 +35,7 @@ namespace GLClasses
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 }
