@@ -44,16 +44,17 @@ namespace Glide3D
 		*/
 		void Buffer();
 
-		void AddTextureMapToMesh(const std::string& path, TextureType tex_type, bool flip = false);
-
-		/*
-		Calculates the tangent and bitangents based on the texture coordinates to en
-		*/
+		//Calculates the tangent and bitangents based on the texture coordinates to en
 		void CalculateTangentNormals();
+		void AddTextureMapToMesh(const std::string& path, TextureType tex_type, bool flip = false);
 
 		std::vector<Mesh> p_Meshes;
 		bool p_CanFacecull = false;
 		float p_Reflectance = 0.4f; // Specifies the reflectance of the object. 0.0 being non reflective and 1.0 being fully reflective
 		ReflectionMapProperties p_ReflectionProps;
+		glm::vec3 p_Center; // The center of the mesh in localized space
+
+	private :
+		void CalculateCenter();
 	};
 }

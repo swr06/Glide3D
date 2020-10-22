@@ -198,6 +198,9 @@
     <ClInclude Include="Core\Mesh\Mesh.h">
       <Filter>Core\Engine\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\CubemapArrayTexture.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -308,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="Core\Mesh\Mesh.cpp">
       <Filter>Core\Engine\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GL_Classes\CubemapArrayTexture.cpp">
+      <Filter>Core\GL Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,8 @@ namespace Glide3D
 
 	void Object::Buffer()
 	{
+		CalculateCenter();
+
 		for (auto& e : p_Meshes)
 		{
 			e.Buffer();
@@ -68,5 +70,28 @@ namespace Glide3D
 		{
 			e.CalculateTangentNormals();
 		}
+	}
+
+	void Object::CalculateCenter()
+	{
+		uint32_t count = 0;
+		glm::vec3& center = this->p_Center;
+
+		for (auto& e : p_Meshes)
+		{
+			count += e.p_VertexCount;
+			
+			for (auto& f : e.p_Vertices)
+			{
+				const glm::vec3& pos = f.position;
+				center.x += pos.x;
+				center.y += pos.y;
+				center.z += pos.z;
+			}
+		}
+
+		center.x /= count;
+		center.y /= count;
+		center.z /= count;
 	}
 }

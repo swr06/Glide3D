@@ -15,6 +15,8 @@
 
 namespace Glide3D
 {
+	class Mesh;
+
 	class Mesh
 	{
 	public:
