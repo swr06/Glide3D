@@ -11,6 +11,7 @@
 #include "../Utils/Vertex.h"
 #include "../Utils/Defs.h"
 #include "../FpsCamera.h"
+#include "../Macros.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

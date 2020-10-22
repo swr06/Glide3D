@@ -7,26 +7,7 @@ kiroma
 hazurl
 */
 
-#include <iostream>
-
-#include <glad/glad.h>
-#include <glfw/glfw3.h>
-
-#include "Core/Application/Application.h"
-#include "Core/Renderer/CubeRenderer.h"
-#include "Core/Renderer/Renderer.h"
-#include "Core/FpsCamera.h"
-#include "Core/GL_Classes/Fps.h"
-#include "Core/ObjectTypes/Cube.h"
-#include "Core/Entity/Entity.h"
-#include "Core/GL_Classes/Framebuffer.h"
-#include "Core/ObjectTypes/Plane.h"
-#include "Core/Model Loader/OBJFileLoader.h"
-#include "Core/Post Processor/PostProcessor.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Core/GlideEngine.h"
 
 using namespace Glide3D;
 
@@ -101,7 +82,6 @@ int main()
 	app.Initialize();
 	glfwSwapInterval(1);
 
-	CubeRenderer cube_renderer;
 	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600);

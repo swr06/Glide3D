@@ -201,6 +201,12 @@
     <ClInclude Include="Core\GL_Classes\CubemapArrayTexture.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Macros.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GlideEngine.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">

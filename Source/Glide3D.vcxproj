@@ -152,6 +152,7 @@
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\Entity\Entity.h" />
     <ClInclude Include="Core\FpsCamera.h" />
+    <ClInclude Include="Core\GlideEngine.h" />
     <ClInclude Include="Core\GL_Classes\CubeDepthMap.h" />
     <ClInclude Include="Core\GL_Classes\CubemapArrayTexture.h" />
     <ClInclude Include="Core\GL_Classes\CubeReflectionMap.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Core\GL_Classes\VertexArray.h" />
     <ClInclude Include="Core\GL_Classes\VertexBuffer.h" />
     <ClInclude Include="Core\Lighting\Light.h" />
+    <ClInclude Include="Core\Macros.h" />
     <ClInclude Include="Core\Mesh\Mesh.h" />
     <ClInclude Include="Core\Model Loader\OBJFileLoader.h" />
     <ClInclude Include="Core\ObjectTypes\Cone.h" />

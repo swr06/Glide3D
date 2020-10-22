@@ -9,6 +9,7 @@
 #include "../GL_Classes/VertexArray.h"
 #include "../GL_Classes/IndexBuffer.h"
 #include "../GL_Classes/Framebuffer.h"
+#include "../Macros.h"
 
 /* --------- Post processor -----------
 
