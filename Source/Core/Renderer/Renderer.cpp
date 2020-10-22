@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 #define MAX_DIRECTIONAL_LIGHTS 2
-#define MAX_POINT_LIGHTS 100
+#define MAX_POINT_LIGHTS 14
 
 namespace Glide3D
 {

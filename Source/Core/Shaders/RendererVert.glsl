@@ -27,6 +27,7 @@ out mat3 v_TBNMatrix;
 out vec2 v_TexCoords;
 out vec3 v_FragPosition;
 out vec3 v_Normal;
+out int v_InstanceID;
 
 out vec4 v_DirectionalLightFragPositions[MAX_DIRECTIONAL_LIGHTS];
 
@@ -66,4 +67,6 @@ void main()
 	{
 		v_DirectionalLightFragPositions[i] = u_DirectionalLightSpaceVP[i] * vec4(v_FragPosition, 1.0f);
 	}
+
+	v_InstanceID = gl_InstanceID;
 }

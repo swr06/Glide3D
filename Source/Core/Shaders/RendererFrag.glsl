@@ -5,7 +5,7 @@ The renderer's fragment shader which includes a phong lighting model
 */
 
 #define MAX_DIRECTIONAL_LIGHTS 2
-#define MAX_POINT_LIGHTS 100
+#define MAX_POINT_LIGHTS 14
 
 /*
 Lighting is based on the phong lighting model.
@@ -16,6 +16,7 @@ in vec3 v_FragPosition;
 in vec3 v_Normal;
 in mat3 v_TBNMatrix;
 in vec4 v_DirectionalLightFragPositions[MAX_DIRECTIONAL_LIGHTS];
+in flat int v_InstanceID;
 
 layout(location = 0) out vec4 o_Color;
 
@@ -23,14 +24,18 @@ uniform float u_AmbientStrength;
 uniform vec4 u_Color;
 uniform vec3 u_ViewerPosition;
 
-// Light maps
+// 6 samplers for the light maps 
 uniform sampler2D u_AlbedoMap; // Or the diffuse map.
 uniform sampler2D u_SpecularMap; 
 uniform sampler2D u_NormalMap;
-uniform sampler2D u_LightDirectionalDepthMap;
-uniform sampler2D u_LightMap;
 uniform sampler2D u_ParallaxMap;
-uniform samplerCube u_EnvironmentMap;
+uniform sampler2D u_MetalnessMap;
+uniform sampler2D u_RoughnessMap;
+
+// 2 samplers for the directional lights
+
+uniform samplerCube u_EnvironmentMaps[8];
+uniform samplerCube u_PointlightDepthMaps[MAX_POINT_LIGHTS];
 
 struct DirectionalLight
 {
@@ -74,6 +79,7 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map);
 vec3 g_Ambient;
 vec3 g_Color;
 float g_Shadow = 0.0f;
+vec3 g_ViewDir = normalize(u_ViewerPosition - v_FragPosition); // Get the direction of the fragment
 
 void main()
 {
@@ -133,7 +139,7 @@ void main()
 	{
 		vec3 I = normalize(v_FragPosition - u_ViewerPosition);
 		vec3 R = reflect(I, Normal);
-		vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
+		vec4 reflect_color = vec4(texture(u_EnvironmentMaps[v_InstanceID], R).rgb, 1.0);
 		o_Color = mix(o_Color, reflect_color, u_Reflectance);
 	}
 
@@ -182,20 +188,18 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 specula
 
 	float Diffuse = max(dot(normal, LightDirection), 0.0f);
 
-	// Calculating the specular highlight
-	vec3 ViewDir = normalize(u_ViewerPosition - v_FragPosition); // Get the direction of the fragment
 	float Specular;
 
 	if (use_blinn == 1)
 	{
-		vec3 Halfway = normalize(LightDirection + ViewDir);  
+		vec3 Halfway = normalize(LightDirection + g_ViewDir);  
         Specular = pow(max(dot(normal, Halfway), 0.0), light.m_SpecularExponent);
 	}
 
 	else
 	{
 		vec3 ReflectDir = reflect(-LightDirection, normal);		
-		Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+		Specular = pow(max(dot(g_ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
 	}
 	
 	vec3 DiffuseColor = Diffuse * g_Color; // To be replaced with diffuse map
@@ -210,20 +214,18 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 specular_color, int
 
 	float Diffuse = max(dot(normal, LightDirection), 0.0f);
 
-	// Calculating the specular highlight
-	vec3 ViewDir = normalize(u_ViewerPosition - v_FragPosition); // Get the direction of the fragment
 	float Specular;
 
 	if (use_blinn == 1)
 	{
-		vec3 Halfway = normalize(LightDirection + ViewDir);  
+		vec3 Halfway = normalize(LightDirection + g_ViewDir);  
         Specular = pow(max(dot(normal, Halfway), 0.0), light.m_SpecularExponent);
 	}
 
 	else
 	{
 		vec3 ReflectDir = reflect(-LightDirection, normal);		
-		float Specular = pow(max(dot(ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+		float Specular = pow(max(dot(g_ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
 	}
 
 	vec3 DiffuseColor = Diffuse * g_Color;
