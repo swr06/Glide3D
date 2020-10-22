@@ -20,7 +20,7 @@ namespace Glide3D
 	class Mesh
 	{
 	public:
-		Mesh();
+		Mesh(const GLClasses::VertexBuffer& MatrixVBO);
 		void Buffer();
 		void CalculateTangentNormals();
 
@@ -33,7 +33,6 @@ namespace Glide3D
 
 		GLClasses::VertexBuffer p_VertexBuffer;
 		GLClasses::VertexArray p_VertexArray;
-		GLClasses::VertexBuffer p_MatrixBuffer; // Internal. Should not be accessed
 		GLClasses::IndexBuffer p_IndexBuffer;
 
 		std::uint32_t p_VertexCount = 0;

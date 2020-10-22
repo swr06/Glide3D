@@ -11,7 +11,7 @@ namespace Glide3D
 
 		PlaneObject(const std::array<PlaneTextureCoordinates, 6>& texture_coordinates)
 		{
-			Mesh mesh;
+			Mesh& mesh = GenerateMesh();
 			std::vector<Vertex>& vertices = mesh.p_Vertices;
 			std::vector<GLuint>& indices = mesh.p_Indices;
 
@@ -27,15 +27,13 @@ namespace Glide3D
 			// Calculate tangent normals
 			CalculateTangentNormals();
 
-			p_Meshes.push_back(std::move(mesh));
-
 			// Upload the data to the gpu
 			Buffer();
 		}
 
 		PlaneObject()
 		{
-			Mesh mesh;
+			Mesh& mesh = GenerateMesh();
 			std::vector<Vertex>& vertices = mesh.p_Vertices;
 			std::vector<GLuint>& indices = mesh.p_Indices;
 
@@ -47,8 +45,6 @@ namespace Glide3D
 			indices = { 0,1,2,2,3,0 };
 
 			p_CanFacecull = false;
-
-			p_Meshes.emplace_back(std::move(mesh));
 
 			// Calculate tangent normals
 			CalculateTangentNormals();

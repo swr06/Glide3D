@@ -21,7 +21,7 @@ namespace Glide3D
 
 		CubeObject(const std::array<PlaneTextureCoordinates, 6>& texture_coordinates)
 		{
-			Mesh mesh;
+			Mesh& mesh = GenerateMesh();
 			std::vector<Vertex>& vertices = mesh.p_Vertices;
 			std::vector<GLuint>& indices = mesh.p_Indices;
 
@@ -88,8 +88,6 @@ namespace Glide3D
 
 			mesh.p_Color = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
-			p_Meshes.emplace_back(std::move(mesh));
-
 			// Calculate tangent normals
 			CalculateTangentNormals();
 
@@ -99,7 +97,7 @@ namespace Glide3D
 
 		CubeObject()
 		{
-			Mesh mesh;
+			Mesh& mesh = GenerateMesh();
 			std::vector<Vertex>& vertices = mesh.p_Vertices;
 			std::vector<GLuint>& indices = mesh.p_Indices;
 
@@ -152,9 +150,6 @@ namespace Glide3D
 			vertices.push_back({ glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) });
 
 			mesh.p_Color = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
-
-			p_Meshes.emplace_back(std::move(mesh));
-
 			p_CanFacecull = false; // Todo : Change winding order so it can facecull
 
 			// Calculate tangent normals

@@ -2,7 +2,7 @@
 
 namespace Glide3D
 {
-	Mesh::Mesh() : p_VertexBuffer(GL_ARRAY_BUFFER), p_MatrixBuffer(GL_ARRAY_BUFFER)
+	Mesh::Mesh(const GLClasses::VertexBuffer& MatrixVBO) : p_VertexBuffer(GL_ARRAY_BUFFER)
 	{
 		/*
 		Setup all the ogl objects
@@ -15,21 +15,21 @@ namespace Glide3D
 		p_VertexBuffer.VertexAttribPointer(2, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
 		p_VertexBuffer.VertexAttribPointer(3, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tangent)));
 		p_VertexBuffer.VertexAttribPointer(4, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, bitangent)));
-		p_MatrixBuffer.Bind();
+		MatrixVBO.Bind();
 
 		constexpr float matrix_stride = 32 * sizeof(GLfloat);
 
 		// Structure padding shouldn't be an issue since the size is 32 * 4 bytes 
-		p_MatrixBuffer.VertexAttribPointer(5, 4, GL_FLOAT, 0, matrix_stride, (void*)0); // column 1
-		p_MatrixBuffer.VertexAttribPointer(6, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 4)); // column 2
-		p_MatrixBuffer.VertexAttribPointer(7, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 8)); // column 3
-		p_MatrixBuffer.VertexAttribPointer(8, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 12)); // column 4
+		MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, matrix_stride, (void*)0); // column 1
+		MatrixVBO.VertexAttribPointer(6, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 4)); // column 2
+		MatrixVBO.VertexAttribPointer(7, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 8)); // column 3
+		MatrixVBO.VertexAttribPointer(8, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 12)); // column 4
 
 		// Normal matrices								   
-		p_MatrixBuffer.VertexAttribPointer(9, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 16)); // column 1
-		p_MatrixBuffer.VertexAttribPointer(10, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 20)); // column 2
-		p_MatrixBuffer.VertexAttribPointer(11, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 24)); // column 3
-		p_MatrixBuffer.VertexAttribPointer(12, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 28)); // column 4
+		MatrixVBO.VertexAttribPointer(9, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 16)); // column 1
+		MatrixVBO.VertexAttribPointer(10, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 20)); // column 2
+		MatrixVBO.VertexAttribPointer(11, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 24)); // column 3
+		MatrixVBO.VertexAttribPointer(12, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 28)); // column 4
 
 		// Set the matrix attributes to be per-instance
 		glVertexAttribDivisor(5, 1);

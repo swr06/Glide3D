@@ -4,7 +4,7 @@
 
 namespace Glide3D
 {
-	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props)
+	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), p_MatrixBuffer(GL_ARRAY_BUFFER)
 	{
 
 	}
@@ -62,6 +62,12 @@ namespace Glide3D
 		{
 			Logger::Log("Can't add texture path : " + path + " When there are no meshes in the object!");
 		}
+	}
+
+	Mesh& Object::GenerateMesh()
+	{
+		p_Meshes.emplace_back(p_MatrixBuffer);
+		return p_Meshes.back();
 	}
 
 	void Object::CalculateTangentNormals()

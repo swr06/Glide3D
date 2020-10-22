@@ -34,7 +34,7 @@ uniform sampler2D u_RoughnessMap;
 
 // 2 samplers for the directional lights
 
-uniform samplerCube u_EnvironmentMaps[8];
+uniform samplerCube u_EnvironmentMap;
 uniform samplerCube u_PointlightDepthMaps[MAX_POINT_LIGHTS];
 
 struct DirectionalLight
@@ -139,7 +139,7 @@ void main()
 	{
 		vec3 I = normalize(v_FragPosition - u_ViewerPosition);
 		vec3 R = reflect(I, Normal);
-		vec4 reflect_color = vec4(texture(u_EnvironmentMaps[v_InstanceID], R).rgb, 1.0);
+		vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
 		o_Color = mix(o_Color, reflect_color, u_Reflectance);
 	}
 

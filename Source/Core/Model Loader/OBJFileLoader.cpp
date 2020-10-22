@@ -51,7 +51,7 @@ namespace Glide3D
 
 		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col)
 		{
-			Mesh _mesh;
+			Mesh& _mesh = object->GenerateMesh();
 			std::vector<Vertex>& vertices = _mesh.p_Vertices;
 			std::vector<GLuint>& indices = _mesh.p_Indices;
 
@@ -123,8 +123,6 @@ namespace Glide3D
 			// process materials
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			_mesh.p_Color = col;
-
-			object->p_Meshes.emplace_back(std::move(_mesh));
 	
 			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->p_Meshes.back(), pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->p_Meshes.back(), pth);

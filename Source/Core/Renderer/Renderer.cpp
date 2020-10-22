@@ -64,6 +64,7 @@ namespace Glide3D
 
 	void Renderer::SetLightUniforms(GLClasses::Shader& shader)
 	{
+		shader.Use();
 		shader.SetInteger("u_SceneDirectionalLightCount", m_DirectionalLights.size(), 0);
 		shader.SetInteger("u_NumDirectionalLights", m_DirectionalLights.size(), 0);
 		shader.SetInteger("u_ScenePointLightCount", m_PointLights.size(), 0);
@@ -146,6 +147,9 @@ namespace Glide3D
 				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
 			}
 
+			const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+
 			for (auto& e : object->p_Meshes)
 			{
 				const Mesh* mesh = &e;
@@ -161,9 +165,6 @@ namespace Glide3D
 				m_ReflectionShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-				const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
-
-				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 				VAO.Bind();
 				glDisableVertexAttribArray(1);
 				glDisableVertexAttribArray(3);
@@ -272,6 +273,9 @@ namespace Glide3D
 						Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
 					}
 
+					const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+					MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+
 					for (auto& e : object->p_Meshes)
 					{
 						const Mesh* mesh = &e;
@@ -281,9 +285,6 @@ namespace Glide3D
 						bool indexed = mesh->p_Indexed;
 
 						const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-						const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
-
-						MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 						VAO.Bind();
 
 						glDisableVertexAttribArray(1);
@@ -398,12 +399,13 @@ namespace Glide3D
 				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
 			}
 
+			const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+
 			for (auto& e : object->p_Meshes)
 			{
 				const Mesh* mesh = &e;
 
-				const std::vector<Vertex>& Vertices = mesh->p_Vertices;
-				const std::vector<GLuint>& Indices = mesh->p_Indices;
 				bool indexed = mesh->p_Indexed;
 
 				if (mesh->p_AlbedoMap.GetTextureID() != 0)
@@ -423,9 +425,6 @@ namespace Glide3D
 				m_RendererShader.SetFloat("u_Reflectance", (float)object->p_Reflectance);
 
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-				const GLClasses::VertexBuffer& MatrixVBO = mesh->p_MatrixBuffer;
-
-				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 				VAO.Bind();
 
 				if (indexed)
