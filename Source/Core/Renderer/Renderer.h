@@ -72,6 +72,7 @@ namespace Glide3D
 		void SetLightUniforms(GLClasses::Shader& shader);
 		void BindLightingMaps();
 		void RenderShadowMaps();
+		void RenderDepthPass(const glm::mat4& view_projection);
 		void RenderPointLightShadowMap(PointLight& pointlight);
 		void RenderReflectionMaps(FPSCamera* camera);
 		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
@@ -79,5 +80,8 @@ namespace Glide3D
 
 		// Tests
 		GLClasses::CubeReflectionMap m_ReflectionMap;
+
+		// For the depth pass
+		GLClasses::DepthBuffer m_DepthPassMap;
 	};
 }

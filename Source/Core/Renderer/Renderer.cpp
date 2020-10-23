@@ -3,7 +3,7 @@
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_DepthPassMap(800, 600)
 	{
 		/* Framebuffer stuff */
 
@@ -248,78 +248,83 @@ namespace Glide3D
 			{
 				e.m_DepthBuffer.Bind();
 				e.m_DepthBuffer.OnUpdate();
-				glDisable(GL_CULL_FACE);
-
-				/* Create the view projection matrix for the light */
 
 				e.m_LightSpaceView = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
 				e.m_LightSpaceViewProjection = e.m_LightSpaceProjection * e.m_LightSpaceView;
-
-				m_DepthShader.SetMatrix4("u_ViewProjection", e.m_LightSpaceViewProjection);
-
-				for (auto& entities : m_RenderEntities)
-				{
-					const Object* object = entities[0]->p_Object;
-
-					std::vector<glm::mat4> Matrices;
-
-					for (auto& e : entities)
-					{
-						const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-						Matrices.push_back(model);
-						Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-					}
-
-					const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
-					MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
-
-					for (auto& e : object->p_Meshes)
-					{
-						const Mesh* mesh = &e;
-
-						const std::vector<Vertex>& Vertices = mesh->p_Vertices;
-						const std::vector<GLuint>& Indices = mesh->p_Indices;
-						bool indexed = mesh->p_Indexed;
-
-						const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-						VAO.Bind();
-
-						glDisableVertexAttribArray(1);
-						glDisableVertexAttribArray(2);
-						glDisableVertexAttribArray(3);
-						glDisableVertexAttribArray(4);
-						glDisableVertexAttribArray(9);
-						glDisableVertexAttribArray(10);
-						glDisableVertexAttribArray(11);
-						glDisableVertexAttribArray(12);
-
-						if (indexed)
-						{
-							glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
-						}
-
-						else
-						{
-							glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
-						}
-
-						glEnableVertexAttribArray(1);
-						glEnableVertexAttribArray(2);
-						glEnableVertexAttribArray(3);
-						glEnableVertexAttribArray(4);
-						glEnableVertexAttribArray(9);
-						glEnableVertexAttribArray(10);
-						glEnableVertexAttribArray(11);
-						glEnableVertexAttribArray(12);
-
-						VAO.Unbind();
-					}
-				}
+				
+				RenderDepthPass(e.m_LightSpaceViewProjection);
 			}
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
+	}
+
+	void Renderer::RenderDepthPass(const glm::mat4& view_projection)
+	{
+		glDisable(GL_CULL_FACE);
+
+		/* Create the view projection matrix for the light */
+
+		m_DepthShader.SetMatrix4("u_ViewProjection", view_projection);
+
+		for (auto& entities : m_RenderEntities)
+		{
+			const Object* object = entities[0]->p_Object;
+
+			std::vector<glm::mat4> Matrices;
+
+			for (auto& e : entities)
+			{
+				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
+				Matrices.push_back(model);
+				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
+			}
+
+			const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+
+			for (auto& e : object->p_Meshes)
+			{
+				const Mesh* mesh = &e;
+				bool indexed = mesh->p_Indexed;
+
+				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+				VAO.Bind();
+
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(2);
+				glDisableVertexAttribArray(3);
+				glDisableVertexAttribArray(4);
+				glDisableVertexAttribArray(9);
+				glDisableVertexAttribArray(10);
+				glDisableVertexAttribArray(11);
+				glDisableVertexAttribArray(12);
+
+				if (indexed)
+				{
+					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+				}
+
+				else
+				{
+					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+				}
+
+				glEnableVertexAttribArray(1);
+				glEnableVertexAttribArray(2);
+				glEnableVertexAttribArray(3);
+				glEnableVertexAttribArray(4);
+				glEnableVertexAttribArray(9);
+				glEnableVertexAttribArray(10);
+				glEnableVertexAttribArray(11);
+				glEnableVertexAttribArray(12);
+
+				VAO.Unbind();
+			}
+		}
+
+		return;
 	}
 
 	/*
@@ -355,6 +360,17 @@ namespace Glide3D
 		RenderShadowMaps();
 		
 		/* Light depth map rendering ends here */
+
+		// Depth Pass
+
+		m_DepthShader.Use();
+		m_DepthPassMap.Bind();
+		m_DepthPassMap.OnUpdate(); // Clear the depth map
+		RenderDepthPass(camera->GetViewProjection());
+		m_DepthPassMap.Unbind();
+		glUseProgram(0);
+
+		// Depth pass ends here
 
 		fbo.Bind();
 
