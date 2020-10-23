@@ -19,13 +19,16 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Anti Aliasing ✔
 - Post Processing pipeline ✔
 - Gamma correction ✔
+- Deferrred Rendering 
+- Full HDR Pipeline
 - Bloom
 - SSAO (Ambient Occlusion)
 - HDR (Exposure control etc.)
 - Skeletal animations
+- Physically based rendering
+  - Image based lighting
 
 # Advanced Features (That will come later..)
-- PBR 
 - Screen space reflections
 - Planar reflections
 - Cascaded shadow maps
