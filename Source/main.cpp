@@ -85,11 +85,9 @@ int main()
 	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600);
-	const float camera_speed = 0.02f; // 0.03
+	const float camera_speed = 0.02f; 
 
 	CubeObject cube;
-
-	
 
 	Entity entity(&cube);
 	Entity entity1(&cube);

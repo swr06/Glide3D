@@ -158,6 +158,22 @@ namespace GLClasses
 		glUniform1iv(GetUniformLocation(name), count, value);
 	}
 
+	void Shader::SetTextureArray(const std::string& name, const GLuint first, const GLuint count, GLboolean useShader)
+	{
+		if (useShader)
+		{
+			this->Use();
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			std::string uniform_name = name + "[" + std::to_string(i) + "]";
+			glUniform1i(GetUniformLocation(uniform_name), i + first);
+		}
+
+		return;
+	}
+
 	void Shader::SetVector2f(const std::string& name, GLfloat x, GLfloat y, GLboolean useShader)
 	{
 		if (useShader)
