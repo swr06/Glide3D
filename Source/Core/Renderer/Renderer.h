@@ -79,7 +79,8 @@ namespace Glide3D
 		void RenderReflectionMaps(FPSCamera* camera);
 		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
 		void RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera);
-		
+		void RenderEnvironmentMap(FPSCamera* camera);
+
 		// Deferred rendering pass stuff
 		GeometryRenderBuffer m_GeometryPassBuffer;
 

@@ -212,6 +212,14 @@ namespace Glide3D
 		return;
 	}
 
+	void Renderer::RenderEnvironmentMap(FPSCamera* camera)
+	{
+		if (m_EnvironmentMap)
+		{
+			m_EnvironmentMap->RenderSkybox(camera);
+		}
+	}
+
 	void Renderer::RenderReflectionMaps(FPSCamera* camera)
 	{
 		// Set the uniforms
@@ -380,6 +388,11 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.SetInteger("u_AlbedoMap", 0, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_NormalMap", 1, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_SpecularMap", 2, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_EnvironmentMap", 3, 0);
+		m_DeferredGeometryPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 
 		for (auto& entities : m_RenderEntities)
 		{
@@ -416,6 +429,7 @@ namespace Glide3D
 				m_DeferredGeometryPassShader.SetVector4f("u_Color", mesh->p_Color);
 				m_DeferredGeometryPassShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 				m_DeferredGeometryPassShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
+				m_DeferredGeometryPassShader.SetFloat("u_Reflectance", object->p_Reflectance);
 
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 				VAO.Bind();
@@ -438,16 +452,11 @@ namespace Glide3D
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		/* Geometry Pass ends here */
-
+		
 		/* Lighting Pass starts here */
 
-		/*
-		uniform vec3 u_ViewerPosition;
-		uniform vec3 u_AmbientLight;
-		*/
-
 		fbo.Bind();
-
+		RenderEnvironmentMap(camera);
 		m_DeferredLightPassShader.Use();
 		m_DeferredLightPassShader.SetInteger("u_PositionTexture", 0);
 		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
@@ -455,6 +464,7 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));
 		SetLightUniforms(m_DeferredLightPassShader);
+		BindLightingMaps();
 
 		// Bind the textures
 		glActiveTexture(GL_TEXTURE0);
@@ -470,13 +480,12 @@ namespace Glide3D
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		m_FBOVAO.Unbind();
 
-		glUseProgram(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		/* Lighting Pass ends here */
 
-		m_RenderEntities.clear();
+		// Clean up
 		glUseProgram(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		m_RenderEntities.clear();
 
 		// Increment the current frame
 		m_CurrentFrame++;
