@@ -207,6 +207,9 @@
     <ClInclude Include="Core\GlideEngine.h">
       <Filter>Core\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GeometryRenderBuffer.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -321,6 +324,9 @@
     <ClCompile Include="Core\GL_Classes\CubemapArrayTexture.cpp">
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Core\GeometryRenderBuffer.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">
@@ -363,6 +369,18 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\ReflectionVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\SSAOFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\SSAOVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\GeometryPassFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\GeometryPassVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
   </ItemGroup>

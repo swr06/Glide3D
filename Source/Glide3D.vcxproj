@@ -152,6 +152,7 @@
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\Entity\Entity.h" />
     <ClInclude Include="Core\FpsCamera.h" />
+    <ClInclude Include="Core\GeometryRenderBuffer.h" />
     <ClInclude Include="Core\GlideEngine.h" />
     <ClInclude Include="Core\GL_Classes\CubeDepthMap.h" />
     <ClInclude Include="Core\GL_Classes\CubemapArrayTexture.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\Entity\Entity.cpp" />
     <ClCompile Include="Core\FpsCamera.cpp" />
+    <ClCompile Include="Core\GeometryRenderBuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeDepthMap.cpp" />
     <ClCompile Include="Core\GL_Classes\CubemapArrayTexture.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeReflectionMap.cpp" />
@@ -247,12 +249,16 @@
     <None Include="Core\Shaders\DepthVert.glsl" />
     <None Include="Core\Shaders\FramebufferFrag.glsl" />
     <None Include="Core\Shaders\FramebufferVert.glsl" />
+    <None Include="Core\Shaders\GeometryPassFrag.glsl" />
+    <None Include="Core\Shaders\GeometryPassVert.glsl" />
     <None Include="Core\Shaders\ReflectionFrag.glsl" />
     <None Include="Core\Shaders\ReflectionVert.glsl" />
     <None Include="Core\Shaders\RendererFrag.glsl" />
     <None Include="Core\Shaders\RendererVert.glsl" />
     <None Include="Core\Shaders\SkyboxFrag.glsl" />
     <None Include="Core\Shaders\SkyboxVertex.glsl" />
+    <None Include="Core\Shaders\SSAOFrag.glsl" />
+    <None Include="Core\Shaders\SSAOVert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

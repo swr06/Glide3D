@@ -85,7 +85,12 @@ namespace GLClasses
 			if (width != m_FBWidth || height != m_FBHeight)
 			{
 				glDeleteFramebuffers(1, &m_FBO);
+				glDeleteTextures(1, &m_TextureAttachment);
+				glDeleteTextures(1, &m_DepthStencilBuffer);
+
 				m_FBO = 0;
+				m_TextureAttachment = 0;
+				m_DepthStencilBuffer = 0;
 				CreateFramebuffer(width, height);
 				m_FBWidth = width;
 				m_FBHeight = height;
