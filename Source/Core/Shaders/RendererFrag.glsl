@@ -1,3 +1,8 @@
+/*
+Forward rendering shader
+Used for initial prototyping 
+*/
+
 #version 440 core
 
 /*

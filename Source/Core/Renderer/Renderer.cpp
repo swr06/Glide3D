@@ -441,12 +441,20 @@ namespace Glide3D
 
 		/* Lighting Pass starts here */
 
+		/*
+		uniform vec3 u_ViewerPosition;
+		uniform vec3 u_AmbientLight;
+		*/
+
 		fbo.Bind();
 
 		m_DeferredLightPassShader.Use();
 		m_DeferredLightPassShader.SetInteger("u_PositionTexture", 0);
 		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
 		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
+		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
+		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));
+		SetLightUniforms(m_DeferredLightPassShader);
 
 		// Bind the textures
 		glActiveTexture(GL_TEXTURE0);

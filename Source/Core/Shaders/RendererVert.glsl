@@ -1,7 +1,12 @@
+/*
+Forward rendering shader
+Used for initial prototyping 
+*/
+
 #version 440 core
 
 #define MAX_DIRECTIONAL_LIGHTS 2
-#define MAX_POINT_LIGHTS 100
+#define MAX_POINT_LIGHTS 14
 
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
