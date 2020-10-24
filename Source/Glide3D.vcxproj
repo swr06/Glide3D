@@ -251,6 +251,8 @@
     <None Include="Core\Shaders\FramebufferVert.glsl" />
     <None Include="Core\Shaders\GeometryPassFrag.glsl" />
     <None Include="Core\Shaders\GeometryPassVert.glsl" />
+    <None Include="Core\Shaders\LightingPassFrag.glsl" />
+    <None Include="Core\Shaders\LightingPassVert.glsl" />
     <None Include="Core\Shaders\ReflectionFrag.glsl" />
     <None Include="Core\Shaders\ReflectionVert.glsl" />
     <None Include="Core\Shaders\RendererFrag.glsl" />

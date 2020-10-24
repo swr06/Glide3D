@@ -1,9 +1,15 @@
 #include "Renderer.h"
 
+/*
+The Glide3D Rendering Engine
+- Uses instanced rendering
+- Deffered shading pipeline
+*/
+
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(800, 600)
 	{
 		/* Framebuffer stuff */
 
@@ -31,6 +37,10 @@ namespace Glide3D
 		m_DepthShader.CompileShaders();
 		m_ReflectionShader.CreateShaderProgramFromFile("Core/Shaders/ReflectionVert.glsl", "Core/Shaders/ReflectionFrag.glsl");
 		m_ReflectionShader.CompileShaders();
+		m_DeferredGeometryPassShader.CreateShaderProgramFromFile("Core/Shaders/GeometryPassVert.glsl", "Core/Shaders/GeometryPassFrag.glsl");
+		m_DeferredGeometryPassShader.CompileShaders();
+		m_DeferredLightPassShader.CreateShaderProgramFromFile("Core/Shaders/LightingPassVert.glsl", "Core/Shaders/LightingPassFrag.glsl");
+		m_DeferredLightPassShader.CompileShaders();
 	}
 
 	void Renderer::AddDirectionalLight(DirectionalLight& light)
@@ -353,35 +363,23 @@ namespace Glide3D
 		}
 
 		RenderShadowMaps();
-		
-		/* Light depth map rendering ends here */
 
-		fbo.Bind();
+		// Deferred shading pipeline starts here
 
-		if (m_EnvironmentMap)
-		{
-			m_EnvironmentMap->RenderSkybox(camera);
-			//m_EnvironmentMap->GetTexture().Bind(4);
-			glActiveTexture(GL_TEXTURE4);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
-		}
+		/* Geometry Pass starts here */
 
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		m_RendererShader.Use();
-		m_RendererShader.SetFloat("u_AmbientStrength", 0.7f);
-		m_RendererShader.SetInteger("u_AlbedoMap", 0);
-		m_RendererShader.SetInteger("u_NormalMap", 1);
-		m_RendererShader.SetInteger("u_LightMap", 2);
-		m_RendererShader.SetInteger("u_Parallax", 3);
-		m_RendererShader.SetInteger("u_EnvironmentMap", 4);
-		m_RendererShader.SetVector3f("u_ViewerPosition", camera->GetPosition());  
-		m_RendererShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
+		m_GeometryPassBuffer.Bind();
 
-		SetLightUniforms(m_RendererShader);
-		BindLightingMaps();
+		// Clear the geometry buffer
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		m_DeferredGeometryPassShader.Use();
+		m_DeferredGeometryPassShader.SetMatrix4("u_ViewProjection", camera->GetViewProjection());
+		m_DeferredGeometryPassShader.SetInteger("u_AlbedoMap", 0, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_NormalMap", 1, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_SpecularMap", 2, 0);
 
 		for (auto& entities : m_RenderEntities)
 		{
@@ -415,11 +413,9 @@ namespace Glide3D
 					mesh->p_NormalMap.Bind(1);
 				}
 
-				/* These uniforms vary from Object to object */
-				m_RendererShader.SetVector4f("u_Color", mesh->p_Color);
-				m_RendererShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
-				m_RendererShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
-				m_RendererShader.SetFloat("u_Reflectance", (float)object->p_Reflectance);
+				m_DeferredGeometryPassShader.SetVector4f("u_Color", mesh->p_Color);
+				m_DeferredGeometryPassShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
+				m_DeferredGeometryPassShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
 
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 				VAO.Bind();
@@ -437,6 +433,39 @@ namespace Glide3D
 				VAO.Unbind();
 			}
 		}
+
+		glUseProgram(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		/* Geometry Pass ends here */
+
+		/* Lighting Pass starts here */
+
+		fbo.Bind();
+
+		m_DeferredLightPassShader.Use();
+		m_DeferredLightPassShader.SetInteger("u_PositionTexture", 0);
+		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
+		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
+
+		// Bind the textures
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPositionTexture());
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetNormalTexture());
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetColorTexture());
+
+		m_FBOVAO.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_FBOVAO.Unbind();
+
+		glUseProgram(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		/* Lighting Pass ends here */
 
 		m_RenderEntities.clear();
 		glUseProgram(0);
@@ -468,7 +497,6 @@ namespace Glide3D
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		m_FBOVAO.Unbind();
 		glEnable(GL_DEPTH_TEST);
-
 
 		glUseProgram(0);
 	}

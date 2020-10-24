@@ -12,6 +12,7 @@
 #include "../Utils/Defs.h"
 #include "../FpsCamera.h"
 #include "../Macros.h"
+#include "../GeometryRenderBuffer.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -58,6 +59,8 @@ namespace Glide3D
 		GLClasses::Shader m_FBOShader;
 		GLClasses::Shader m_DepthShader;
 		GLClasses::Shader m_ReflectionShader;
+		GLClasses::Shader m_DeferredGeometryPassShader;
+		GLClasses::Shader m_DeferredLightPassShader;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
@@ -76,6 +79,9 @@ namespace Glide3D
 		void RenderReflectionMaps(FPSCamera* camera);
 		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
 		void RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera);
+		
+		// Deferred rendering pass stuff
+		GeometryRenderBuffer m_GeometryPassBuffer;
 
 		// Tests
 		GLClasses::CubeReflectionMap m_ReflectionMap;

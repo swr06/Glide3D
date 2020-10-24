@@ -10,13 +10,10 @@ layout (location = 1) out vec3 o_Normal;
 layout (location = 2) out vec4 o_Color;
 
 uniform vec4 u_Color;
-uniform vec3 u_ViewerPosition;
 
 uniform sampler2D u_AlbedoMap;
 uniform sampler2D u_SpecularMap; 
 uniform sampler2D u_NormalMap;
-
-//uniform float u_Reflectance = 0.0f;
 
 uniform int u_HasAlbedoMap = 0;
 uniform int u_HasNormalMap = 0;

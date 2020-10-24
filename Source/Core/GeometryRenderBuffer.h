@@ -44,7 +44,27 @@ namespace Glide3D
 			v.m_FBO = 0;
 		}
 
+		void Bind() const
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+		}
+
+		void Unbind() const
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+
 		void SetDimensions(uint32_t w, uint32_t h);
+
+		std::pair<uint32_t, uint32_t> GetDimensions() 
+		{ 
+			return { m_Width, m_Height };
+		}
+
+		inline GLuint GetFramebufferID() const noexcept { return m_FBO; }
+		inline GLuint GetPositionTexture() const noexcept { return m_PositionTexture; }
+		inline GLuint GetColorTexture() const noexcept { return m_ColorTexture; }
+		inline GLuint GetNormalTexture() const noexcept { return m_NormalTexture; }
 
 	private :
 
