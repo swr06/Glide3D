@@ -18,8 +18,8 @@ uniform sampler2D u_NormalMap;
 // For reflections
 uniform samplerCube u_EnvironmentMap;
 uniform vec3 u_ViewerPosition;
-uniform float u_Reflectance = 0.0f;
-
+uniform vec3 u_Reflectance = vec3(0.0f);
+uniform int u_HasReflections = 0;
 uniform int u_HasAlbedoMap = 0;
 uniform int u_HasNormalMap = 0;
 
@@ -49,14 +49,16 @@ void main()
 	}
 
 	o_Position = v_FragPosition;
-	
-	// Reflections 
-	if (u_Reflectance > 0.002f)
+
+	if (u_HasReflections == 1)
 	{
+		// Reflections 
 		vec3 I = normalize(v_FragPosition - u_ViewerPosition);
 		vec3 R = reflect(I, o_Normal);
 		vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
-		o_Color = mix(o_Color, reflect_color, u_Reflectance);
+		o_Color.r += reflect_color.r * u_Reflectance.r;
+		o_Color.g += reflect_color.g * u_Reflectance.g;
+		o_Color.b += reflect_color.b * u_Reflectance.b;
 	}
 }
 

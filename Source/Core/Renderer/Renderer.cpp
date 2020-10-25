@@ -392,7 +392,7 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.SetInteger("u_SpecularMap", 2, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_EnvironmentMap", 3, 0);
 		m_DeferredGeometryPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
-
+		
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 
@@ -431,8 +431,9 @@ namespace Glide3D
 				m_DeferredGeometryPassShader.SetVector4f("u_Color", mesh->p_Color);
 				m_DeferredGeometryPassShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 				m_DeferredGeometryPassShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
-				m_DeferredGeometryPassShader.SetFloat("u_Reflectance", mesh->p_Reflectivity);
-
+				m_DeferredGeometryPassShader.SetInteger("u_HasReflections", static_cast<int>(mesh->p_Reflectivity != glm::vec3(0.0f)));
+				m_DeferredGeometryPassShader.SetVector3f("u_Reflectance", mesh->p_Reflectivity);
+				
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 				VAO.Bind();
 

@@ -51,7 +51,7 @@ namespace Glide3D
 
 		std::vector<Mesh> p_Meshes;
 
-		bool p_CanFacecull = false;
+		bool p_CanFacecull = true;
 		ReflectionMapProperties p_ReflectionProps;
 		glm::vec3 p_Center; // The center of the mesh in localized space
 		GLClasses::VertexBuffer p_MatrixBuffer; // Internal. Should not be accessed

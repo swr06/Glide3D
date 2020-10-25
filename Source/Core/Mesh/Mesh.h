@@ -40,7 +40,7 @@ namespace Glide3D
 		bool p_Indexed = false;
 
 		glm::vec4 p_Color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		float p_Reflectivity = 0.0f;
+		glm::vec3 p_Reflectivity = glm::vec3(0.0f);
 	};
 
 }

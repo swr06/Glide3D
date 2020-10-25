@@ -14,7 +14,7 @@ using namespace Glide3D;
 FPSCamera camera(70, 800.0f / 600.0f, 0.2f, 1000.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
-float exposure = 0.2f;
+float exposure = 0.1f;
 float camera_speed = 0.02f;
 std::stringstream camera_props;
 
@@ -130,11 +130,12 @@ int main()
 	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.model");
 
 	FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.model");
-	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.model");
-	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.model");
-	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.model");
+	//FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.model");
+	//FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.model");
+	//FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.model");
 	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
+	object_1.p_CanFacecull = false;
 	object_1.p_CanFacecull = false;
 	object_4.AddTextureMapToMesh("Resources/brickwall.jpg", TextureType::Albedo, true);
 	object_4.AddTextureMapToMesh("Resources/brickwall_normal.jpg", TextureType::Normal, true);
@@ -191,7 +192,7 @@ int main()
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(90, 193, 65); // 10, 70, 10
 	d_light.m_SpecularStrength = 2.0f;
-	d_light.m_SpecularExponent = 0;
+	d_light.m_SpecularExponent = 256;
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 60;
 
@@ -206,6 +207,7 @@ int main()
 	PointLight p_light; // -73 8 81 
 	p_light.m_Position = glm::vec3(-73, 8, 81);
 	p_light.m_SpecularStrength = 0.01f;
+
 	p_light.m_SpecularExponent = 1;
 	p_light.m_IsBlinn = true;
 	p_light.m_Linear = 0.09f;

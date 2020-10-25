@@ -49,7 +49,7 @@ namespace Glide3D
 			}
 		}
 
-		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, float reflectivity)
+		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, const glm::vec3& reflectivity)
 		{
 			Mesh& _mesh = object->GenerateMesh();
 			std::vector<Vertex>& vertices = _mesh.p_Vertices;
@@ -139,7 +139,7 @@ namespace Glide3D
 			aiScene* scene;
 			Object* object;
 			std::string pth;
-			float reflectivity = 0.0f;
+			glm::vec3 reflectivity;
 		};
 
 		std::vector<TransparentMesh> transparent_meshes;
@@ -158,11 +158,21 @@ namespace Glide3D
 				aiColor4D diffuse_color;
 				aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse_color);
 
-				float transparency;
-				aiGetMaterialFloat(material, AI_MATKEY_OPACITY, &transparency);
+				float transparency = 0.0f;
 
-				float reflectivity;
-				aiGetMaterialFloat(material, AI_MATKEY_REFLECTIVITY, &reflectivity);
+				if (aiGetMaterialFloat(material, AI_MATKEY_OPACITY, &transparency) == AI_FAILURE)
+				{
+					transparency = 0.0f;
+				}
+
+				aiVector3D _reflectivity;
+
+				if (material->Get(AI_MATKEY_COLOR_REFLECTIVE, _reflectivity) == AI_FAILURE)
+				{
+					_reflectivity = aiVector3D(0.0f);
+				}
+
+				glm::vec3 reflectivity = glm::vec3(_reflectivity.x, _reflectivity.y, _reflectivity.z);
 
 				glm::vec4 final_color;
 
