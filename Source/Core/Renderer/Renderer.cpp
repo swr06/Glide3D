@@ -43,7 +43,7 @@ namespace Glide3D
 		m_DeferredLightPassShader.CompileShaders();
 	}
 
-	void Renderer::AddDirectionalLight(DirectionalLight& light)
+	void Renderer::AddDirectionalLight(DirectionalLight* light)
 	{
 		if (m_DirectionalLights.size() + 1 > MAX_DIRECTIONAL_LIGHTS)
 		{
@@ -53,7 +53,7 @@ namespace Glide3D
 			assert(0);
 		}
 
-		m_DirectionalLights.emplace_back(std::move(light));
+		m_DirectionalLights.emplace_back(light);
 	}
 
 	void Renderer::AddPointLight(const PointLight& light)
@@ -83,13 +83,13 @@ namespace Glide3D
 
 			std::string matname = "u_DirectionalLightSpaceVP[" + std::to_string(i) + "]";
 			shader.SetMatrix4(matname,
-				m_DirectionalLights[i].m_LightSpaceViewProjection, 0);
+				m_DirectionalLights[i]->m_LightSpaceViewProjection, 0);
 
-			shader.SetVector3f(name + ".m_Direction", m_DirectionalLights[i].m_Direction);
-			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i].m_SpecularColor);
-			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i].m_SpecularExponent);
-			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i].m_SpecularStrength);
-			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i].m_IsBlinn);
+			shader.SetVector3f(name + ".m_Direction", m_DirectionalLights[i]->m_Direction);
+			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i]->m_SpecularColor);
+			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i]->m_SpecularExponent);
+			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i]->m_SpecularStrength);
+			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i]->m_IsBlinn);
 			shader.SetInteger(name + ".m_DepthMap", (int)5 + i); // 5 slots are used for the materials
 		}
 
@@ -114,7 +114,7 @@ namespace Glide3D
 		for (int i = 0 ; i < m_DirectionalLights.size() ; i++)
 		{
 			glActiveTexture(GL_TEXTURE5 + i);
-			glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[i].m_DepthBuffer.GetDepthTexture());
+			glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[i]->m_DepthBuffer.GetDepthTexture());
 		}
 	}
 
@@ -262,18 +262,18 @@ namespace Glide3D
 
 		for (auto& e : m_DirectionalLights)
 		{
-			if (m_CurrentFrame == 0 || (e.m_UpdateRate > 0 && m_CurrentFrame % e.m_UpdateRate == 0))
+			if (m_CurrentFrame == 0 || (e->m_UpdateRate > 0 && m_CurrentFrame % e->m_UpdateRate == 0))
 			{
-				e.m_DepthBuffer.Bind();
-				e.m_DepthBuffer.OnUpdate();
+				e->m_DepthBuffer.Bind();
+				e->m_DepthBuffer.OnUpdate();
 				glDisable(GL_CULL_FACE);
 
 				/* Create the view projection matrix for the light */
 
-				e.m_LightSpaceView = glm::lookAt(e.m_ShadowPosition, e.m_ShadowPosition + e.m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
-				e.m_LightSpaceViewProjection = e.m_LightSpaceProjection * e.m_LightSpaceView;
+				e->m_LightSpaceView = glm::lookAt(e->m_ShadowPosition, e->m_ShadowPosition + e->m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
+				e->m_LightSpaceViewProjection = e->m_LightSpaceProjection * e->m_LightSpaceView;
 
-				m_DepthShader.SetMatrix4("u_ViewProjection", e.m_LightSpaceViewProjection);
+				m_DepthShader.SetMatrix4("u_ViewProjection", e->m_LightSpaceViewProjection);
 
 				for (auto& entities : m_RenderEntities)
 				{
@@ -365,6 +365,8 @@ namespace Glide3D
 	*/
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
+		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
+
 		if (m_CurrentFrame == 0)
 		{
 			RenderReflectionMaps(camera);

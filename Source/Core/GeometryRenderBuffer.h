@@ -47,6 +47,7 @@ namespace Glide3D
 		void Bind() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+			glViewport(0, 0, m_Width, m_Height);
 		}
 
 		void Unbind() const

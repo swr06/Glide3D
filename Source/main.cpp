@@ -11,10 +11,12 @@ hazurl
 
 using namespace Glide3D;
 
-FPSCamera camera(70, 800.0f / 600.0f, 0.1f, 400.0f, 0.25f);
+FPSCamera camera(70, 800.0f / 600.0f, 0.2f, 1000.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
 float exposure = 0.2f;
+float camera_speed = 0.02f;
+std::stringstream camera_props;
 
 class MyApp : public Application
 {
@@ -31,9 +33,21 @@ public:
 
 	void OnImguiRender(double ts) override
 	{
-		if (ImGui::Begin("Settings"))
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoTitleBar;
+		window_flags |= ImGuiWindowFlags_NoScrollbar;
+		window_flags |= ImGuiWindowFlags_NoResize;
+		window_flags |= ImGuiWindowFlags_NoBackground;
+
+		if (ImGui::Begin("Settings", false, window_flags))
 		{
+			const glm::vec3& position = camera.GetPosition();
+			const glm::vec3& front = camera.GetFront();
+
 			ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
+			ImGui::SliderFloat("Speed", &camera_speed, 0.01f, 2.0f);
+			ImGui::Text("Camera Position : %f, %f, %f", position.x, position.y, position.z);
+			ImGui::Text("Camera Front : %f, %f, %f", front.x, front.y, front.z);
 			ImGui::End();
 		}
 	}
@@ -91,7 +105,6 @@ int main()
 	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600, true);
-	const float camera_speed = 0.02f; 
 
 	CubeObject cube;
 
@@ -114,12 +127,12 @@ int main()
 	Object object_5;
 
 	// Load all the OBJ files
-	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.objm");
+	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.model");
 
-	//FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.obj");
-	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.objm");
-	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.objm");
-	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.objm");
+	FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.model");
+	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.model");
+	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.model");
+	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.model");
 	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
 	object_1.p_CanFacecull = false;
@@ -173,14 +186,14 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
-	DirectionalLight d_light({ -100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 100.0f }, {6084,6084 });
+	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {8096,8096 });
 
 	d_light.m_Direction = light_dir;
-	d_light.m_ShadowPosition = glm::vec3(10, 70, 10);
-	d_light.m_SpecularStrength = 0.01f;
+	d_light.m_ShadowPosition = glm::vec3(90, 193, 65); // 10, 70, 10
+	d_light.m_SpecularStrength = 2.0f;
 	d_light.m_SpecularExponent = 0;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 0;
+	d_light.m_UpdateRate = 60;
 
 	/*DirectionalLight d_light2;
 
@@ -210,7 +223,7 @@ int main()
 		});
 
 	renderer.SetEnvironmentMap(skybox);
-	renderer.AddDirectionalLight(d_light);
+	renderer.AddDirectionalLight(&d_light);
 	renderer.AddPointLight(p_light);
 
 	glDisable(GL_BLEND);
@@ -260,14 +273,14 @@ int main()
 		}
 
 		//renderer.AddEntityToRenderQueue({ &entity });
-		//renderer.AddEntityToRenderQueue({ sponza });
-		renderer.AddEntityToRenderQueue({ &suzanne });
-		renderer.AddEntityToRenderQueue({ &backpack });
-		renderer.AddEntityToRenderQueue({ &sphere });
-		renderer.AddEntityToRenderQueue({ &brickwall });
-		renderer.AddEntityToRenderQueue({ &block0_entity });
-		renderer.AddEntityToRenderQueue({ &block1_entity });
-		renderer.AddEntityToRenderQueue({ &floor_entity });
+		renderer.AddEntityToRenderQueue({ &sponza });
+		//renderer.AddEntityToRenderQueue({ &suzanne });
+		//renderer.AddEntityToRenderQueue({ &backpack });
+		//renderer.AddEntityToRenderQueue({ &sphere });
+		//renderer.AddEntityToRenderQueue({ &brickwall });
+		//renderer.AddEntityToRenderQueue({ &block0_entity });
+		//renderer.AddEntityToRenderQueue({ &block1_entity });
+		//renderer.AddEntityToRenderQueue({ &floor_entity });
 		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);
@@ -275,15 +288,6 @@ int main()
 		camera.OnUpdate();
 		camera.ResetAcceleration();
 		app.FinishFrame(); 
-
-		// Print the camera position and rotation every 60 frames
-		if (renderer.GetCurrentFrame() % 60 == 0)
-		{
-			const glm::vec3& vec = camera.GetPosition();
-			std::cout << "\nCAMERA POSITION : X : " << vec.x << "   |  Y : " << vec.y << "  Z  : " << vec.z;
-			const glm::vec3& vec1 = camera.GetFront();
-			std::cout << "\nCAMERA ROTATION : X : " << vec1.x << "   |  Y : " << vec1.y << "  Z  : " << vec1.z;
-		}
 
 		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
 	}

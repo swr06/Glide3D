@@ -36,7 +36,7 @@ namespace Glide3D
 	public :
 		Renderer(GLFWwindow* window);
 
-		void AddDirectionalLight(DirectionalLight& light);
+		void AddDirectionalLight(DirectionalLight* light);
 		void AddPointLight(const PointLight& light);
 
 		// Rendering
@@ -66,7 +66,7 @@ namespace Glide3D
 		GLClasses::VertexBuffer m_FBOVBO;
 		GLFWwindow* m_Window;
 		GLClasses::SSBO m_LightSSBO;
-		std::vector<DirectionalLight> m_DirectionalLights;
+		std::vector<DirectionalLight*> m_DirectionalLights;
 		std::vector<PointLight> m_PointLights;
 		std::vector<std::vector<const Entity*>> m_RenderEntities;
 		Skybox* m_EnvironmentMap = nullptr;
