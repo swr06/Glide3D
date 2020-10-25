@@ -429,7 +429,7 @@ namespace Glide3D
 				m_DeferredGeometryPassShader.SetVector4f("u_Color", mesh->p_Color);
 				m_DeferredGeometryPassShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 				m_DeferredGeometryPassShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
-				m_DeferredGeometryPassShader.SetFloat("u_Reflectance", object->p_Reflectance);
+				m_DeferredGeometryPassShader.SetFloat("u_Reflectance", mesh->p_Reflectivity);
 
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 				VAO.Bind();

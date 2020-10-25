@@ -49,7 +49,7 @@ namespace Glide3D
 			}
 		}
 
-		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col)
+		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, float reflectivity)
 		{
 			Mesh& _mesh = object->GenerateMesh();
 			std::vector<Vertex>& vertices = _mesh.p_Vertices;
@@ -123,6 +123,7 @@ namespace Glide3D
 			// process materials
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			_mesh.p_Color = col;
+			_mesh.p_Reflectivity = reflectivity;
 	
 			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->p_Meshes.back(), pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->p_Meshes.back(), pth);
@@ -138,6 +139,7 @@ namespace Glide3D
 			aiScene* scene;
 			Object* object;
 			std::string pth;
+			float reflectivity = 0.0f;
 		};
 
 		std::vector<TransparentMesh> transparent_meshes;
@@ -159,6 +161,9 @@ namespace Glide3D
 				float transparency;
 				aiGetMaterialFloat(material, AI_MATKEY_OPACITY, &transparency);
 
+				float reflectivity;
+				aiGetMaterialFloat(material, AI_MATKEY_REFLECTIVITY, &reflectivity);
+
 				glm::vec4 final_color;
 
 				final_color = glm::vec4(diffuse_color.r, diffuse_color.g, diffuse_color.b, diffuse_color.a) *
@@ -174,13 +179,14 @@ namespace Glide3D
 					m.scene = (aiScene*)Scene;
 					m.object = object;
 					m.pth = pth;
+					m.reflectivity = reflectivity;
 
 					transparent_meshes.push_back(m);
 					continue;
 				}
 
 				ProcessAssimpMesh(mesh, Scene, object, pth, 
-					final_color);
+					final_color, reflectivity);
 			}
 
 			for (int i = 0; i < Node->mNumChildren; i++)
@@ -193,7 +199,7 @@ namespace Glide3D
 		{
 			for (auto& e : transparent_meshes)
 			{
-				ProcessAssimpMesh(e.mesh, (const aiScene*)e.scene, e.object, e.pth, e.final_color);
+				ProcessAssimpMesh(e.mesh, (const aiScene*)e.scene, e.object, e.pth, e.final_color, e.reflectivity);
 			}
 
 			transparent_meshes.clear();
