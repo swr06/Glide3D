@@ -130,9 +130,9 @@ int main()
 	//FileLoader::LoadOBJFile(&object_1, "Resources/teapot.model");
 
 	FileLoader::LoadOBJFile(&object_1, "Resources/models/sponza/quintessentials.model");
-	//FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.model");
-	//FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.model");
-	//FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.model");
+	FileLoader::LoadOBJFile(&object_2, "Resources/suzanne.model");
+	FileLoader::LoadOBJFile(&object_3, "Resources/12305_backpack_v2_l3.model");
+	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.model");
 	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
 	object_1.p_CanFacecull = false;
@@ -192,7 +192,7 @@ int main()
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(90, 193, 65); // 10, 70, 10
 	d_light.m_SpecularStrength = 2.0f;
-	d_light.m_SpecularExponent = 256;
+	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 60;
 

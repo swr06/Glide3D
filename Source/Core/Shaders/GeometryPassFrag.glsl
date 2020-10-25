@@ -52,13 +52,12 @@ void main()
 
 	if (u_HasReflections == 1)
 	{
-		// Reflections 
-		vec3 I = normalize(v_FragPosition - u_ViewerPosition);
-		vec3 R = reflect(I, o_Normal);
-		vec4 reflect_color = vec4(texture(u_EnvironmentMap, R).rgb, 1.0);
-		o_Color.r += reflect_color.r * u_Reflectance.r;
-		o_Color.g += reflect_color.g * u_Reflectance.g;
-		o_Color.b += reflect_color.b * u_Reflectance.b;
+		vec4 reflect_color = vec4(texture(u_EnvironmentMap, 
+		reflect(normalize(v_FragPosition - u_ViewerPosition), o_Normal)).rgb, 1.0);
+
+		o_Color.r = mix(o_Color, reflect_color, u_Reflectance.r).r;
+		o_Color.g = mix(o_Color, reflect_color, u_Reflectance.g).g;
+		o_Color.b = mix(o_Color, reflect_color, u_Reflectance.b).b;
 	}
 }
 

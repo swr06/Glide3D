@@ -222,6 +222,44 @@ namespace Glide3D
 
 	void Renderer::RenderReflectionMaps(FPSCamera* camera)
 	{
+		/*
+		// Set the uniforms
+		m_ReflectionShader.Use();
+		m_ReflectionShader.SetInteger("u_AlbedoMap", 0, 0);
+
+		glm::mat4 projection_matrix;
+
+		for (auto& entities : m_RenderEntities)
+		{
+			for (auto& e : entities)
+			{
+				if (!e->p_RenderReflectionCubemap) { continue; }
+
+				const GLClasses::CubeReflectionMap& fbo = e->p_ReflectionCubemap;
+				const glm::vec3& entity_position = e->p_ReflectionPosition;
+
+				projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 150.0f);
+				fbo.Bind();
+
+				std::array<glm::mat4, 6> view_matrices =
+				{
+					glm::lookAt(entity_position, entity_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+					glm::lookAt(entity_position, entity_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+					glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+					glm::lookAt(entity_position, entity_position + glm::vec3(0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+					glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+					glm::lookAt(entity_position, entity_position + glm::vec3(0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+				};
+
+				for (int i = 0; i < 6; i++)
+				{
+					fbo.BindFace(i);
+					m_ReflectionShader.SetMatrix4("u_ViewProjection", projection_matrix * view_matrices[i], 1);
+					_RenderEntitesForReflectionMap(projection_matrix, view_matrices[i]);
+				}
+			}
+		}*/
+
 		// Set the uniforms
 		m_ReflectionShader.Use();
 		m_ReflectionShader.SetInteger("u_AlbedoMap", 0, 0);
