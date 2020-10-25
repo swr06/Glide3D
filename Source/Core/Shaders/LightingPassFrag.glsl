@@ -168,6 +168,7 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map)
 
 	vec2 texelsz = 1.0 / textureSize(map, 0);
 
+	// Take the average of the surrounding texels to create the PCF effect
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)

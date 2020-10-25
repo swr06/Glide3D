@@ -158,6 +158,7 @@
     <ClInclude Include="Core\GL_Classes\CubemapArrayTexture.h" />
     <ClInclude Include="Core\GL_Classes\CubeReflectionMap.h" />
     <ClInclude Include="Core\GL_Classes\CubeTextureMap.h" />
+    <ClInclude Include="Core\GL_Classes\DepthBuffer.h" />
     <ClInclude Include="Core\GL_Classes\Fps.h" />
     <ClInclude Include="Core\GL_Classes\Framebuffer.h" />
     <ClInclude Include="Core\GL_Classes\IndexBuffer.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Core\GL_Classes\CubemapArrayTexture.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeReflectionMap.cpp" />
     <ClCompile Include="Core\GL_Classes\CubeTextureMap.cpp" />
+    <ClCompile Include="Core\GL_Classes\DepthBuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\Fps.cpp" />
     <ClCompile Include="Core\GL_Classes\Framebuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\IndexBuffer.cpp" />
@@ -247,8 +249,8 @@
     <None Include="Core\Shaders\DepthCubemapVert.glsl" />
     <None Include="Core\Shaders\DepthFrag.glsl" />
     <None Include="Core\Shaders\DepthVert.glsl" />
-    <None Include="Core\Shaders\FramebufferFrag.glsl" />
-    <None Include="Core\Shaders\FramebufferVert.glsl" />
+    <None Include="Core\Shaders\FramebufferHDRFrag.glsl" />
+    <None Include="Core\Shaders\FramebufferHDRVert.glsl" />
     <None Include="Core\Shaders\GeometryPassFrag.glsl" />
     <None Include="Core\Shaders\GeometryPassVert.glsl" />
     <None Include="Core\Shaders\LightingPassFrag.glsl" />

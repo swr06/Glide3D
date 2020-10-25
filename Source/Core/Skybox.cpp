@@ -56,7 +56,7 @@ namespace Glide3D
             paths.bottom,
             paths.front,
             paths.back
-            });
+            }, true);
 
         m_SkyboxShader.CreateShaderProgramFromFile("Core/Shaders/SkyboxVertex.glsl", "Core/Shaders/SkyboxFrag.glsl");
         m_SkyboxShader.CompileShaders();

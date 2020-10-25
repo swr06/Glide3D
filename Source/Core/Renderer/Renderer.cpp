@@ -31,7 +31,7 @@ namespace Glide3D
 		/* Create and compile the shaders */
 		m_RendererShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
 		m_RendererShader.CompileShaders();
-		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferVert.glsl", "Core/Shaders/FramebufferFrag.glsl");
+		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferHDRVert.glsl", "Core/Shaders/FramebufferHDRFrag.glsl");
 		m_FBOShader.CompileShaders();
 		m_DepthShader.CreateShaderProgramFromFile("Core/Shaders/DepthVert.glsl", "Core/Shaders/DepthFrag.glsl");
 		m_DepthShader.CompileShaders();
@@ -498,23 +498,38 @@ namespace Glide3D
 	*/
 	void Renderer::RenderFBO(const GLClasses::Framebuffer& fbo)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		if (!fbo.IsHDR())
+		{
+			fbo.Bind();
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glBlitFramebuffer(0, 0, fbo.GetWidth(), fbo.GetHeight(), 0, 0, 800, 600, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glEnable(GL_DEPTH_TEST);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
 
-		glDisable(GL_DEPTH_TEST);
-		m_FBOShader.Use();
-		m_FBOShader.SetInteger("u_FramebufferTexture", 1);
-		glActiveTexture(GL_TEXTURE1);
+		else
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_DEPTH_BUFFER_BIT);
 
-		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
+			glDisable(GL_DEPTH_TEST);
+			m_FBOShader.Use();
+			m_FBOShader.SetInteger("u_FramebufferTexture", 1);
+			m_FBOShader.SetFloat("u_Exposure", fbo.GetExposure());
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
 
-		m_FBOVAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		m_FBOVAO.Unbind();
-		glEnable(GL_DEPTH_TEST);
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
 
-		glUseProgram(0);
+			glEnable(GL_DEPTH_TEST);
+
+			glUseProgram(0);
+		}
 	}
 }

@@ -14,6 +14,7 @@ using namespace Glide3D;
 FPSCamera camera(70, 800.0f / 600.0f, 0.1f, 400.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
+float exposure = 0.2f;
 
 class MyApp : public Application
 {
@@ -30,6 +31,11 @@ public:
 
 	void OnImguiRender(double ts) override
 	{
+		if (ImGui::Begin("Settings"))
+		{
+			ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
+			ImGui::End();
+		}
 	}
 
 	void OnEvent(Event e) override
@@ -84,7 +90,7 @@ int main()
 
 	Renderer renderer(app.GetWindow());
 	GLFWwindow* window = app.GetWindow();
-	GLClasses::Framebuffer FBO(800, 600);
+	GLClasses::Framebuffer FBO(800, 600, true);
 	const float camera_speed = 0.02f; 
 
 	CubeObject cube;
@@ -212,6 +218,8 @@ int main()
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
+		FBO.SetExposure(exposure);
+
 		app.OnUpdate();
 		app.SetCursorLocked(cursor_locked);
 

@@ -210,6 +210,9 @@
     <ClInclude Include="Core\GeometryRenderBuffer.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\DepthBuffer.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -327,6 +330,9 @@
     <ClCompile Include="Core\GeometryRenderBuffer.cpp">
       <Filter>Core\GL Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Core\GL_Classes\DepthBuffer.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">
@@ -339,12 +345,6 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\CubeRendererVert.glsl">
-      <Filter>Core\Shaders</Filter>
-    </None>
-    <None Include="Core\Shaders\FramebufferFrag.glsl">
-      <Filter>Core\Shaders</Filter>
-    </None>
-    <None Include="Core\Shaders\FramebufferVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\SkyboxFrag.glsl">
@@ -387,6 +387,12 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\LightingPassVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\FramebufferHDRFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\FramebufferHDRVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
   </ItemGroup>

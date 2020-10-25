@@ -10,7 +10,7 @@ namespace GLClasses
 	class Framebuffer
 	{
 	public :
-		Framebuffer(unsigned int w, unsigned int h);
+		Framebuffer(unsigned int w, unsigned int h, bool hdr);
 		~Framebuffer();
 
 		Framebuffer(const Framebuffer&) = delete;
@@ -22,7 +22,7 @@ namespace GLClasses
 			return *this;
 		}
 
-		Framebuffer(Framebuffer&& v)
+		Framebuffer(Framebuffer&& v) : m_IsHDR(v.m_IsHDR)
 		{
 			m_FBO = v.m_FBO;
 			m_TextureAttachment = v.m_TextureAttachment;
@@ -71,7 +71,7 @@ namespace GLClasses
 			{
 				glDeleteFramebuffers(1, &m_FBO);
 				m_FBO = 0;
-				CreateFramebuffer(width, height);
+				CreateFramebuffer(width, height, m_IsHDR);
 				m_FBWidth = width;
 				m_FBHeight = height;
 
@@ -91,7 +91,7 @@ namespace GLClasses
 				m_FBO = 0;
 				m_TextureAttachment = 0;
 				m_DepthStencilBuffer = 0;
-				CreateFramebuffer(width, height);
+				CreateFramebuffer(width, height, m_IsHDR);
 				m_FBWidth = width;
 				m_FBHeight = height;
 			}
@@ -111,73 +111,35 @@ namespace GLClasses
 		inline unsigned int GetWidth() const noexcept { return m_FBWidth; }
 		inline unsigned int GetHeight() const noexcept { return m_FBHeight; }
 
+		inline bool IsHDR() const
+		{
+			return m_IsHDR;
+		}
+
+		void SetExposure(float exp)
+		{
+			if (!m_IsHDR)
+			{
+				throw "SetExposure(float) called on a Framebuffer that is not HDR!";
+			}
+
+			m_Exposure = exp;
+		}
+
+		float GetExposure() const noexcept
+		{
+			return m_Exposure;
+		}
+
 	private :
-		void CreateFramebuffer(int w, int h);
+		void CreateFramebuffer(int w, int h, bool hdr);
 
 		GLuint m_FBO; // The Framebuffer object
 		GLuint m_TextureAttachment; // The actual texture attachment
 		GLuint m_DepthStencilBuffer;
 		int m_FBWidth;
 		int m_FBHeight;
-	};
-
-	/*
-	Can be used as a shadow map
-	*/
-	class DepthBuffer
-	{
-	public :
-		DepthBuffer(unsigned int w, unsigned int h);
-		~DepthBuffer();
-		DepthBuffer(const DepthBuffer&) = delete;
-		DepthBuffer operator=(DepthBuffer const&) = delete;
-
-		DepthBuffer& operator=(DepthBuffer&& other)
-		{
-			std::swap(*this, other); 
-			return *this;
-		}
-
-		DepthBuffer(DepthBuffer&& v)
-		{
-			m_DepthMap = v.m_DepthMap;
-			m_DepthMapFBO = v.m_DepthMapFBO;
-			m_Width = v.m_Width;
-			m_Height = v.m_Height;
-
-			v.m_DepthMap = 0;
-			v.m_DepthMapFBO = 0;
-		}
-
-		inline GLuint GetDepthTexture() const
-		{
-			return m_DepthMap;
-		}
-
-		void Bind() const
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
-			glViewport(0, 0, m_Width, m_Height);
-		}
-
-		void Unbind() const
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-
-		void OnUpdate()
-		{
-			Bind();
-			glClear(GL_DEPTH_BUFFER_BIT);
-		}
-
-		inline unsigned int GetWidth() const noexcept { return m_Width; }
-		inline unsigned int GetHeight() const noexcept { return m_Height; }
-
-	private:
-		GLuint m_DepthMap = 0;
-		GLuint m_DepthMapFBO = 0;
-		int m_Width = 0;
-		int m_Height = 0;
+		const bool m_IsHDR;
+		float m_Exposure = 0.0f;
 	};
 }

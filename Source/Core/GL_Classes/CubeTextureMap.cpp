@@ -2,7 +2,7 @@
 
 namespace GLClasses
 {
-	void CubeTextureMap::CreateCubeTextureMap(const std::vector<std::string>& cube_face_paths)
+	void CubeTextureMap::CreateCubeTextureMap(const std::vector<std::string>& cube_face_paths, bool hdr)
 	{
 		unsigned char* image_data;
 		int width, height, channels;
@@ -18,6 +18,7 @@ namespace GLClasses
 			image_data = stbi_load(cube_face_paths[i].c_str(), &width, &height, &channels, 0);
 
 			GLenum format;
+			GLenum _format;
 
 			if (channels == 1)
 			{
@@ -34,9 +35,12 @@ namespace GLClasses
 				format = GL_RGBA;
 			}
 
+			_format = format;
+			_format = hdr ? GL_SRGB : _format;
+
 			if (image_data)
 			{
-  				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width,
+  				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, _format, width,
 					height, 0, format, GL_UNSIGNED_BYTE, image_data);
 				stbi_image_free(image_data);
 			}

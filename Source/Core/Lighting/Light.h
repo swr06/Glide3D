@@ -3,6 +3,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "../GL_Classes/Framebuffer.h"
+#include "../GL_Classes/DepthBuffer.h"
 #include "../GL_Classes/CubeDepthMap.h"
 
 namespace Glide3D

@@ -56,7 +56,7 @@ namespace Glide3D
 
 		// The shader programs
 		GLClasses::Shader m_RendererShader;
-		GLClasses::Shader m_FBOShader;
+		GLClasses::Shader m_FBOShader; // The hdr shader
 		GLClasses::Shader m_DepthShader;
 		GLClasses::Shader m_ReflectionShader;
 		GLClasses::Shader m_DeferredGeometryPassShader;
