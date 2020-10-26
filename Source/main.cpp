@@ -49,7 +49,9 @@ public:
 			ImGui::Text("Camera Position : %f, %f, %f", position.x, position.y, position.z);
 			ImGui::Text("Camera Front : %f, %f, %f", front.x, front.y, front.z);
 			ImGui::End();
-		}
+		}   
+
+		ImGui::ShowDemoWindow();
 	}
 
 	void OnEvent(Event e) override
@@ -187,14 +189,14 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(0.00349f, -0.59832f, -0.80124f);
 
-	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {8096,8096 });
+	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {4096,4096 });
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(90, 193, 65); // 10, 70, 10
 	d_light.m_SpecularStrength = 2.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 60;
+	d_light.m_UpdateRate = 2;
 
 	/*DirectionalLight d_light2;
 
@@ -286,9 +288,7 @@ int main()
 		}
 
 		renderer.Render(&camera, FBO);  
-
 		renderer.RenderFBO(FBO);
-
 		camera.OnUpdate();
 		camera.ResetAcceleration();
 		app.FinishFrame(); 

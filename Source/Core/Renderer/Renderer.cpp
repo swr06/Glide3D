@@ -222,8 +222,23 @@ namespace Glide3D
 		}
 	}
 
+	void Renderer::RenderImGuiElements()
+	{
+		if (ImGui::Begin("Renderer Editor"))
+		{
+			ImGui::Text("Geometry Pass Render Time : %f ms", m_GeometryPassTime);
+			ImGui::Text("Lighting Pass Time : %f ms", m_LightingPassTime);
+			ImGui::Text("Shadow Map Render Time : %f ms", m_ShadowMapRenderTime);
+			ImGui::Text("Reflection Map Render Time : %f ms", m_ReflectionMapRenderTime);
+			ImGui::Text("Total Render Time : %f ms", m_TotalRenderTime);
+			ImGui::End();
+		}
+	}
+
 	void Renderer::RenderReflectionMaps(FPSCamera* camera)
 	{
+		m_ReflectionMapRenderTime = glfwGetTime();
+
 		/*
 		// Set the uniforms
 		m_ReflectionShader.Use();
@@ -290,11 +305,23 @@ namespace Glide3D
 			_RenderEntitesForReflectionMap(projection_matrix, view_matrices[i]);
 		}
 
+		m_ReflectionMapRenderTime = glfwGetTime() - m_ReflectionMapRenderTime;
+		m_ReflectionMapRenderTime *= 1000.0f;
+
 		return;
 	}
 
-	void Renderer::RenderShadowMaps()
+	void Renderer::RenderShadowMaps(FPSCamera* camera)
 	{
+		static CubeObject cube;
+		Entity cube_player(&cube);
+
+		m_ShadowMapRenderTime = glfwGetTime();
+
+		cube_player.GetTransform().SetPosition(camera->GetPosition());
+		cube_player.GetTransform().Scale(glm::vec3(10.0f));
+		m_Entities[cube.GetID()].push_back(&cube_player);
+
 		/* Render the depth maps of each light */
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -378,6 +405,10 @@ namespace Glide3D
 			}
 		}
 
+		m_Entities[cube.GetID()].pop_back();
+		m_ShadowMapRenderTime = glfwGetTime() - m_ShadowMapRenderTime;
+		m_ShadowMapRenderTime *= 1000.0f;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
 	}
@@ -427,6 +458,7 @@ namespace Glide3D
 	*/
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
+		m_TotalRenderTime = glfwGetTime();
 		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
 
 		if (m_CurrentFrame == 0)
@@ -434,11 +466,13 @@ namespace Glide3D
 			RenderReflectionMaps(camera);
 		}
 
-		RenderShadowMaps();
+		RenderShadowMaps(camera);
 
 		// Deferred shading pipeline starts here
 
 		/* Geometry Pass starts here */
+
+		m_GeometryPassTime = glfwGetTime();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -518,11 +552,20 @@ namespace Glide3D
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		m_GeometryPassTime = glfwGetTime() - m_GeometryPassTime;
+		m_GeometryPassTime *= 1000.0f;
+
 		/* Geometry Pass ends here */
 		
 		/* Lighting Pass starts here */
 
+		m_LightingPassTime = glfwGetTime();
+
 		fbo.Bind();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		RenderEnvironmentMap(camera);
 		m_DeferredLightPassShader.Use();
 		m_DeferredLightPassShader.SetInteger("u_PositionTexture", 0);
@@ -547,6 +590,11 @@ namespace Glide3D
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		m_FBOVAO.Unbind();
 
+		m_LightingPassTime = glfwGetTime() - m_LightingPassTime;
+		m_LightingPassTime *= 1000.0f;
+
+		glDisable(GL_BLEND);
+
 		/* Lighting Pass ends here */
 
 		// Clean up
@@ -555,6 +603,9 @@ namespace Glide3D
 
 		// Increment the current frame
 		m_CurrentFrame++;
+
+		m_TotalRenderTime = glfwGetTime() - m_TotalRenderTime;
+		m_TotalRenderTime *= 1000.0f;
 
 		return;
 	}

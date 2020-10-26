@@ -15,10 +15,15 @@
 #include "../FpsCamera.h"
 #include "../Macros.h"
 #include "../GeometryRenderBuffer.h"
+#include "../Utils/Timer.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 /* OpenGL Specific stuff */
 #include "../GL_Classes/VertexBuffer.h"
@@ -28,6 +33,7 @@
 #include "../GL_Classes/SSBO.h"
 #include "../GL_Classes/Framebuffer.h"
 #include "../Skybox.h"
+#include "../ObjectTypes/Cube.h"
 
 #include "../Lighting/Light.h"
 
@@ -77,7 +83,7 @@ namespace Glide3D
 
 		void SetLightUniforms(GLClasses::Shader& shader);
 		void BindLightingMaps();
-		void RenderShadowMaps();
+		void RenderShadowMaps(FPSCamera* camera);
 		void RenderPointLightShadowMap(PointLight& pointlight);
 		void RenderReflectionMaps(FPSCamera* camera);
 		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
@@ -90,7 +96,13 @@ namespace Glide3D
 		// Tests
 		GLClasses::CubeReflectionMap m_ReflectionMap;
 
-		void RenderImGuiElements() {};
+		void RenderImGuiElements();
 		friend class Application;
+
+		double m_ShadowMapRenderTime = 0;
+		double m_ReflectionMapRenderTime = 0;
+		double m_GeometryPassTime = 0;
+		double m_LightingPassTime = 0;
+		double m_TotalRenderTime = 0;
 	};
 }

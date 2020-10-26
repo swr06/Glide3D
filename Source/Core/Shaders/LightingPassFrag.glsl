@@ -65,7 +65,8 @@ void main()
 
 	if (g_Color == EmptyPixel && g_Normal == EmptyPixel && g_FragPosition == EmptyPixel) 
 	{ 
-		discard;
+		o_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		return;
 	}
 
 	vec3 FinalColor = vec3(0.0f);
