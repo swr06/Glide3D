@@ -56,7 +56,10 @@ namespace Glide3D
 		glm::vec3 p_Center; // The center of the mesh in localized space
 		GLClasses::VertexBuffer p_MatrixBuffer; // Internal. Should not be accessed
 
+		inline uint32_t GetID() const noexcept { return m_ObjectID; }
+
 	private :
 		void CalculateCenter();
+		const uint32_t m_ObjectID;
 	};
 }

@@ -4,9 +4,12 @@
 
 namespace Glide3D
 {
-	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), p_MatrixBuffer(GL_ARRAY_BUFFER)
-	{
+	static uint32_t _CurrentObjectID = 1;
 
+	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), p_MatrixBuffer(GL_ARRAY_BUFFER),
+	m_ObjectID(++_CurrentObjectID)
+	{
+	
 	}
 
 	Object::~Object()

@@ -231,7 +231,7 @@ int main()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
-	renderer.AddEntities({ &sponza });
+	renderer.AddEntity(&sponza);
 
 	//renderer.AddEntities({ &entity });
 	//renderer.AddEntities({ &suzanne });

@@ -43,6 +43,7 @@ namespace Glide3D
 
 		// Rendering
 		void AddEntities(const std::vector<const Entity*>& entities);
+		void AddEntity(const Entity* entity);
 		void Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo);
 
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
@@ -70,7 +71,7 @@ namespace Glide3D
 		GLClasses::SSBO m_LightSSBO;
 		std::vector<DirectionalLight*> m_DirectionalLights;
 		std::vector<PointLight> m_PointLights;
-		std::vector<std::vector<const Entity*>> m_RenderEntities;
+		std::unordered_map<uint32_t, std::vector<const Entity*>> m_Entities;
 		Skybox* m_EnvironmentMap = nullptr;
 		uint32_t m_CurrentFrame = 0;
 

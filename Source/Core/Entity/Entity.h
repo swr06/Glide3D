@@ -26,7 +26,7 @@ namespace Glide3D
 			return glm::vec3(localized_center.x, localized_center.y, localized_center.z);
 		}
 
-		const Object* p_Object;
+		const Object* p_Object = nullptr;
 		Transform p_Transform;
 		bool p_Visible;
 		bool p_ShouldCastShadow = true;

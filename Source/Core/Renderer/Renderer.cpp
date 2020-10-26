@@ -141,13 +141,15 @@ namespace Glide3D
 
 		m_ReflectionShader.Use();
 
-		for (auto& entities : m_RenderEntities)
+		for (auto& entities : m_Entities)
 		{
-			const Object* object = entities[0]->p_Object;
+			if (entities.second.size() <= 0) { continue; }
+
+			const Object* object = entities.second[0]->p_Object;
 
 			std::vector<glm::mat4> Matrices;
 
-			for (auto& e : entities)
+			for (auto& e : entities.second)
 			{
 				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
 				Matrices.push_back(model);
@@ -183,12 +185,12 @@ namespace Glide3D
 
 				if (indexed)
 				{
-					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.second.size());
 				}
 
 				else 
 				{
-					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.second.size());
 				}
 
 				glEnableVertexAttribArray(1);
@@ -229,7 +231,7 @@ namespace Glide3D
 
 		glm::mat4 projection_matrix;
 
-		for (auto& entities : m_RenderEntities)
+		for (auto& entities : m_Entities)
 		{
 			for (auto& e : entities)
 			{
@@ -313,13 +315,15 @@ namespace Glide3D
 
 				m_DepthShader.SetMatrix4("u_ViewProjection", e->m_LightSpaceViewProjection);
 
-				for (auto& entities : m_RenderEntities)
+				for (auto& entities : m_Entities)
 				{
-					const Object* object = entities[0]->p_Object;
+					if (entities.second.size() <= 0) { continue; }
+
+					const Object* object = entities.second[0]->p_Object;
 
 					std::vector<glm::mat4> Matrices;
 
-					for (auto& e : entities)
+					for (auto& e : entities.second)
 					{
 						const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
 						Matrices.push_back(model);
@@ -351,12 +355,12 @@ namespace Glide3D
 
 						if (indexed)
 						{
-							glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+							glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.second.size());
 						}
 
 						else
 						{
-							glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+							glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.second.size());
 						}
 
 						glEnableVertexAttribArray(1);
@@ -383,19 +387,39 @@ namespace Glide3D
 	*/
 	void Renderer::AddEntities(const std::vector<const Entity*>& entities)
 	{
-		const Object* object = entities[0]->p_Object;
-		
+		for (auto& e : entities)
+		{
+			const Object* object = e->p_Object;
+
+			if (object)
+			{
+				m_Entities[object->GetID()].push_back(e);
+			}
+
+			else
+			{
+				Logger::Log("Attempted to add an entity to the render list without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
+			}
+		}
+
+		Logger::Log("Entity array of size : " + std::to_string(entities.size()) + " Was added to the entity list");
+
+		return;
+	}
+
+	void Renderer::AddEntity(const Entity* entity)
+	{
+		const Object* object = entity->p_Object;
+
 		if (object)
 		{
-			m_RenderEntities.push_back(entities);
+			m_Entities[object->GetID()].push_back(entity);
 		}
 
 		else
 		{
-			Logger::Log("Attempted to add an entity to the render list without a parent object! || COULD NOT DRAW ENTITY LIST OF SIZE : " + entities.size());
+			Logger::Log("Attempted to add an entity to the render list without a parent object!");
 		}
-
-		return;
 	}
 	
 	/* 
@@ -434,13 +458,15 @@ namespace Glide3D
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 
-		for (auto& entities : m_RenderEntities)
+		for (auto& entities : m_Entities)
 		{
-			const Object* object = entities[0]->p_Object;
+			if (entities.second.size() <= 0) { continue; }
+
+			const Object* object = entities.second[0]->p_Object;
 
 			std::vector<glm::mat4> Matrices;
 
-			for (auto& e : entities)
+			for (auto& e : entities.second)
 			{
 				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
 				Matrices.push_back(model);
@@ -477,12 +503,12 @@ namespace Glide3D
 
 				if (indexed)
 				{
-					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.size());
+					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.second.size());
 				}
 
 				else
 				{
-					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.size());
+					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.second.size());
 				}
 
 				VAO.Unbind();
