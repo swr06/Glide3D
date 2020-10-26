@@ -102,7 +102,7 @@ int main()
 	app.Initialize();
 	glfwSwapInterval(1);
 
-	Renderer renderer(app.GetWindow());
+	Glide3D::Renderer &renderer = app.GetRenderer();
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600, true);
 
@@ -231,6 +231,17 @@ int main()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
+	renderer.AddEntities({ &sponza });
+
+	//renderer.AddEntities({ &entity });
+	//renderer.AddEntities({ &suzanne });
+	//renderer.AddEntities({ &backpack });
+	//renderer.AddEntities({ &sphere });
+	//renderer.AddEntities({ &brickwall });
+	//renderer.AddEntities({ &block0_entity });
+	//renderer.AddEntities({ &block1_entity });
+	//renderer.AddEntities({ &floor_entity });
+
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		FBO.SetExposure(exposure);
@@ -274,15 +285,6 @@ int main()
 			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed)); 
 		}
 
-		//renderer.AddEntityToRenderQueue({ &entity });
-		renderer.AddEntityToRenderQueue({ &sponza });
-		//renderer.AddEntityToRenderQueue({ &suzanne });
-		//renderer.AddEntityToRenderQueue({ &backpack });
-		//renderer.AddEntityToRenderQueue({ &sphere });
-		//renderer.AddEntityToRenderQueue({ &brickwall });
-		//renderer.AddEntityToRenderQueue({ &block0_entity });
-		//renderer.AddEntityToRenderQueue({ &block1_entity });
-		//renderer.AddEntityToRenderQueue({ &floor_entity });
 		renderer.Render(&camera, FBO);  
 
 		renderer.RenderFBO(FBO);

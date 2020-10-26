@@ -13,7 +13,6 @@
 #include "Application/Application.h"
 #include "Model Loader/OBJFileLoader.h"
 #include "Application/Logger.h"
-#include "Renderer/Renderer.h"
 #include "Entity/Entity.h"
 #include "Object/Object.h"
 #include "ObjectTypes/Cube.h"

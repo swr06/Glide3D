@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -40,7 +42,7 @@ namespace Glide3D
 		void AddPointLight(const PointLight& light);
 
 		// Rendering
-		void AddEntityToRenderQueue(const std::vector<const Entity*>& entities);
+		void AddEntities(const std::vector<const Entity*>& entities);
 		void Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo);
 
 		void RenderFBO(const GLClasses::Framebuffer& fbo);
@@ -86,5 +88,8 @@ namespace Glide3D
 
 		// Tests
 		GLClasses::CubeReflectionMap m_ReflectionMap;
+
+		void RenderImGuiElements() {};
+		friend class Application;
 	};
 }

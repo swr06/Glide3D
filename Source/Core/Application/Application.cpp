@@ -115,7 +115,6 @@ namespace Glide3D
 
 	Application::Application() : m_CurrentFrame(0), m_Window(nullptr)
 	{
-
 	}
 
 	Application::~Application()
@@ -208,7 +207,12 @@ namespace Glide3D
 			std::cout << "\tDEBUG : THE OPENGL SYNCHRONOUS DEBUG EXTENSION IS UN AVAILABLE\n";
 		}
 
-		std::cout << "------------------------------------------------\n\n";
+		std::cout << "------------------------------------------------\n";
+
+		std::cout << "INITIALIZING RENDERER\n";
+		m_Renderer = std::unique_ptr<Renderer>(new Renderer(m_Window));
+		std::cout << "RENDERER INITIALIZED\n------------------------------------------------\n\n";
+
 		return;
 	}
 
@@ -231,6 +235,7 @@ namespace Glide3D
 		ImGui::NewFrame();
 
 		OnUserUpdate(this->GetTime());
+		RenderImGuiElements();
 		OnImguiRender(this->GetTime());
 	}
 
@@ -298,6 +303,19 @@ namespace Glide3D
 		else
 		{
 			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+	}
+
+	Renderer& Application::GetRenderer()
+	{
+		if (m_Renderer)
+		{
+			return *m_Renderer;
+		}
+
+		else
+		{
+			throw "Tried calling Application::GetRenderer() when renderer is not Initialized. Did you call Application::Initialize()?";
 		}
 	}
 

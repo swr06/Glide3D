@@ -381,7 +381,7 @@ namespace Glide3D
 	/*
 	Adds a group of the same entity at different positions using instanced rendering
 	*/
-	void Renderer::AddEntityToRenderQueue(const std::vector<const Entity*>& entities)
+	void Renderer::AddEntities(const std::vector<const Entity*>& entities)
 	{
 		const Object* object = entities[0]->p_Object;
 		
@@ -526,7 +526,6 @@ namespace Glide3D
 		// Clean up
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		m_RenderEntities.clear();
 
 		// Increment the current frame
 		m_CurrentFrame++;
@@ -541,11 +540,15 @@ namespace Glide3D
 	{
 		if (!fbo.IsHDR())
 		{
+			int w = 0, h = 0;
+
+			glfwGetFramebufferSize(m_Window, &w, &h);
+
 			fbo.Bind();
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-			glBlitFramebuffer(0, 0, fbo.GetWidth(), fbo.GetHeight(), 0, 0, 800, 600, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glBlitFramebuffer(0, 0, fbo.GetWidth(), fbo.GetHeight(), 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			glEnable(GL_DEPTH_TEST);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}

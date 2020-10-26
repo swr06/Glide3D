@@ -3,12 +3,14 @@
 #include <string>
 #include <queue>
 #include <assert.h>
+#include <memory>
 
 #include <glad/glad.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <glfw/glfw3.h>
+#include "../Renderer/Renderer.h"
 
 #include "Logger.h"
 
@@ -54,6 +56,7 @@ namespace Glide3D
 		unsigned int GetWidth();
 		unsigned int GetHeight();
 		void SetCursorLocked(bool locked);
+		Renderer& GetRenderer();
 
 	protected:
 		GLFWwindow* m_Window;
@@ -75,5 +78,8 @@ namespace Glide3D
 		std::queue<Event> m_EventQueue;
 		int m_CurrentWidth = 0;
 		int m_CurrentHeight = 0;
+		std::unique_ptr<Renderer> m_Renderer;
+
+		void RenderImGuiElements() { m_Renderer->RenderImGuiElements(); }
 	};
 }
