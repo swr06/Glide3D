@@ -116,7 +116,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light)
 	vec3 DiffuseColor = Diffuse * g_Color; 
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor ; // To be also sampled with specular map
 
-	return vec3(g_Ambient * (DiffuseColor + SpecularColor) * g_Color);  
+	return vec3((g_Ambient + DiffuseColor + SpecularColor) * g_Color);  
 }
 
 vec3 CalculatePointLight(PointLight light)
