@@ -20,10 +20,10 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Post Processing pipeline ✔
 - Gamma correction ✔
 - Deferrred Rendering ✔
-- Full HDR Pipeline
+- Full HDR Pipeline ✔
 - Bloom
 - SSAO (Ambient Occlusion)
-- HDR (Exposure control etc.)
+- HDR (Exposure control etc.) ✔
 - Skeletal animations
 - Physically based rendering
   - Image based lighting
