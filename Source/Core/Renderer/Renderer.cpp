@@ -313,14 +313,7 @@ namespace Glide3D
 
 	void Renderer::RenderShadowMaps(FPSCamera* camera)
 	{
-		static CubeObject cube;
-		Entity cube_player(&cube);
-
 		m_ShadowMapRenderTime = glfwGetTime();
-
-		cube_player.GetTransform().SetPosition(camera->GetPosition());
-		cube_player.GetTransform().Scale(glm::vec3(10.0f));
-		m_Entities[cube.GetID()].push_back(&cube_player);
 
 		/* Render the depth maps of each light */
 
@@ -405,7 +398,6 @@ namespace Glide3D
 			}
 		}
 
-		m_Entities[cube.GetID()].pop_back();
 		m_ShadowMapRenderTime = glfwGetTime() - m_ShadowMapRenderTime;
 		m_ShadowMapRenderTime *= 1000.0f;
 
@@ -497,6 +489,12 @@ namespace Glide3D
 			if (entities.second.size() <= 0) { continue; }
 
 			const Object* object = entities.second[0]->p_Object;
+
+			if (object->p_CanFacecull)
+			{
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
+			}
 
 			std::vector<glm::mat4> Matrices;
 

@@ -40,5 +40,8 @@ namespace Glide3D
 		bool p_RenderReflectionCubemap = false;
 		GLClasses::CubeReflectionMap p_ReflectionCubemap;
 		glm::vec3 p_ReflectionPosition; // The position of the camera when it renders the scene into a cubemap
+	
+	private :
+		friend class Renderer;
 	};
 }

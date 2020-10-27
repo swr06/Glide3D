@@ -50,8 +50,6 @@ public:
 			ImGui::Text("Camera Front : %f, %f, %f", front.x, front.y, front.z);
 			ImGui::End();
 		}   
-
-		ImGui::ShowDemoWindow();
 	}
 
 	void OnEvent(Event e) override
@@ -137,8 +135,7 @@ int main()
 	FileLoader::LoadOBJFile(&object_5, "Resources/globe-sphere.model");
 	floor_obj.AddTextureMapToMesh("Resources/marble.jpg", TextureType::Albedo);
 
-	object_1.p_CanFacecull = false;
-	object_1.p_CanFacecull = false;
+	object_1.p_CanFacecull = true;
 	object_4.AddTextureMapToMesh("Resources/brickwall.jpg", TextureType::Albedo, true);
 	object_4.AddTextureMapToMesh("Resources/brickwall_normal.jpg", TextureType::Normal, true);
 
@@ -196,7 +193,7 @@ int main()
 	d_light.m_SpecularStrength = 2.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 2;
+	d_light.m_UpdateRate = 0;
 
 	/*DirectionalLight d_light2;
 

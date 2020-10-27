@@ -25,5 +25,6 @@ namespace Glide3D
 		glm::vec3 m_Position = glm::vec3(0.0f);
 
 		inline void ComputeNormalMatrix();
+		friend class Renderer;
 	};
 }
