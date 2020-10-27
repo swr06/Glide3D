@@ -23,10 +23,6 @@ namespace GLClasses
 	{
 	public:
 
-		Texture(const string& path, bool flip = false, GLenum type = GL_TEXTURE_2D,
-			GLenum min_filter = GL_LINEAR, GLenum mag_filter = GL_LINEAR,
-			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT	, bool clean_up = true);
-
 		Texture()
 		{
 			m_clean_up = true;
@@ -68,7 +64,7 @@ namespace GLClasses
 			v.m_Texture = 0;
 		}
 
-		void CreateTexture(const string& path, bool flip = false, GLenum type = GL_TEXTURE_2D,
+		void CreateTexture(const string& path, bool, bool flip = false, GLenum type = GL_TEXTURE_2D,
 			GLenum min_filter = GL_LINEAR, GLenum mag_filter = GL_LINEAR,
 			GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT, bool clean_up = true);
 

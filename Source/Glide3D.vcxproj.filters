@@ -114,9 +114,6 @@
     <ClInclude Include="Core\OrthographicCamera.h">
       <Filter>Core\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Core\TextureAtlas.h">
-      <Filter>Core\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Model Loader\OBJFileLoader.h">
       <Filter>Core\Engine\Model Loader</Filter>
     </ClInclude>
@@ -259,9 +256,6 @@
       <Filter>Core\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Core\OrthographicCamera.cpp">
-      <Filter>Core\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\TextureAtlas.cpp">
       <Filter>Core\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Core\Model Loader\OBJFileLoader.cpp">

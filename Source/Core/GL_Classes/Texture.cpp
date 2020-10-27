@@ -16,12 +16,7 @@ namespace GLClasses
 
 	std::unordered_map<std::string, TextureMapData> CreatedTextures;
 
-	Texture::Texture(const string& path, bool flip, GLenum type, GLenum min_filter, GLenum mag_filter, GLenum texwrap_s, GLenum texwrap_t, bool clean_up)
-	{
-		this->CreateTexture(path, flip, type, min_filter, mag_filter, texwrap_s, texwrap_t, clean_up);
-	}
-
-	void Texture::CreateTexture(const string& path, bool flip, GLenum type, GLenum min_filter, GLenum mag_filter, GLenum texwrap_s, GLenum texwrap_t, bool clean_up)
+	void Texture::CreateTexture(const string& path, bool hdr, bool flip, GLenum type, GLenum min_filter, GLenum mag_filter, GLenum texwrap_s, GLenum texwrap_t, bool clean_up)
 	{
 		/*
 		Check if the texture is already created, if it is, then use the existing texture. Else create a new one :)
@@ -36,6 +31,7 @@ namespace GLClasses
 				stbi_set_flip_vertically_on_load(false);
 
 			GLenum internalformat = 0;
+			GLenum _internalformat = 0;
 
 			m_delete_texture = true;
 			m_clean_up = clean_up;
@@ -47,7 +43,7 @@ namespace GLClasses
 			glTexParameteri(type, GL_TEXTURE_WRAP_S, texwrap_s);
 			glTexParameteri(type, GL_TEXTURE_WRAP_T, texwrap_t);
 
-			glTexParameteri(type, GL_TEXTURE_MIN_FILTER, min_filter);
+			glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameteri(type, GL_TEXTURE_MAG_FILTER, mag_filter);
 
 			unsigned char* image = stbi_load(path.c_str(), &m_width, &m_height, &m_BPP, 0);
@@ -55,16 +51,19 @@ namespace GLClasses
 			if (m_BPP == 1)
 			{
 				internalformat = GL_RED;
+				_internalformat = GL_RED;
 			}
 
 			else if (m_BPP == 3)
 			{
 				internalformat = GL_RGB;
+				_internalformat = hdr ? GL_SRGB : GL_RGB;
 			}
 
 			else if (m_BPP == 4)
 			{
 				internalformat = GL_RGBA;
+				_internalformat = hdr ? GL_SRGB : GL_RGBA;
 			}
 
 			if (image)
@@ -84,7 +83,7 @@ namespace GLClasses
 					CreatedTextures[path] = data;
 				}
 
-				glTexImage2D(type, 0, internalformat, m_width, m_height, 0, internalformat, GL_UNSIGNED_BYTE, image);
+				glTexImage2D(type, 0, _internalformat, m_width, m_height, 0, internalformat, GL_UNSIGNED_BYTE, image);
 				glGenerateMipmap(type);
 
 				if (clean_up)
