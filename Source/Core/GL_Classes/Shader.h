@@ -46,7 +46,6 @@ namespace GLClasses
 			m_VertexPath = v.m_VertexPath;
 			m_FragmentData = v.m_FragmentData;
 			m_FragmentPath = v.m_FragmentPath;
-			m_CompiledShader = v.m_CompiledShader;
 
 			v.m_Program = 0;
 		}
@@ -61,14 +60,10 @@ namespace GLClasses
 		
 		inline void Use() 
 		{
-			if (m_CompiledShader == false)
-			{
-				this->CompileShaders();
-			}
-
 			glUseProgram(this->m_Program);
 		}
 
+		void Destroy();
 		void SetFloat(const std::string& name, GLfloat value, GLboolean useShader = GL_FALSE);
 		void SetInteger(const std::string& name, GLint value, GLboolean useShader = GL_FALSE);
 		void SetVector2f(const std::string& name, GLfloat x, GLfloat y, GLboolean useShader = GL_FALSE);
@@ -86,7 +81,6 @@ namespace GLClasses
 
 		unordered_map<string, GLint> Location_map; // To avoid unnecessary calls to glGetUniformLocation()
 		GLuint m_Program = 0;
-		bool m_CompiledShader = false;
 
 		GLint GetUniformLocation(const std::string& uniform_name);
 		string m_VertexData;

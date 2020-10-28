@@ -109,4 +109,11 @@ namespace Glide3D
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         glUseProgram(0);
     }
+
+    void Skybox::Recompile()
+    {
+        m_SkyboxShader.Destroy();
+        m_SkyboxShader.CreateShaderProgramFromFile("Core/Shaders/SkyboxVertex.glsl", "Core/Shaders/SkyboxFrag.glsl");
+        m_SkyboxShader.CompileShaders();
+    }
 }

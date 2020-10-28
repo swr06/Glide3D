@@ -60,6 +60,7 @@ namespace Glide3D
 		}
 
 		uint32_t GetCurrentFrame() const noexcept { return m_CurrentFrame; }
+		void RecompileShaders();
 
 	private :
 

@@ -82,6 +82,11 @@ public:
 			}
 		}
 
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_F2)
+		{
+			RecompileShaders();
+		}
+
 		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_ESCAPE)
 		{
 			cursor_locked = !cursor_locked;

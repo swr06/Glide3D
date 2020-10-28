@@ -10,12 +10,13 @@ namespace GLClasses
 
 	Shader::~Shader()
 	{
+		glDeleteProgram(m_Program);
 		glUseProgram(0);
 	}
 
 	void Shader::CompileShaders()
 	{
-		m_CompiledShader = true;
+		m_Program = 0;
 		auto start = chrono::steady_clock::now();
 
 		GLuint vs;
@@ -126,6 +127,12 @@ namespace GLClasses
 		m_FragmentData = fragment_data;
 		m_VertexPath = "PASSED_VIA_DATA";
 		m_FragmentPath = "PASSED_VIA_DATA";
+	}
+
+	void Shader::Destroy()
+	{
+		glDeleteProgram(m_Program);
+		glUseProgram(0);
 	}
 
 	void Shader::SetFloat(const std::string& name, GLfloat value, GLboolean useShader)

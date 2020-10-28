@@ -665,4 +665,32 @@ namespace Glide3D
 			glUseProgram(0);
 		}
 	}
+
+	void Renderer::RecompileShaders()
+	{
+		if (m_EnvironmentMap)
+		{
+			m_EnvironmentMap->Recompile();
+		}
+
+		m_RendererShader.Destroy();
+		m_FBOShader.Destroy();
+		m_DepthShader.Destroy();
+		m_ReflectionShader.Destroy();
+		m_DeferredGeometryPassShader.Destroy();
+		m_DeferredLightPassShader.Destroy();
+
+		m_RendererShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
+		m_RendererShader.CompileShaders();
+		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferHDRVert.glsl", "Core/Shaders/FramebufferHDRFrag.glsl");
+		m_FBOShader.CompileShaders();
+		m_DepthShader.CreateShaderProgramFromFile("Core/Shaders/DepthVert.glsl", "Core/Shaders/DepthFrag.glsl");
+		m_DepthShader.CompileShaders();
+		m_ReflectionShader.CreateShaderProgramFromFile("Core/Shaders/ReflectionVert.glsl", "Core/Shaders/ReflectionFrag.glsl");
+		m_ReflectionShader.CompileShaders();
+		m_DeferredGeometryPassShader.CreateShaderProgramFromFile("Core/Shaders/GeometryPassVert.glsl", "Core/Shaders/GeometryPassFrag.glsl");
+		m_DeferredGeometryPassShader.CompileShaders();
+		m_DeferredLightPassShader.CreateShaderProgramFromFile("Core/Shaders/LightingPassVert.glsl", "Core/Shaders/LightingPassFrag.glsl");
+		m_DeferredLightPassShader.CompileShaders();
+	}
 }

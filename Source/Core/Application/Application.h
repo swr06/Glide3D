@@ -57,6 +57,7 @@ namespace Glide3D
 		unsigned int GetHeight();
 		void SetCursorLocked(bool locked);
 		Renderer& GetRenderer();
+		void RecompileShaders();
 
 	protected:
 		GLFWwindow* m_Window;

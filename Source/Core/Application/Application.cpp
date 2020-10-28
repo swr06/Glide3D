@@ -319,6 +319,12 @@ namespace Glide3D
 		}
 	}
 
+	void Application::RecompileShaders()
+	{
+		m_Renderer->RecompileShaders();
+		return;
+	}
+
 	// Event handling
 
 	void QueueEvent(const Event& e, GLFWwindow* window)

@@ -27,6 +27,7 @@ namespace Glide3D
 		inline const GLClasses::CubeTextureMap& GetTexture() { return m_CubeMap; }
 		void RenderSkybox(FPSCamera* camera);
 		void RenderSkybox(const glm::mat4& projection, const glm::mat4& view);
+		void Recompile();
 
 	private :
 		GLClasses::VertexBuffer m_VBO;
