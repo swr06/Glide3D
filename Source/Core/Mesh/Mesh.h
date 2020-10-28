@@ -20,7 +20,7 @@ namespace Glide3D
 	class Mesh
 	{
 	public:
-		Mesh(const GLClasses::VertexBuffer& MatrixVBO);
+		Mesh(const GLClasses::VertexBuffer& MatrixVBO, const uint32_t number);
 		void Buffer();
 		void CalculateTangentNormals();
 
@@ -41,6 +41,20 @@ namespace Glide3D
 
 		glm::vec4 p_Color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 p_Reflectivity = glm::vec3(0.0f);
+		std::string p_Name = std::string("");
+		const uint32_t p_MeshNumber;
+		
+		/* Determines where in the mesh the basic wave effect should be the most
+		the effect is calculated with distance(position.y, p_ClothAffectY)
+		
+		The further the vertex is away from this position, the more the impact
+		If this variable is 0 then the effect is applied to all the vertices of that mesh
+		*/
+		float p_WaveAffectY = 0.0f; 
+
+		glm::vec2 p_WaveAffectFreq;
+		glm::vec2 p_WaveAffectSpeed; 
+		bool p_HasWavePhysics = false;
 	};
 
 }

@@ -2,7 +2,7 @@
 
 namespace Glide3D
 {
-	Mesh::Mesh(const GLClasses::VertexBuffer& MatrixVBO) : p_VertexBuffer(GL_ARRAY_BUFFER)
+	Mesh::Mesh(const GLClasses::VertexBuffer& MatrixVBO, const uint32_t number) : p_VertexBuffer(GL_ARRAY_BUFFER), p_MeshNumber(number)
 	{
 		/*
 		Setup all the ogl objects

@@ -31,6 +31,23 @@ namespace Glide3D
 				case aiTextureType_DIFFUSE:
 				{
 					_mesh->p_AlbedoMap.CreateTexture(texture_path, true);
+
+					if (texture_path.find("curtain") != std::string::npos)
+					{
+						_mesh->p_HasWavePhysics = true;
+						_mesh->p_WaveAffectY = 30;
+						_mesh->p_WaveAffectFreq = glm::vec2(0.5f, 0.25f);
+						_mesh->p_WaveAffectSpeed = glm::vec2(2.5f, 5.0f);
+					}
+
+					if (texture_path.find("fabric") != std::string::npos)
+					{
+						_mesh->p_HasWavePhysics = true;
+						_mesh->p_WaveAffectY = 58;
+						_mesh->p_WaveAffectFreq = glm::vec2(0.5f, 0.25f);
+						_mesh->p_WaveAffectSpeed = glm::vec2(2.5f, 4.0f);
+					}
+
 					break;
 				}
 
@@ -120,14 +137,16 @@ namespace Glide3D
 			- Normal map
 			*/
 
+			_mesh.p_Name = mesh->mName.C_Str();
+
 			// process materials
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 			_mesh.p_Color = col;
 			_mesh.p_Reflectivity = reflectivity;
 	
-			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->p_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->p_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, &object->p_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->m_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->m_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, &object->m_Meshes.back(), pth);
 		}
 
 		struct TransparentMesh

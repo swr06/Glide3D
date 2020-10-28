@@ -11,7 +11,7 @@ hazurl
 
 using namespace Glide3D;
 
-FPSCamera camera(70, 800.0f / 600.0f, 0.1f, 1000.0f, 0.25f);
+FPSCamera camera(90, 800.0f / 600.0f, 0.1f, 1000.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
 float exposure = 0.1f;

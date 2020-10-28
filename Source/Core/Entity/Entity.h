@@ -20,7 +20,7 @@ namespace Glide3D
 		glm::vec3 GetCenter()
 		{
 			assert(!(p_Object == nullptr));
-			glm::vec4 localized_center = glm::vec4(p_Object->p_Center, 1.0f);
+			glm::vec4 localized_center = glm::vec4(p_Object->m_Center, 1.0f);
 			localized_center = p_Transform.GetTransformationMatrix() * localized_center;
 			
 			return glm::vec3(localized_center.x, localized_center.y, localized_center.z);

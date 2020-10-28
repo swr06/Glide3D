@@ -6,7 +6,7 @@ namespace Glide3D
 {
 	static uint32_t _CurrentObjectID = 1;
 
-	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), p_MatrixBuffer(GL_ARRAY_BUFFER),
+	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), m_MatrixBuffer(GL_ARRAY_BUFFER),
 	m_ObjectID(++_CurrentObjectID)
 	{
 	
@@ -21,7 +21,7 @@ namespace Glide3D
 	{
 		CalculateCenter();
 
-		for (auto& e : p_Meshes)
+		for (auto& e : m_Meshes)
 		{
 			e.Buffer();
 		}
@@ -29,9 +29,9 @@ namespace Glide3D
 
 	void Object::AddTextureMapToMesh(const std::string& path, TextureType tex_type, bool flip)
 	{
-		if (p_Meshes.size() > 0)
+		if (m_Meshes.size() > 0)
 		{
-			Mesh* mesh = &p_Meshes.back();
+			Mesh* mesh = &m_Meshes.back();
 
 			switch (tex_type)
 			{
@@ -69,13 +69,13 @@ namespace Glide3D
 
 	Mesh& Object::GenerateMesh()
 	{
-		p_Meshes.emplace_back(p_MatrixBuffer);
-		return p_Meshes.back();
+		m_Meshes.emplace_back(m_MatrixBuffer, m_Meshes.size());
+		return m_Meshes.back();
 	}
 
 	void Object::CalculateTangentNormals()
 	{
-		for (auto& e : p_Meshes)
+		for (auto& e : m_Meshes)
 		{
 			e.CalculateTangentNormals();
 		}
@@ -84,9 +84,9 @@ namespace Glide3D
 	void Object::CalculateCenter()
 	{
 		uint32_t count = 0;
-		glm::vec3& center = this->p_Center;
+		glm::vec3& center = this->m_Center;
 
-		for (auto& e : p_Meshes)
+		for (auto& e : m_Meshes)
 		{
 			count += e.p_VertexCount;
 			

@@ -73,7 +73,6 @@ namespace Glide3D
 	{
 		shader.Use();
 		shader.SetInteger("u_SceneDirectionalLightCount", m_DirectionalLights.size(), 0);
-		shader.SetInteger("u_NumDirectionalLights", m_DirectionalLights.size(), 0);
 		shader.SetInteger("u_ScenePointLightCount", m_PointLights.size(), 0);
 
 		for (int i = 0; i < m_DirectionalLights.size(); i++)
@@ -157,10 +156,10 @@ namespace Glide3D
 				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
 			}
 
-			const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+			const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
 			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 
-			for (auto& e : object->p_Meshes)
+			for (auto& e : object->m_Meshes)
 			{
 				const Mesh* mesh = &e;
 
@@ -351,10 +350,10 @@ namespace Glide3D
 						Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
 					}
 
-					const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+					const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
 					MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 
-					for (auto& e : object->p_Meshes)
+					for (auto& e : object->m_Meshes)
 					{
 						const Mesh* mesh = &e;
 
@@ -481,7 +480,8 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.SetInteger("u_SpecularMap", 2, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_EnvironmentMap", 3, 0);
 		m_DeferredGeometryPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
-		
+		m_DeferredGeometryPassShader.SetFloat("u_Time", (float)glfwGetTime());
+
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 
@@ -506,11 +506,24 @@ namespace Glide3D
 				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
 			}
 
-			const GLClasses::VertexBuffer& MatrixVBO = object->p_MatrixBuffer;
+			const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
 			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 
-			for (auto& e : object->p_Meshes)
+			for (auto& e : object->m_Meshes)
 			{
+				if (e.p_HasWavePhysics)
+				{
+					m_DeferredGeometryPassShader.SetInteger("u_HasWavePhysics", 1);
+					m_DeferredGeometryPassShader.SetFloat("u_WavePhysicsProps.m_WavePosY", e.p_WaveAffectY);
+					m_DeferredGeometryPassShader.SetVector2f("u_WavePhysicsProps.m_WaveFreq", e.p_WaveAffectFreq);
+					m_DeferredGeometryPassShader.SetVector2f("u_WavePhysicsProps.m_WaveSpeed", e.p_WaveAffectSpeed);
+				}
+
+				else
+				{
+					m_DeferredGeometryPassShader.SetInteger("u_HasWavePhysics", 0);
+				}
+
 				const Mesh* mesh = &e;
 
 				bool indexed = mesh->p_Indexed;

@@ -14,9 +14,19 @@
 #include <glad/glad.h>
 
 #include "../Mesh/Mesh.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace Glide3D
 {
+	class Object;
+	
+	namespace FileLoader
+	{
+		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, const glm::vec3& reflectivity);
+	}
+
 	enum class TextureType
 	{
 		Albedo,
@@ -49,17 +59,23 @@ namespace Glide3D
 		// Generates a mesh and returns a reference to that mesh
 		Mesh& GenerateMesh();
 
-		std::vector<Mesh> p_Meshes;
-
 		bool p_CanFacecull = true;
 		ReflectionMapProperties p_ReflectionProps;
-		glm::vec3 p_Center; // The center of the mesh in localized space
-		GLClasses::VertexBuffer p_MatrixBuffer; // Internal. Should not be accessed
 
 		inline uint32_t GetID() const noexcept { return m_ObjectID; }
 
 	private :
 		void CalculateCenter();
 		const uint32_t m_ObjectID;
+
+		std::vector<Mesh> m_Meshes;
+		friend class Renderer;
+		friend class Application;
+		friend class Entity;
+
+		friend void FileLoader::ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, const glm::vec3& reflectivity);
+		GLClasses::VertexBuffer m_MatrixBuffer;
+		glm::vec3 m_Center; // The center of the mesh in localized space
+
 	};
 }
