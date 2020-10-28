@@ -129,8 +129,7 @@ int main()
 	d_light.m_SpecularStrength = 2.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 1;
-
+	d_light.m_UpdateRate = 0;
 
 	Skybox skybox({
 		"Resources/skybox/px.png",
@@ -151,8 +150,6 @@ int main()
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
-		d_light.m_ShadowPosition = camera.GetPosition();
-		d_light.m_Direction = camera.GetFront();
 		FBO.SetExposure(exposure);
 
 		app.OnUpdate();

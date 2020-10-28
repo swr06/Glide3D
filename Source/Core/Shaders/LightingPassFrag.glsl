@@ -20,6 +20,7 @@ struct DirectionalLight
 	int m_IsBlinn;
 	int m_DirectionalLightElement;
 	sampler2D m_DepthMap;
+	float m_ShadowStrength;
 };
 
 struct PointLight
@@ -52,7 +53,7 @@ float g_Shadow;
 // Function prototype
 vec3 CalculateDirectionalLight(DirectionalLight light);
 vec3 CalculatePointLight(PointLight light);
-float ShadowCalculation(vec4 light_fragpos, sampler2D map);
+float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir);
 
 const vec3 EmptyPixel = vec3(0.0f);
 
@@ -74,11 +75,12 @@ void main()
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
-		g_Shadow += ShadowCalculation(u_DirectionalLightSpaceVP[i] * vec4(g_FragPosition, 1.0f), u_SceneDirectionalLights[i].m_DepthMap);
+		g_Shadow += u_SceneDirectionalLights[i].m_ShadowStrength * ShadowCalculation(u_DirectionalLightSpaceVP[i] * vec4(g_FragPosition, 1.0f), u_SceneDirectionalLights[i].m_DepthMap, u_SceneDirectionalLights[i].m_Direction);
 	}
 
+	g_Shadow = 1.0f - g_Shadow;
+
 	g_Ambient = u_AmbientStrength * g_Color;
-	g_Ambient = g_Ambient + 1.0f - g_Shadow;
 
 	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 	{
@@ -116,7 +118,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light)
 	vec3 DiffuseColor = Diffuse * g_Color; 
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor ; // To be also sampled with specular map
 
-	return vec3((g_Ambient + DiffuseColor + SpecularColor) * g_Color);  
+	return vec3((g_Ambient + (DiffuseColor * g_Shadow) + SpecularColor) * g_Color);  
 }
 
 vec3 CalculatePointLight(PointLight light)
@@ -147,35 +149,34 @@ vec3 CalculatePointLight(PointLight light)
     float Attenuation = 1.0 / (light.m_Constant + light.m_Linear * Distance + light.m_Quadratic * (Distance * Distance));
 	
 	DiffuseColor  *= Attenuation;
+	DiffuseColor  *= g_Shadow; // Apply shadow to the diffuse color
 	SpecularColor *= Attenuation;
 	return vec3(((g_Ambient * Attenuation) + DiffuseColor + SpecularColor) * g_Color);
 }
 
-float ShadowCalculation(vec4 light_fragpos, sampler2D map)
+float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 {
-    vec3 ProjectionCoordinates = light_fragpos.xyz / light_fragpos.w;
+    vec3 ProjectionCoordinates = light_fragpos.xyz;
     ProjectionCoordinates = ProjectionCoordinates * 0.5f + 0.5f;
 	float shadow = 0.0;
 
-	if(ProjectionCoordinates.z > 1.0)
+	if (ProjectionCoordinates.z > 1.0)
 	{
-        shadow = 0.0;
-		return shadow;
+		return 0.0f;
 	}
 
     float ClosestDepth = texture(map, ProjectionCoordinates.xy).r; 
     float Depth = ProjectionCoordinates.z;
-    float bias = 0.005f;
-
-	vec2 texelsz = 1.0 / textureSize(map, 0);
+    float Bias =  max(0.05f * (1.0f - dot(g_Normal, light_dir)), 0.005f);
+	vec2 TexelSize = 1.0 / textureSize(map, 0); // LOD = 0
 
 	// Take the average of the surrounding texels to create the PCF effect
 	for(int x = -1; x <= 1; ++x)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcf = texture(map, ProjectionCoordinates.xy + vec2(x, y) * texelsz).r; 
-			shadow += Depth - bias > pcf ? 1.0 : 0.0;        
+			float pcf = texture(map, ProjectionCoordinates.xy + vec2(x, y) * TexelSize).r; 
+			shadow += Depth - Bias > pcf ? 1.0 : 0.0;        
 		}    
 	}
 

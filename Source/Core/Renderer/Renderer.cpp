@@ -89,6 +89,7 @@ namespace Glide3D
 			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i]->m_SpecularColor);
 			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i]->m_SpecularExponent);
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i]->m_SpecularStrength);
+			shader.SetFloat(name + ".m_ShadowStrength", m_DirectionalLights[i]->m_ShadowStrength);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i]->m_IsBlinn);
 			shader.SetInteger(name + ".m_DepthMap", (int)5 + i); // 5 slots are used for the materials
 		}

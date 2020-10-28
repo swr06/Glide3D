@@ -23,7 +23,7 @@ namespace Glide3D
 	struct DirectionalLight
 	{
 		DirectionalLight(const OrthogonalProperties& ortho_properties = { -60.0f, 60.0f, -60.0f, 60.0f, 0.15f, 60.0f }
-			, const ShadowBufferResolution& shadow_res = {(int)4096, (int)4096})
+			, const ShadowBufferResolution& shadow_res = {(int)1024, (int)1024})
 			: m_DepthBuffer(shadow_res.first, shadow_res.second)
 		{ 
 			m_OrthagonalProperties = ortho_properties;
@@ -48,6 +48,7 @@ namespace Glide3D
 		glm::mat4 m_LightSpaceProjection;
 		glm::mat4 m_LightSpaceView;
 		OrthogonalProperties m_OrthagonalProperties;
+		float m_ShadowStrength = 1.5f;
 	};
 
 	class PointLight
