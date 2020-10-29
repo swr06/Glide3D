@@ -184,6 +184,7 @@
     <ClInclude Include="Core\Renderer\CubeRenderer.h" />
     <ClInclude Include="Core\Renderer\Renderer.h" />
     <ClInclude Include="Core\Skybox.h" />
+    <ClInclude Include="Core\SSAO.h" />
     <ClInclude Include="Core\Transform\Transform.h" />
     <ClInclude Include="Core\Utils\Defs.h" />
     <ClInclude Include="Core\Utils\Timer.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="Core\Renderer\CubeRenderer.cpp" />
     <ClCompile Include="Core\Renderer\Renderer.cpp" />
     <ClCompile Include="Core\Skybox.cpp" />
+    <ClCompile Include="Core\SSAO.cpp" />
     <ClCompile Include="Core\Transform\Transform.cpp" />
     <ClCompile Include="Dependencies\glad\src\glad.c" />
     <ClCompile Include="Dependencies\imgui\imgui.cpp" />

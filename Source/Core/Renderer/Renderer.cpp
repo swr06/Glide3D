@@ -41,6 +41,8 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.CompileShaders();
 		m_DeferredLightPassShader.CreateShaderProgramFromFile("Core/Shaders/LightingPassVert.glsl", "Core/Shaders/LightingPassFrag.glsl");
 		m_DeferredLightPassShader.CompileShaders();
+	
+
 	}
 
 	void Renderer::AddDirectionalLight(DirectionalLight* light)

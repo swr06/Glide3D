@@ -210,6 +210,9 @@
     <ClInclude Include="Core\GL_Classes\DepthBuffer.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\SSAO.h">
+      <Filter>Core\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -326,6 +329,9 @@
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\DepthBuffer.cpp">
       <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\SSAO.cpp">
+      <Filter>Core\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@
 #include <string>
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
+#include <random>
 
 #include "../Object/Object.h"
 #include "../Entity/Entity.h"
