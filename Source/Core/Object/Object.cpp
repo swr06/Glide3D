@@ -53,6 +53,24 @@ namespace Glide3D
 				break;
 			}
 
+			case TextureType::Metalness:
+			{
+				mesh->p_MetalnessMap.CreateTexture(path, flip);
+				break;
+			}
+
+			case TextureType::Roughness:
+			{
+				mesh->p_RoughnessMap.CreateTexture(path, flip);
+				break;
+			}
+
+			case TextureType::AO:
+			{
+				mesh->p_AmbientOcclusionMap.CreateTexture(path, flip);
+				break;
+			}
+
 			default : 
 			{
 				Logger::Log("Invalid argument passed to Object::AddTextureToMesh()!");

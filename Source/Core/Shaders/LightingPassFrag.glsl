@@ -61,8 +61,8 @@ vec3 g_ViewDir;
 vec3 g_Ambient;
 
 // PBR
-uniform float u_Roughness = 0.1f;
-uniform float u_Metalness = 0.1f;
+float g_Roughness = 0.1f;
+float g_Metalness = 0.1f;
 uniform int u_UsesPBRLighting = 0;
 
 vec3 g_F0;
@@ -86,8 +86,11 @@ void main()
 	g_Color = vec3(texture(u_ColorTexture, v_TextureCoordinates));
 	g_Normal = vec3(texture(u_NormalTexture, v_TextureCoordinates));
 	g_FragPosition = vec3(texture(u_PositionTexture, v_TextureCoordinates));
-	g_ViewDir = normalize(u_ViewerPosition - g_FragPosition);
+	g_Roughness = texture(u_RoughnessTexture, v_TextureCoordinates).r;
+	g_Metalness = texture(u_MetallicTexture, v_TextureCoordinates).r;
+	float ao = texture(u_AOTexture, v_TextureCoordinates).r;
 
+	g_ViewDir = normalize(u_ViewerPosition - g_FragPosition);
 	if (g_Color == EmptyPixel && g_Normal == EmptyPixel && g_FragPosition == EmptyPixel) 
 	{ 
 		o_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -99,7 +102,7 @@ void main()
 	if (u_UsesPBRLighting == 1)
 	{
 		g_F0 = vec3(0.04f);
-		g_F0 = mix(g_F0, g_Color, u_Metalness);
+		g_F0 = mix(g_F0, g_Color, g_Metalness);
 
 		vec3 Lo = vec3(0.0f);
 
@@ -149,8 +152,8 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp)
     vec3 H = normalize(V + L);
 	vec3 radiance = light.m_SpecularColor ;
 
-    float NDF = DistributionGGX(g_Normal, H, u_Roughness);   
-    float G = GeometrySmith(g_Normal, V, L, u_Roughness);      
+    float NDF = DistributionGGX(g_Normal, H, g_Roughness);   
+    float G = GeometrySmith(g_Normal, V, L, g_Roughness);      
     vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), g_F0);
        
     vec3 nominator = NDF * G * F; 
@@ -159,7 +162,7 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp)
     
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - u_Metalness;	
+    kD *= 1.0 - g_Metalness;	
 
     float NdotL = max(dot(g_Normal, L), 0.0);
     return (kD * g_Color / PI + specular) * radiance * NdotL * (1.0f - Shadow);
@@ -174,8 +177,8 @@ vec3 CalculatePointLightPBR(PointLight light)
     float Attenuation = 1.0 / (light.m_Constant + light.m_Linear * Distance + light.m_Quadratic * (Distance * Distance)); 
 	vec3 radiance = light.m_SpecularColor * Attenuation;
 
-    float NDF = DistributionGGX(g_Normal, H, u_Roughness);   
-    float G = GeometrySmith(g_Normal, V, L, u_Roughness);      
+    float NDF = DistributionGGX(g_Normal, H, g_Roughness);   
+    float G = GeometrySmith(g_Normal, V, L, g_Roughness);      
     vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), g_F0);
        
     vec3 nominator = NDF * G * F; 
@@ -184,7 +187,7 @@ vec3 CalculatePointLightPBR(PointLight light)
     
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - u_Metalness;	  
+    kD *= 1.0 - g_Metalness;	  
 
     float NdotL = max(dot(g_Normal, L), 0.0);        
 

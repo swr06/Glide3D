@@ -31,6 +31,11 @@ namespace Glide3D
 		GLClasses::Texture p_AlbedoMap;
 		GLClasses::Texture p_NormalMap;
 
+		// PBR
+		GLClasses::Texture p_MetalnessMap;
+		GLClasses::Texture p_RoughnessMap;
+		GLClasses::Texture p_AmbientOcclusionMap;
+
 		GLClasses::VertexBuffer p_VertexBuffer;
 		GLClasses::VertexArray p_VertexArray;
 		GLClasses::IndexBuffer p_IndexBuffer;

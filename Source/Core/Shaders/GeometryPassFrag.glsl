@@ -9,11 +9,21 @@ layout (location = 0) out vec3 o_Position;
 layout (location = 1) out vec3 o_Normal;
 layout (location = 2) out vec4 o_Color;
 
+// PBR Inputs
+layout (location = 3) out float o_Metalness;
+layout (location = 4) out float o_Roughness;
+layout (location = 5) out float o_AO;
+
 uniform vec4 u_Color;
 
 uniform sampler2D u_AlbedoMap;
 uniform sampler2D u_SpecularMap; 
 uniform sampler2D u_NormalMap;
+
+// PBR Textures
+uniform sampler2D u_Metalness;
+uniform sampler2D u_Roughness;
+uniform sampler2D u_AO;
 
 // For reflections
 uniform samplerCube u_EnvironmentMap;
@@ -59,6 +69,10 @@ void main()
 		o_Color.g = mix(o_Color, reflect_color, u_Reflectance.g).g;
 		o_Color.b = mix(o_Color, reflect_color, u_Reflectance.b).b;
 	}
+
+	o_Metalness = texture(u_Metalness, v_TexCoords).r;
+	o_Roughness = texture(u_Roughness, v_TexCoords).r;
+	o_AO = texture(u_AO, v_TexCoords).r;
 }
 
 

@@ -30,7 +30,7 @@ namespace Glide3D
 				{
 				case aiTextureType_DIFFUSE:
 				{
-					_mesh->p_AlbedoMap.CreateTexture(texture_path, true);
+					_mesh->p_AlbedoMap.CreateTexture(texture_path, true) ;
 
 					if (texture_path.find("curtain") != std::string::npos)
 					{
@@ -62,6 +62,25 @@ namespace Glide3D
 					_mesh->p_NormalMap.CreateTexture(texture_path, false);
 					break;
 				}
+
+				case aiTextureType_METALNESS:
+				{
+					_mesh->p_MetalnessMap.CreateTexture(texture_path, false);
+					break;
+				}
+
+				case aiTextureType_DIFFUSE_ROUGHNESS:
+				{
+					_mesh->p_RoughnessMap.CreateTexture(texture_path, false);
+					break;
+				}
+
+				case aiTextureType_AMBIENT_OCCLUSION:
+				{
+					_mesh->p_AmbientOcclusionMap.CreateTexture(texture_path, false);
+					break;
+				}
+
 				}
 			}
 		}
@@ -147,6 +166,9 @@ namespace Glide3D
 			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->m_Meshes.back(), pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->m_Meshes.back(), pth);
 			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, &object->m_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_METALNESS, &object->m_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE_ROUGHNESS, &object->m_Meshes.back(), pth);
+			LoadMaterialTexture(mesh, material, aiTextureType_AMBIENT_OCCLUSION, &object->m_Meshes.back(), pth);
 		}
 
 		struct TransparentMesh
