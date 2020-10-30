@@ -3,7 +3,7 @@ The Glide3D Game Engine by Samuel Rasquinha
 */
 
 /* Contributors
-kiroma 
+kiroma
 hazurl
 */
 
@@ -49,7 +49,7 @@ public:
 			ImGui::Text("Camera Position : %f, %f, %f", position.x, position.y, position.z);
 			ImGui::Text("Camera Front : %f, %f, %f", front.x, front.y, front.z);
 			ImGui::End();
-		}   
+		}
 	}
 
 	void OnEvent(Event e) override
@@ -107,7 +107,7 @@ int main()
 	app.Initialize();
 	glfwSwapInterval(1);
 
-	Glide3D::Renderer &renderer = app.GetRenderer();
+	Glide3D::Renderer& renderer = app.GetRenderer();
 	GLFWwindow* window = app.GetWindow();
 	GLClasses::Framebuffer FBO(800, 600, true);
 
@@ -127,10 +127,10 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(-0.71f, -0.69f, -0.01f);
 
-	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, {4096,4096 });
+	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, { 4096,4096 });
 
 	d_light.m_Direction = light_dir;
-	d_light.m_ShadowPosition = glm::vec3(91, 79, -7); 
+	d_light.m_ShadowPosition = glm::vec3(91, 79, -7);
 	d_light.m_SpecularStrength = 2.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
@@ -193,15 +193,15 @@ int main()
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
-			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed)); 
+			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
 		}
 
-		renderer.Render(&camera, FBO);  
+		renderer.Render(&camera, FBO);
 		renderer.RenderFBO(FBO);
 		camera.OnUpdate();
 		camera.ResetAcceleration();
-		app.FinishFrame(); 
+		app.FinishFrame();
 
 		GLClasses::DisplayFrameRate(app.GetWindow(), "Glide3D ");
 	}
-} 
+}
