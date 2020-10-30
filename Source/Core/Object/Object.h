@@ -31,7 +31,10 @@ namespace Glide3D
 	{
 		Albedo,
 		Normal,
-		Specular
+		Specular,
+		Metalness,
+		Roughness,
+		AO // Ambient Occlusion
 	};
 
 	struct ReflectionMapProperties

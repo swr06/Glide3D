@@ -14,6 +14,7 @@ using namespace Glide3D;
 FPSCamera camera(90, 800.0f / 600.0f, 0.1f, 1000.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
+bool pbr = false;
 float exposure = 0.1f;
 float camera_speed = 0.02f;
 std::stringstream camera_props;
@@ -87,6 +88,11 @@ public:
 			RecompileShaders();
 		}
 
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_F1)
+		{
+			pbr = !pbr;
+		}
+
 		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_ESCAPE)
 		{
 			cursor_locked = !cursor_locked;
@@ -115,15 +121,22 @@ int main()
 
 	camera.SetPosition(glm::vec3(0, 5, 0));
 
-	Object Sponza_obj;
+	Object object;
 
-	FileLoader::LoadOBJFile(&Sponza_obj, "Resources/models/sponza/quintessentials.model");
-	//FileLoader::LoadOBJFile(&Sponza_obj, "Resources/models/dabrovic_sponza/sponza.model");
+	//FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
 
-	Entity sponza(&Sponza_obj);
+	FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
 
-	sponza.GetTransform().Translate(glm::vec3(15, 0, 0));
-	sponza.GetTransform().Scale(glm::vec3(0.1f));
+	object.AddTextureMapToMesh("Resources/pbr/mat1/Albedo.png", TextureType::Albedo);
+	object.AddTextureMapToMesh("Resources/pbr/mat1/Normal.png", TextureType::Normal);
+	object.AddTextureMapToMesh("Resources/pbr/mat1/Metallic.png", TextureType::Metalness);
+	object.AddTextureMapToMesh("Resources/pbr/mat1/Roughness.png", TextureType::Roughness);
+	object.AddTextureMapToMesh("Resources/pbr/mat1/AO.png", TextureType::AO);
+
+	Entity entity1(&object);
+
+	entity1.GetTransform().Translate(glm::vec3(0, 0, 0));
+	entity1.GetTransform().Scale(glm::vec3(2.0f));
 
 	glm::vec3 light_dir = glm::vec3(-0.71f, -0.69f, -0.01f);
 
@@ -136,6 +149,11 @@ int main()
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 0;
 
+	PointLight p_light;
+
+	p_light.m_Position = glm::vec3(4.0f, 3.0f, -1.0f);
+	p_light.m_SpecularStrength = 100.0f;
+
 	Skybox skybox({
 		"Resources/skybox/px.png",
 		"Resources/skybox/nx.png",
@@ -146,15 +164,17 @@ int main()
 		});
 
 	renderer.SetEnvironmentMap(skybox);
-	renderer.AddDirectionalLight(&d_light);
+	//renderer.AddDirectionalLight(&d_light);
+	renderer.AddPointLight(&p_light);
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
-	renderer.AddEntity(&sponza);
+	renderer.AddEntity(&entity1);
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
+		renderer.SetUsePBR(pbr);
 		FBO.SetExposure(exposure);
 
 		app.OnUpdate();
