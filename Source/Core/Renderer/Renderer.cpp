@@ -58,7 +58,7 @@ namespace Glide3D
 		m_DirectionalLights.emplace_back(light);
 	}
 
-	void Renderer::AddPointLight(const PointLight& light)
+	void Renderer::AddPointLight(PointLight* light)
 	{
 		if (m_PointLights.size() + 1 > MAX_POINT_LIGHTS)
 		{
@@ -92,7 +92,7 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i]->m_SpecularStrength);
 			shader.SetFloat(name + ".m_ShadowStrength", m_DirectionalLights[i]->m_ShadowStrength);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i]->m_IsBlinn);
-			shader.SetInteger(name + ".m_DepthMap", (int)5 + i); // 5 slots are used for the materials
+			shader.SetInteger(name + ".m_DepthMap", (int)6 + i); // 5 slots are used for the materials
 		}
 
 		for (int i = 0; i < m_PointLights.size(); i++)
@@ -100,14 +100,14 @@ namespace Glide3D
 			std::string name("u_ScenePointLights[");
 			name = name + std::to_string(i) + "]";
 
-			shader.SetVector3f(name + ".m_Position", m_PointLights[i].m_Position);
-			shader.SetVector3f(name + ".m_SpecularColor", m_PointLights[i].m_SpecularColor);
-			shader.SetInteger(name + ".m_SpecularExponent", m_PointLights[i].m_SpecularExponent);
-			shader.SetFloat(name + ".m_SpecularStrength", m_PointLights[i].m_SpecularStrength);
-			shader.SetFloat(name + ".m_Linear", m_PointLights[i].m_Linear);
-			shader.SetFloat(name + ".m_Constant", m_PointLights[i].m_Constant);
-			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i].m_Quadratic);
-			shader.SetInteger(name + ".m_IsBlinn", (int)m_PointLights[i].m_IsBlinn);
+			shader.SetVector3f(name + ".m_Position", m_PointLights[i]->m_Position);
+			shader.SetVector3f(name + ".m_SpecularColor", m_PointLights[i]->m_SpecularColor);
+			shader.SetInteger(name + ".m_SpecularExponent", m_PointLights[i]->m_SpecularExponent);
+			shader.SetFloat(name + ".m_SpecularStrength", m_PointLights[i]->m_SpecularStrength);
+			shader.SetFloat(name + ".m_Linear", m_PointLights[i]->m_Linear);
+			shader.SetFloat(name + ".m_Constant", m_PointLights[i]->m_Constant);
+			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i]->m_Quadratic);
+			shader.SetInteger(name + ".m_IsBlinn", (int)m_PointLights[i]->m_IsBlinn);
 		}
 	}
 
@@ -115,7 +115,7 @@ namespace Glide3D
 	{
 		for (int i = 0 ; i < m_DirectionalLights.size() ; i++)
 		{
-			glActiveTexture(GL_TEXTURE5 + i);
+			glActiveTexture(GL_TEXTURE6 + i);
 			glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[i]->m_DepthBuffer.GetDepthTexture());
 		}
 	}
@@ -233,6 +233,8 @@ namespace Glide3D
 			ImGui::Text("Shadow Map Render Time : %f ms", m_ShadowMapRenderTime);
 			ImGui::Text("Reflection Map Render Time : %f ms", m_ReflectionMapRenderTime);
 			ImGui::Text("Total Render Time : %f ms", m_TotalRenderTime);
+			ImGui::SliderFloat("Roughness", &m_Roughness, 0.0, 2.0f);
+			ImGui::SliderFloat("Metalness", &m_Metalness, 0.0, 2.0f);
 			ImGui::End();
 		}
 	}
@@ -587,6 +589,15 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));
+
+		// PBR
+		m_DeferredLightPassShader.SetInteger("u_UsesPBRLighting", static_cast<int>(m_UsePBR));
+		m_DeferredLightPassShader.SetFloat("u_Metalness", m_Metalness);
+		m_DeferredLightPassShader.SetFloat("u_Roughness", m_Roughness);
+		m_DeferredLightPassShader.SetInteger("u_RoughnessTexture", 3);
+		m_DeferredLightPassShader.SetInteger("u_MetallicTexture", 4);
+		m_DeferredLightPassShader.SetInteger("u_AOTexture", 5);
+		
 		SetLightUniforms(m_DeferredLightPassShader);
 		BindLightingMaps();
 
