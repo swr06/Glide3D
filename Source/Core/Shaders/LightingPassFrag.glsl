@@ -18,9 +18,7 @@ uniform sampler2D u_NormalTexture;
 uniform sampler2D u_ColorTexture;
 
 // PBR TEXTURES
-uniform sampler2D u_RoughnessTexture;
-uniform sampler2D u_MetallicTexture;
-uniform sampler2D u_AOTexture;
+uniform sampler2D u_PBRComponentTexture;
 
 struct DirectionalLight
 {
@@ -86,9 +84,10 @@ void main()
 	g_Color = vec3(texture(u_ColorTexture, v_TextureCoordinates));
 	g_Normal = vec3(texture(u_NormalTexture, v_TextureCoordinates));
 	g_FragPosition = vec3(texture(u_PositionTexture, v_TextureCoordinates));
-	g_Roughness = texture(u_RoughnessTexture, v_TextureCoordinates).r;
-	g_Metalness = texture(u_MetallicTexture, v_TextureCoordinates).r;
-	float ao = texture(u_AOTexture, v_TextureCoordinates).r;
+
+	vec3 PBRComponent = texture(u_PBRComponentTexture, v_TextureCoordinates).rgb;
+	g_Metalness = PBRComponent.r;
+	g_Roughness = PBRComponent.g;
 
 	g_ViewDir = normalize(u_ViewerPosition - g_FragPosition);
 	if (g_Color == EmptyPixel && g_Normal == EmptyPixel && g_FragPosition == EmptyPixel) 
@@ -97,7 +96,7 @@ void main()
 		return;
 	}
 
-	g_Ambient = u_AmbientStrength * g_Color;
+	g_Ambient = u_AmbientStrength * PBRComponent.b * g_Color;
 
 	if (u_UsesPBRLighting == 1)
 	{

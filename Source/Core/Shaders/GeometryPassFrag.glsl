@@ -9,10 +9,8 @@ layout (location = 0) out vec3 o_Position;
 layout (location = 1) out vec3 o_Normal;
 layout (location = 2) out vec4 o_Color;
 
-// PBR Inputs
-layout (location = 3) out float o_Metalness;
-layout (location = 4) out float o_Roughness;
-layout (location = 5) out float o_AO;
+// PBR Components (Metallic, Roughness and AO)
+layout (location = 3) out vec3 o_PBRComponents;
 
 uniform vec4 u_Color;
 
@@ -70,9 +68,9 @@ void main()
 		o_Color.b = mix(o_Color, reflect_color, u_Reflectance.b).b;
 	}
 
-	o_Metalness = texture(u_Metalness, v_TexCoords).r;
-	o_Roughness = texture(u_Roughness, v_TexCoords).r;
-	o_AO = texture(u_AO, v_TexCoords).r;
+	o_PBRComponents.r = texture(u_Metalness, v_TexCoords).r;
+	o_PBRComponents.g = texture(u_Roughness, v_TexCoords).r;
+	o_PBRComponents.b = texture(u_AO, v_TexCoords).r;
 }
 
 

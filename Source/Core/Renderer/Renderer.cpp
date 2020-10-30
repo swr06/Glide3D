@@ -610,9 +610,7 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetInteger("u_PositionTexture", 0);
 		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
 		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
-		m_DeferredLightPassShader.SetInteger("u_MetallicTexture", 3);
-		m_DeferredLightPassShader.SetInteger("u_RoughnessTexture", 4);
-		m_DeferredLightPassShader.SetInteger("u_AOTexture", 5);
+		m_DeferredLightPassShader.SetInteger("u_PBRComponentTexture", 3);
 
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));
@@ -634,13 +632,7 @@ namespace Glide3D
 		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetColorTexture());
 
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetMetalnessTexture());
-
-		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetRoughnessTexture());
-
-		glActiveTexture(GL_TEXTURE5);
-		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetAOTexture());
+		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPBRComponentTexture());
 
 		m_FBOVAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);

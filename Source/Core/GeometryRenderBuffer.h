@@ -35,9 +35,7 @@ namespace Glide3D
 			m_PositionTexture = v.m_PositionTexture;
 			m_NormalTexture = v.m_NormalTexture;
 			m_DepthRenderBuffer = v.m_DepthRenderBuffer;
-			m_MetalnessTexture = v.m_MetalnessTexture;
-			m_RoughnessTexture = v.m_RoughnessTexture;
-			m_AOTexture = v.m_AOTexture;
+			m_PBRComponentTexture = v.m_PBRComponentTexture;
 			m_FBO = v.m_FBO;
 
 			v.m_ColorTexture = 0;
@@ -45,9 +43,7 @@ namespace Glide3D
 			v.m_NormalTexture = 0;
 			v.m_DepthRenderBuffer = 0;
 			v.m_FBO = 0;
-			v.m_MetalnessTexture = 0;
-			v.m_RoughnessTexture = 0;
-			v.m_AOTexture = 0;
+			v.m_PBRComponentTexture = 0;
 		}
 
 		void Bind() const
@@ -72,9 +68,7 @@ namespace Glide3D
 		inline GLuint GetPositionTexture() const noexcept { return m_PositionTexture; }
 		inline GLuint GetColorTexture() const noexcept { return m_ColorTexture; }
 		inline GLuint GetNormalTexture() const noexcept { return m_NormalTexture; }
-		inline GLuint GetMetalnessTexture() const noexcept { return m_MetalnessTexture; }
-		inline GLuint GetAOTexture() const noexcept { return m_AOTexture; }
-		inline GLuint GetRoughnessTexture() const noexcept { return m_RoughnessTexture; }
+		inline GLuint GetPBRComponentTexture() const noexcept { return m_PBRComponentTexture; }
 
 	private :
 
@@ -86,9 +80,7 @@ namespace Glide3D
 		GLuint m_NormalTexture = 0;
 		GLuint m_DepthRenderBuffer = 0;
 
-		GLuint m_MetalnessTexture = 0;
-		GLuint m_RoughnessTexture = 0;
-		GLuint m_AOTexture = 0;
+		GLuint m_PBRComponentTexture;
 
 		GLuint m_FBO = 0;
 		uint32_t m_Width = 0;

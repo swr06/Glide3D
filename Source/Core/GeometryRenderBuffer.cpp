@@ -27,13 +27,11 @@ namespace Glide3D
 
 	void GeometryRenderBuffer::GenerateFramebuffers()
 	{
-		GLenum DrawBuffers[6] = {
+		GLenum DrawBuffers[4] = {
 			GL_COLOR_ATTACHMENT0,
 			GL_COLOR_ATTACHMENT1,
 			GL_COLOR_ATTACHMENT2, 
-			GL_COLOR_ATTACHMENT3, // Metalness
-			GL_COLOR_ATTACHMENT4, // Roughness
-			GL_COLOR_ATTACHMENT5 // AO
+			GL_COLOR_ATTACHMENT3, // Metalness, Roughness and AO
 		};
 
 		glGenFramebuffers(1, &m_FBO);
@@ -60,32 +58,18 @@ namespace Glide3D
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_ColorTexture, 0);
 
-		glGenTextures(1, &m_MetalnessTexture);
-		glBindTexture(GL_TEXTURE_2D, m_MetalnessTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_FLOAT, NULL);
+		glGenTextures(1, &m_PBRComponentTexture);
+		glBindTexture(GL_TEXTURE_2D, m_PBRComponentTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_MetalnessTexture, 0);
-
-		glGenTextures(1, &m_RoughnessTexture);
-		glBindTexture(GL_TEXTURE_2D, m_RoughnessTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_RoughnessTexture, 0);
-
-		glGenTextures(1, &m_AOTexture);
-		glBindTexture(GL_TEXTURE_2D, m_AOTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, m_AOTexture, 0);
-
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_PBRComponentTexture, 0);
+		
 		glGenRenderbuffers(1, &m_DepthRenderBuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthRenderBuffer);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_Width, m_Height);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthRenderBuffer);
-		glDrawBuffers(6, DrawBuffers);
+		glDrawBuffers(4, DrawBuffers);
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		{
@@ -102,16 +86,12 @@ namespace Glide3D
 		glDeleteTextures(1, &m_ColorTexture);
 		glDeleteTextures(1, &m_PositionTexture);
 		glDeleteTextures(1, &m_NormalTexture);
-		glDeleteTextures(1, &m_MetalnessTexture);
-		glDeleteTextures(1, &m_RoughnessTexture);
-		glDeleteTextures(1, &m_AOTexture);
+		glDeleteTextures(1, &m_PBRComponentTexture);
 
 		m_FBO = 0;
 		m_ColorTexture = 0;
 		m_PositionTexture = 0;
 		m_NormalTexture = 0;
-		m_MetalnessTexture = 0;
-		m_RoughnessTexture = 0;
-		m_AOTexture = 0;
+		m_PBRComponentTexture = 0;
 	}
 }

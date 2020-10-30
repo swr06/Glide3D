@@ -126,7 +126,7 @@ int main()
 	//FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
 
 	FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
-
+	
 	object.AddTextureMapToMesh("Resources/pbr/mat1/Albedo.png", TextureType::Albedo);
 	object.AddTextureMapToMesh("Resources/pbr/mat1/Normal.png", TextureType::Normal);
 	object.AddTextureMapToMesh("Resources/pbr/mat1/Metallic.png", TextureType::Metalness);
@@ -135,8 +135,8 @@ int main()
 
 	Entity entity1(&object);
 
-	entity1.GetTransform().Translate(glm::vec3(0, 0, 0));
 	entity1.GetTransform().Scale(glm::vec3(2.0f));
+	entity1.GetTransform().Translate(glm::vec3(0, 0, 0));
 
 	glm::vec3 light_dir = glm::vec3(-0.71f, -0.69f, -0.01f);
 
