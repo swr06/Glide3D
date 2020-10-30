@@ -92,7 +92,7 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i]->m_SpecularStrength);
 			shader.SetFloat(name + ".m_ShadowStrength", m_DirectionalLights[i]->m_ShadowStrength);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i]->m_IsBlinn);
-			shader.SetInteger(name + ".m_DepthMap", (int)5 + i); // 5 slots are used for the materials
+			shader.SetInteger(name + ".m_DepthMap", (int)6 + i); // 5 slots are used for the materials
 		}
 
 		for (int i = 0; i < m_PointLights.size(); i++)
@@ -115,7 +115,7 @@ namespace Glide3D
 	{
 		for (int i = 0 ; i < m_DirectionalLights.size() ; i++)
 		{
-			glActiveTexture(GL_TEXTURE5 + i);
+			glActiveTexture(GL_TEXTURE6 + i);
 			glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[i]->m_DepthBuffer.GetDepthTexture());
 		}
 	}
@@ -233,8 +233,8 @@ namespace Glide3D
 			ImGui::Text("Shadow Map Render Time : %f ms", m_ShadowMapRenderTime);
 			ImGui::Text("Reflection Map Render Time : %f ms", m_ReflectionMapRenderTime);
 			ImGui::Text("Total Render Time : %f ms", m_TotalRenderTime);
-			ImGui::SliderFloat("Roughness", &m_Roughness, 0.0, 5.0f);
-			ImGui::SliderFloat("Metalness", &m_Metalness, 0.0, 5.0f);
+			ImGui::SliderFloat("Roughness", &m_Roughness, 0.0, 2.0f);
+			ImGui::SliderFloat("Metalness", &m_Metalness, 0.0, 2.0f);
 			ImGui::End();
 		}
 	}
@@ -590,9 +590,14 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));
 
+		// PBR
+		m_DeferredLightPassShader.SetInteger("u_UsesPBRLighting", static_cast<int>(m_UsePBR));
 		m_DeferredLightPassShader.SetFloat("u_Metalness", m_Metalness);
 		m_DeferredLightPassShader.SetFloat("u_Roughness", m_Roughness);
-
+		m_DeferredLightPassShader.SetInteger("u_RoughnessTexture", 3);
+		m_DeferredLightPassShader.SetInteger("u_MetallicTexture", 4);
+		m_DeferredLightPassShader.SetInteger("u_AOTexture", 5);
+		
 		SetLightUniforms(m_DeferredLightPassShader);
 		BindLightingMaps();
 

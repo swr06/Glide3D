@@ -47,6 +47,7 @@ namespace Glide3D
 
 		void AddDirectionalLight(DirectionalLight* light);
 		void AddPointLight(PointLight* light);
+		void SetUsePBR(bool v) noexcept { m_UsePBR = v; };
 
 		// Rendering
 		void AddEntities(const std::vector<const Entity*>& entities);
@@ -109,5 +110,7 @@ namespace Glide3D
 
 		float m_Roughness = 0.1f;
 		float m_Metalness = 0.1f;
+
+		bool m_UsePBR = false;
 	};
 }

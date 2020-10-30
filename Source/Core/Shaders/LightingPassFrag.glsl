@@ -1,7 +1,13 @@
+/*
+-------- Glide3D ---------
+-- Lighting Pass Shader --
+*/
+
 #version 330 core
 
 #define MAX_DIRECTIONAL_LIGHTS 2
 #define MAX_POINT_LIGHTS 14
+#define PI 3.14159265359
 
 layout (location = 0) out vec4 o_Color;
 
@@ -10,6 +16,11 @@ in vec2 v_TextureCoordinates;
 uniform sampler2D u_PositionTexture;
 uniform sampler2D u_NormalTexture;
 uniform sampler2D u_ColorTexture;
+
+// PBR TEXTURES
+uniform sampler2D u_RoughnessTexture;
+uniform sampler2D u_MetallicTexture;
+uniform sampler2D u_AOTexture;
 
 struct DirectionalLight
 {
@@ -48,60 +59,26 @@ vec3 g_Normal;
 vec3 g_Color;
 vec3 g_ViewDir;
 vec3 g_Ambient;
-float g_Shadow;
 
 // PBR
 uniform float u_Roughness = 0.1f;
 uniform float u_Metalness = 0.1f;
+uniform int u_UsesPBRLighting = 0;
+
 vec3 g_F0;
 
 // Function prototype
-vec3 CalculateDirectionalLight(DirectionalLight light);
-vec3 CalculatePointLight(PointLight light);
+vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp);
+vec3 CalculatePointLightPBR(PointLight light);
+vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp);
+vec3 CalculatePointLightPHONG(PointLight light);
 float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir);
+vec3 fresnelSchlick(float cosTheta, vec3 F0);
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+float GeometrySchlickGGX(float NdotV, float roughness);
+float DistributionGGX(vec3 N, vec3 H, float roughness);
 
 const vec3 EmptyPixel = vec3(0.0f);
-const float PI = 3.14159265359;
-
-float DistributionGGX(vec3 N, vec3 H, float roughness)
-{
-    float a = roughness * roughness;
-    float a2 = a * a;
-    float NdotH = max(dot(N, H), 0.0);
-    float NdotH2 = NdotH * NdotH;
-
-    float nom   = a2;
-    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = PI * denom * denom;
-
-    return nom / max(denom, 0.001); 
-}
-
-float GeometrySchlickGGX(float NdotV, float roughness)
-{
-    float r = (roughness + 1.0);
-    float k = (r*r) / 8.0;
-
-    float nom   = NdotV;
-    float denom = NdotV * (1.0 - k) + k;
-
-    return nom / denom;
-}
-
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
-{
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
-
-    return ggx1 * ggx2;
-}
-
-vec3 fresnelSchlick(float cosTheta, vec3 F0)
-{
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
-}
 
 void main()
 {
@@ -117,35 +94,56 @@ void main()
 		return;
 	}
 
-	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
+	g_Ambient = u_AmbientStrength * g_Color;
+
+	if (u_UsesPBRLighting == 1)
 	{
-		g_Shadow += u_SceneDirectionalLights[i].m_ShadowStrength * ShadowCalculation(u_DirectionalLightSpaceVP[i] * vec4(g_FragPosition, 1.0f), u_SceneDirectionalLights[i].m_DepthMap, u_SceneDirectionalLights[i].m_Direction);
+		g_F0 = vec3(0.04f);
+		g_F0 = mix(g_F0, g_Color, u_Metalness);
+
+		vec3 Lo = vec3(0.0f);
+
+		for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
+		{
+			Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i]);
+		}	
+
+		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
+		{
+			Lo += CalculatePointLightPBR(u_ScenePointLights[i]);
+		}	
+
+		o_Color = vec4(g_Ambient + Lo, 1.0f);
+
+		return;
 	}
 
-	g_Shadow = 1.0f - g_Shadow;
-	g_Shadow = max(g_Shadow, 0.01f);
-	g_Ambient = g_Color * g_Shadow;
-
-	g_F0 = vec3(0.04f);
-	g_F0 = mix(g_F0, g_Color, u_Metalness);
-
-	vec3 Lo = vec3(0.0f);
-
-	for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
+	else
 	{
-		Lo += CalculateDirectionalLight(u_SceneDirectionalLights[i]);
-	}	
+		vec3 FinalColor;
 
-	for (int i = 0 ; i < u_ScenePointLightCount ; i++)
-	{
-		Lo += CalculatePointLight(u_ScenePointLights[i]);
-	}	
+		for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
+		{
+			FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i]);
+		}	
 
-	o_Color = vec4(g_Ambient + Lo, 1.0f);
+		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
+		{
+			FinalColor += CalculatePointLightPHONG(u_ScenePointLights[i]);
+		}	
+
+		o_Color = vec4(FinalColor, 1.0f);
+
+		return;
+	}
+
+	return;
 }
 
-vec3 CalculateDirectionalLight(DirectionalLight light)
+vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp)
 {
+	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), light.m_DepthMap, light.m_Direction), 0.1f);
+
 	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
     vec3 L = normalize(-light.m_Direction);
     vec3 H = normalize(V + L);
@@ -161,14 +159,13 @@ vec3 CalculateDirectionalLight(DirectionalLight light)
     
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - u_Metalness;	  
+    kD *= 1.0 - u_Metalness;	
 
-    float NdotL = max(dot(g_Normal, L), 0.0);        
-
-    return ((kD * g_Color / PI + specular * light.m_SpecularStrength) * radiance * NdotL);
+    float NdotL = max(dot(g_Normal, L), 0.0);
+    return (kD * g_Color / PI + specular) * radiance * NdotL * (1.0f - Shadow);
 }
 
-vec3 CalculatePointLight(PointLight light)
+vec3 CalculatePointLightPBR(PointLight light)
 {
 	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
     vec3 L = normalize(light.m_Position - g_FragPosition);
@@ -207,8 +204,8 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 
     float ClosestDepth = texture(map, ProjectionCoordinates.xy).r; 
     float Depth = ProjectionCoordinates.z;
-    //float Bias =  max(0.05f * (1.0f - dot(g_Normal, light_dir)), 0.005f);
-    float Bias =  0.005f;
+    float Bias =  max(0.05f * (1.0f - dot(g_Normal, light_dir)), 0.005f);
+    //float Bias =  0.005f;
 	vec2 TexelSize = 1.0 / textureSize(map, 0); // LOD = 0
 
 	// Take the average of the surrounding texels to create the PCF effect
@@ -223,4 +220,106 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 
 	shadow /= 9.0;
     return shadow;
+}
+
+vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp)
+{
+	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), light.m_DepthMap, light.m_Direction), 0.1f);
+	Shadow = 1.0f - Shadow;
+
+	vec3 LightDirection = normalize(-light.m_Direction);
+
+	float Diffuse = max(dot(g_Normal, LightDirection), 0.0f);
+
+	float Specular;
+
+	if (light.m_IsBlinn == 1) 
+	{
+		vec3 Halfway = normalize(LightDirection + g_ViewDir);  
+        Specular = pow(max(dot(g_Normal, Halfway), 0.0), light.m_SpecularExponent);
+	}
+
+	else
+	{
+		vec3 ReflectDir = reflect(-LightDirection, g_Normal);		
+		Specular = pow(max(dot(g_ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+	}
+	
+	vec3 DiffuseColor = Diffuse * g_Color; 
+	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor ; // To be also sampled with specular map
+
+	return vec3((g_Ambient + (DiffuseColor * Shadow) + SpecularColor) * g_Color);  
+}
+
+vec3 CalculatePointLightPHONG(PointLight light)
+{
+	vec3 LightDirection = normalize(light.m_Position - g_FragPosition);
+
+	float Diffuse = max(dot(g_Normal, LightDirection), 0.0f);
+
+	float Specular;
+
+	if (light.m_IsBlinn == 1)
+	{
+		vec3 Halfway = normalize(LightDirection + g_ViewDir);  
+        Specular = pow(max(dot(g_Normal, Halfway), 0.0), light.m_SpecularExponent);
+	}
+
+	else
+	{
+		vec3 ReflectDir = reflect(-LightDirection, g_Normal);		
+		float Specular = pow(max(dot(g_ViewDir, ReflectDir), 0.0), light.m_SpecularExponent);
+	}
+
+	vec3 DiffuseColor = Diffuse * g_Color;
+	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor;    
+
+	// Calculate the attenuation
+	float Distance = length(light.m_Position - g_FragPosition);
+    float Attenuation = 1.0 / (light.m_Constant + light.m_Linear * Distance + light.m_Quadratic * (Distance * Distance));
+	
+	DiffuseColor  *= Attenuation;
+	SpecularColor *= Attenuation;
+	return vec3(((g_Ambient * Attenuation) + DiffuseColor + SpecularColor) * g_Color);
+}
+
+// The below are just implementations of PBR equations
+float DistributionGGX(vec3 N, vec3 H, float roughness)
+{
+    float a = roughness * roughness;
+    float a2 = a * a;
+    float NdotH = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH * NdotH;
+
+    float nom   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+
+    return nom / max(denom, 0.001); 
+}
+
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r * r) / 8.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+
+    return ggx1 * ggx2;
+}
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
