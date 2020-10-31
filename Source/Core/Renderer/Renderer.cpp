@@ -226,15 +226,16 @@ namespace Glide3D
 
 	void Renderer::RenderImGuiElements()
 	{
-		if (ImGui::Begin("Renderer Editor"))
+		if (ImGui::Begin("Renderer Stats"))
 		{
 			ImGui::Text("Geometry Pass Render Time : %f ms", m_GeometryPassTime);
 			ImGui::Text("Lighting Pass Time : %f ms", m_LightingPassTime);
 			ImGui::Text("Shadow Map Render Time : %f ms", m_ShadowMapRenderTime);
 			ImGui::Text("Reflection Map Render Time : %f ms", m_ReflectionMapRenderTime);
 			ImGui::Text("Total Render Time : %f ms", m_TotalRenderTime);
-			ImGui::SliderFloat("Roughness", &m_Roughness, 0.0, 2.0f);
-			ImGui::SliderFloat("Metalness", &m_Metalness, 0.0, 2.0f);
+			ImGui::Text("Total Draw Calls : %d", m_DrawCalls);
+			ImGui::Text("Total Vertices : %d", m_VertexCount);
+			ImGui::Text("Total Indices : %d", m_IndexCount);
 			ImGui::End();
 		}
 	}
@@ -454,6 +455,9 @@ namespace Glide3D
 	*/
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
+		m_DrawCalls = 0;
+		m_VertexCount = 0;
+		m_IndexCount = 0;
 		m_TotalRenderTime = glfwGetTime();
 		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
 
@@ -484,9 +488,9 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.SetInteger("u_NormalMap", 1, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_SpecularMap", 2, 0);
 
-		m_DeferredGeometryPassShader.SetInteger("u_Metalness", 3, 0);
-		m_DeferredGeometryPassShader.SetInteger("u_Roughness", 4, 0);
-		m_DeferredGeometryPassShader.SetInteger("u_AO", 5, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_MetalnessMap", 3, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_RoughnessMap", 4, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_AOMap", 5, 0);
 
 		m_DeferredGeometryPassShader.SetInteger("u_EnvironmentMap", 6, 0);
 		m_DeferredGeometryPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
@@ -536,6 +540,9 @@ namespace Glide3D
 
 				const Mesh* mesh = &e;
 
+				m_VertexCount += mesh->p_VertexCount;
+				m_IndexCount += mesh->p_IndicesCount;
+
 				bool indexed = mesh->p_Indexed;
 
 				if (mesh->p_AlbedoMap.GetTextureID() != 0)
@@ -567,6 +574,9 @@ namespace Glide3D
 				m_DeferredGeometryPassShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
 				m_DeferredGeometryPassShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
 				m_DeferredGeometryPassShader.SetInteger("u_HasReflections", static_cast<int>(mesh->p_Reflectivity != glm::vec3(0.0f)));
+				m_DeferredGeometryPassShader.SetInteger("u_HasMetalnessMap", static_cast<int>(mesh->p_MetalnessMap.GetTextureID() != 0));
+				m_DeferredGeometryPassShader.SetInteger("u_HasRoughnessMap", static_cast<int>(mesh->p_RoughnessMap.GetTextureID() != 0));
+				m_DeferredGeometryPassShader.SetInteger("u_HasAOMap", static_cast<int>(mesh->p_AmbientOcclusionMap.GetTextureID() != 0));
 				m_DeferredGeometryPassShader.SetVector3f("u_Reflectance", mesh->p_Reflectivity);
 				
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
@@ -575,11 +585,13 @@ namespace Glide3D
 				if (indexed)
 				{
 					glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.second.size());
+					m_DrawCalls++;
 				}
 
 				else
 				{
 					glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.second.size());
+					m_DrawCalls++;
 				}
 
 				VAO.Unbind();

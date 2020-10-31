@@ -127,11 +127,11 @@ int main()
 
 	FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
 	
-	object.AddTextureMapToMesh("Resources/pbr/mat1/Albedo.png", TextureType::Albedo);
-	object.AddTextureMapToMesh("Resources/pbr/mat1/Normal.png", TextureType::Normal);
-	object.AddTextureMapToMesh("Resources/pbr/mat1/Metallic.png", TextureType::Metalness);
-	object.AddTextureMapToMesh("Resources/pbr/mat1/Roughness.png", TextureType::Roughness);
-	object.AddTextureMapToMesh("Resources/pbr/mat1/AO.png", TextureType::AO);
+	object.AddTextureMapToMesh("Resources/pbr/mat2/Albedo.png", TextureType::Albedo);
+	object.AddTextureMapToMesh("Resources/pbr/mat2/Normal.png", TextureType::Normal);
+	object.AddTextureMapToMesh("Resources/pbr/mat2/Metallic.png", TextureType::Metalness);
+	object.AddTextureMapToMesh("Resources/pbr/mat2/Roughness.png", TextureType::Roughness);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/AO.png", TextureType::AO);
 
 	Entity entity1(&object);
 
@@ -152,7 +152,7 @@ int main()
 	PointLight p_light;
 
 	p_light.m_Position = glm::vec3(4.0f, 3.0f, -1.0f);
-	p_light.m_SpecularStrength = 100.0f;
+	p_light.m_SpecularStrength = 4.0f;
 
 	Skybox skybox({
 		"Resources/skybox/px.png",

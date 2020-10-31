@@ -3,6 +3,21 @@
 -- Lighting Pass Shader --
 */
 
+/* -- Reference --           
+
+ --Material--				-- Linear --				-- sRGB --
+Water 				|	(0.02f, 0.02f, 0.02f) 	|  (0.15f, 0.15f, 0.15f)   	
+Plastic / Glass     | 	(0.03f, 0.03f, 0.03f) 	|  (0.21f, 0.21f, 0.21f) 	
+Plastic High 		|	(0.05f, 0.05f, 0.05f) 	|  (0.24f, 0.24f, 0.24f) 		
+Glass / Ruby 		|	(0.08f, 0.08f, 0.08f) 	|  (0.31f, 0.31f, 0.31f) 	
+Diamond				|	(0.17f, 0.17f, 0.17f) 	|  (0.45f, 0.45f, 0.45f) 	
+Iron 				|	(0.56f, 0.57f, 0.58f) 	|  (0.77f, 0.78f, 0.78f) 	
+Copper				|	(0.95f, 0.64f, 0.54f) 	|  (0.98f, 0.82f, 0.76f) 	
+Gold 				|	(1.00f, 0.71f, 0.29f) 	|  (1.00f, 0.86f, 0.57f) 	
+Aluminium			|	(0.91f, 0.92f, 0.92f) 	|  (0.96f, 0.96f, 0.97f) 	
+Silver 				|	(0.95f, 0.93f, 0.88f) 	|  (0.98f, 0.97f, 0.95f)
+*/
+
 #version 330 core
 
 #define MAX_DIRECTIONAL_LIGHTS 2
@@ -100,7 +115,7 @@ void main()
 
 	if (u_UsesPBRLighting == 1)
 	{
-		g_F0 = vec3(0.04f);
+		g_F0 = vec3(0.05f); // Dielectric Material
 		g_F0 = mix(g_F0, g_Color, g_Metalness);
 
 		vec3 Lo = vec3(0.0f);
@@ -195,7 +210,7 @@ vec3 CalculatePointLightPBR(PointLight light)
 
 float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 {
-    vec3 ProjectionCoordinates = light_fragpos.xyz;
+    vec3 ProjectionCoordinates = light_fragpos.xyz / light_fragpos.w; // Perspective division is not really needed for orthagonal projection but whatever
     ProjectionCoordinates = ProjectionCoordinates * 0.5f + 0.5f;
 	float shadow = 0.0;
 

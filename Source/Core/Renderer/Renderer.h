@@ -107,6 +107,9 @@ namespace Glide3D
 		double m_GeometryPassTime = 0;
 		double m_LightingPassTime = 0;
 		double m_TotalRenderTime = 0;
+		uint32_t m_DrawCalls = 0;
+		uint32_t m_VertexCount = 0;
+		uint32_t m_IndexCount = 0;
 
 		float m_Roughness = 0.1f;
 		float m_Metalness = 0.1f;

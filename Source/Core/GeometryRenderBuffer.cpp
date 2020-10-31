@@ -31,7 +31,7 @@ namespace Glide3D
 			GL_COLOR_ATTACHMENT0,
 			GL_COLOR_ATTACHMENT1,
 			GL_COLOR_ATTACHMENT2, 
-			GL_COLOR_ATTACHMENT3, // Metalness, Roughness and AO
+			GL_COLOR_ATTACHMENT3 // Metalness, Roughness and AO
 		};
 
 		glGenFramebuffers(1, &m_FBO);

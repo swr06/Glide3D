@@ -1,3 +1,7 @@
+/*
+-- Geometry Pass Shader --
+*/
+
 #version 440 core
 
 in vec2 v_TexCoords;
@@ -19,17 +23,26 @@ uniform sampler2D u_SpecularMap;
 uniform sampler2D u_NormalMap;
 
 // PBR Textures
-uniform sampler2D u_Metalness;
-uniform sampler2D u_Roughness;
-uniform sampler2D u_AO;
+uniform sampler2D u_MetalnessMap;
+uniform sampler2D u_RoughnessMap;
+uniform sampler2D u_AOMap;
 
 // For reflections
 uniform samplerCube u_EnvironmentMap;
 uniform vec3 u_ViewerPosition;
 uniform vec3 u_Reflectance = vec3(0.0f);
+
 uniform int u_HasReflections = 0;
 uniform int u_HasAlbedoMap = 0;
 uniform int u_HasNormalMap = 0;
+
+// PBR Stuff
+uniform int u_HasMetalnessMap = 0;
+uniform int u_HasRoughnessMap = 0;
+uniform int u_HasAOMap = 0;
+
+uniform float u_Roughness = 0.1f;
+uniform float u_Metalness = 0.2f;
 
 void main()
 {
@@ -68,9 +81,26 @@ void main()
 		o_Color.b = mix(o_Color, reflect_color, u_Reflectance.b).b;
 	}
 
-	o_PBRComponents.r = texture(u_Metalness, v_TexCoords).r;
-	o_PBRComponents.g = texture(u_Roughness, v_TexCoords).r;
-	o_PBRComponents.b = texture(u_AO, v_TexCoords).r;
+	if (u_HasMetalnessMap == 1)
+	{
+		o_PBRComponents.r = texture(u_MetalnessMap, v_TexCoords).r;
+	}
+
+	else { o_PBRComponents.r = u_Metalness; }
+
+	if (u_HasRoughnessMap == 1)
+	{
+		o_PBRComponents.g = texture(u_RoughnessMap, v_TexCoords).r;
+	} 
+
+	else { o_PBRComponents.g = u_Roughness; }
+
+	if (u_HasAOMap == 1)
+	{
+		o_PBRComponents.b = texture(u_AOMap, v_TexCoords).r;
+	} 
+
+	else { o_PBRComponents.b = 1.0f; }
 }
 
 
