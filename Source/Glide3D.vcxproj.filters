@@ -359,12 +359,6 @@
     <None Include="Core\Shaders\DepthVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
-    <None Include="Core\Shaders\DepthCubemapFrag.glsl">
-      <Filter>Core\Shaders</Filter>
-    </None>
-    <None Include="Core\Shaders\DepthCubemapVert.glsl">
-      <Filter>Core\Shaders</Filter>
-    </None>
     <None Include="Core\Shaders\ReflectionFrag.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
@@ -393,6 +387,15 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\FramebufferHDRVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\DepthCubemapFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\DepthCubemapGeometry.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\DepthCubemapVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
   </ItemGroup>

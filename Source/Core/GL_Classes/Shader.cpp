@@ -2,7 +2,7 @@
 
 namespace GLClasses
 {
-	static string GetFileName(string path)
+	static std::string GetFileName(std::string path)
 	{
 		std::filesystem::path pth = std::filesystem::path(path.c_str()).filename();
 		return pth.string();
@@ -17,12 +17,42 @@ namespace GLClasses
 	void Shader::CompileShaders()
 	{
 		m_Program = 0;
-		auto start = chrono::steady_clock::now();
+		auto start = std::chrono::steady_clock::now();
 
 		GLuint vs;
 		GLuint fs;
 		GLint successful;
 		GLchar GLInfoLog[512];
+
+		GLuint gs;
+
+		if (m_GeometryData.size() > 0)
+		{
+			gs = glCreateShader(GL_GEOMETRY_SHADER);
+
+			const char* geo_source = m_GeometryData.c_str();
+
+			glShaderSource(gs, 1, &geo_source, 0);
+			glCompileShader(gs);
+			glGetShaderiv(gs, GL_COMPILE_STATUS, &successful);
+
+			if (!successful)
+			{
+				glGetShaderInfoLog(gs, 512, NULL, GLInfoLog);
+				std::cout << "\nCOMPILATION ERROR IN GEOMETRY SHADER (" << m_GeometryPath << ")" << "\n" << GLInfoLog << "\n\n";
+			}
+
+			GLint log_length = 0;
+
+			glGetShaderiv(gs, GL_INFO_LOG_LENGTH, &log_length);
+
+			if (log_length > 0)
+			{
+				std::string shaderlog(log_length, 0);
+				glGetShaderInfoLog(gs, log_length, 0, shaderlog.data());
+				std::cout << "Geometry Shader compilation log: " << shaderlog << std::endl;
+			}
+		}
 
 		vs = glCreateShader(GL_VERTEX_SHADER);
 		fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -74,6 +104,12 @@ namespace GLClasses
 		m_Program = glCreateProgram();
 		glAttachShader(m_Program, vs);
 		glAttachShader(m_Program, fs);
+
+		if (m_GeometryData.size() > 0)
+		{
+			glAttachShader(m_Program, gs);
+		}
+
 		glLinkProgram(m_Program);
 
 		glGetProgramiv(m_Program, GL_LINK_STATUS, &successful);
@@ -87,25 +123,41 @@ namespace GLClasses
 		glDeleteShader(vs);
 		glDeleteShader(fs);
 
-		auto end = chrono::steady_clock::now();
+		auto end = std::chrono::steady_clock::now();
 		double elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 	}
 
-	void Shader::CreateShaderProgramFromFile(const string vertex_pth, const string fragment_pth)
+	void Shader::CreateShaderProgramFromFile(const std::string& vertex_pth, const std::string& fragment_pth, const std::string& geometry_path)
 	{
-		stringstream v_cont;
-		stringstream f_cont;
-		string vertex_cont;
-		string frag_cont;
-		ifstream vertex_file;
-		ifstream frag_file;
+		if (geometry_path.size() > 0)
+		{
+			std::ifstream geo_file;
+			std::stringstream g_cont;
 
-		vertex_file.exceptions(ifstream::badbit | ifstream::failbit);
-		frag_file.exceptions(ifstream::badbit | ifstream::failbit);
+			geo_file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+			geo_file.open(geometry_path, std::ios::in);
 
-		vertex_file.open(vertex_pth, ios::in);
-		frag_file.open(fragment_pth, ios::in);
-		
+			if (geo_file.good() && geo_file.is_open())
+			{
+				g_cont << geo_file.rdbuf();
+				m_GeometryPath = geometry_path;
+				m_GeometryData = g_cont.str();
+			}
+
+			geo_file.close();
+		}
+
+		std::stringstream v_cont;
+		std::stringstream f_cont;
+		std::ifstream vertex_file;
+		std::ifstream frag_file;
+
+		vertex_file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+		frag_file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+
+		vertex_file.open(vertex_pth, std::ios::in);
+		frag_file.open(fragment_pth, std::ios::in);
+
 		m_VertexPath = vertex_pth;
 		m_FragmentPath = fragment_pth;
 
@@ -121,12 +173,14 @@ namespace GLClasses
 		}
 	}
 
-	void Shader::CreateShaderProgramFromString(const string& vertex_data, const string& fragment_data)
+	void Shader::CreateShaderProgramFromString(const std::string& vertex_data, const std::string& fragment_data, const std::string& geometry_data)
 	{
 		m_VertexData = vertex_data;
 		m_FragmentData = fragment_data;
+		m_GeometryData = geometry_data;
 		m_VertexPath = "PASSED_VIA_DATA";
 		m_FragmentPath = "PASSED_VIA_DATA";
+		m_GeometryData = "PASSED_VIA_DATA";
 	}
 
 	void Shader::Destroy()

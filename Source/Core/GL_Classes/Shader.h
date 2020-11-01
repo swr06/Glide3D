@@ -17,23 +17,10 @@
 
 namespace GLClasses
 {
-	using namespace std;
 	class Shader
 	{
 	public:
 
-		Shader(string vertex_shader, const string fragment_shader, bool pass_by_path)
-		{
-			if (pass_by_path)
-			{
-				CreateShaderProgramFromFile(vertex_shader, fragment_shader);
-			}
-
-			else
-			{
-				CreateShaderProgramFromString(vertex_shader, fragment_shader);
-			}
-		}
 		Shader() {}; 
 
 		Shader(const Shader&) = delete;
@@ -54,8 +41,8 @@ namespace GLClasses
 		~Shader();
 
 		void CompileShaders();
-		void CreateShaderProgramFromFile(const string vertex_pth, const string fragment_pth);
-		void CreateShaderProgramFromString(const string& vertex_data, const string& fragment_data);
+		void CreateShaderProgramFromFile(const std::string& vertex_pth, const std::string& fragment_pth, const std::string& geometry_path = "");
+		void CreateShaderProgramFromString(const std::string& vertex_data, const std::string& fragment_data, const std::string& geometry_data = "");
 		inline GLuint GetProgramID() const { return m_Program; };
 		
 		inline void Use() 
@@ -79,13 +66,15 @@ namespace GLClasses
 
 	 private:
 
-		unordered_map<string, GLint> Location_map; // To avoid unnecessary calls to glGetUniformLocation()
+		std::unordered_map<std::string, GLint> Location_map; // To avoid unnecessary calls to glGetUniformLocation()
 		GLuint m_Program = 0;
 
 		GLint GetUniformLocation(const std::string& uniform_name);
-		string m_VertexData;
-		string m_VertexPath;
-		string m_FragmentData;
-		string m_FragmentPath;
+		std::string m_VertexData;
+		std::string m_VertexPath;
+		std::string m_FragmentData;
+		std::string m_FragmentPath;
+		std::string m_GeometryData;
+		std::string m_GeometryPath;
 	};
 }

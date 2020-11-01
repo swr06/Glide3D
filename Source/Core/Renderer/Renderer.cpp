@@ -41,8 +41,8 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.CompileShaders();
 		m_DeferredLightPassShader.CreateShaderProgramFromFile("Core/Shaders/LightingPassVert.glsl", "Core/Shaders/LightingPassFrag.glsl");
 		m_DeferredLightPassShader.CompileShaders();
-	
-
+		m_DepthCubemapShader.CreateShaderProgramFromFile("Core/Shaders/DepthCubemapVert.glsl", "Core/Shaders/DepthCubemapFrag.glsl", "Core/Shaders/DepthCubemapGeometry.glsl");
+		m_DepthCubemapShader.CompileShaders();
 	}
 
 	void Renderer::AddDirectionalLight(DirectionalLight* light)
@@ -122,7 +122,19 @@ namespace Glide3D
 
 	void Renderer::RenderPointLightShadowMap(PointLight& pointlight)
 	{
-		// Todo
+		glm::vec3 pos = pointlight.m_Position;
+
+		std::array<glm::mat4, 6> view_matrices =
+		{
+			glm::lookAt(pos, pos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(pos, pos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(pos, pos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+			glm::lookAt(pos, pos + glm::vec3(0.0f,-1.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+			glm::lookAt(pos, pos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			glm::lookAt(pos, pos + glm::vec3(0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+		};
+
+
 	}
 
 	void Renderer::_RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view)

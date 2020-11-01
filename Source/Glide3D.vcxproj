@@ -246,6 +246,7 @@
     <None Include="Core\Shaders\CubeRendererFrag.glsl" />
     <None Include="Core\Shaders\CubeRendererVert.glsl" />
     <None Include="Core\Shaders\DepthCubemapFrag.glsl" />
+    <None Include="Core\Shaders\DepthCubemapGeometry.glsl" />
     <None Include="Core\Shaders\DepthCubemapVert.glsl" />
     <None Include="Core\Shaders\DepthFrag.glsl" />
     <None Include="Core\Shaders\DepthVert.glsl" />
