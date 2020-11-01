@@ -47,7 +47,8 @@ namespace Glide3D
 
 	private:
 		void InitializeEditor();
-		std::vector<std::unique_ptr<Object>> m_Objects;
+		std::vector<Object> m_Objects;
+		std::vector<std::unique_ptr<Entity>> m_Entities;
 		std::shared_ptr<Renderer> m_Renderer;
 		GLFWwindow* m_Window;
 	};

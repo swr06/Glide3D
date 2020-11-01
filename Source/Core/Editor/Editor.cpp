@@ -43,7 +43,10 @@ namespace Glide3D
 			ofn.lpstrInitialDir = NULL;
 			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-			if (ImGui::Button("Select Model File"))
+			ImGui::Text("Model File : "); ImGui::SameLine();
+			ImGui::Text(model_path.c_str()); ImGui::SameLine();
+
+			if (ImGui::Button("Select Model File..."))
 			{
 				if (GetOpenFileName(&ofn) == TRUE)
 				{
@@ -53,7 +56,10 @@ namespace Glide3D
 				}
 			}
 
-			if (ImGui::Button("Select Albedo Texture"))
+			ImGui::Text("Albedo File : "); ImGui::SameLine();
+			ImGui::Text(albedo_path.c_str()); ImGui::SameLine();
+
+			if (ImGui::Button("Select Albedo Texture..."))
 			{
 				if (GetOpenFileName(&ofn) == TRUE)
 				{
@@ -62,6 +68,9 @@ namespace Glide3D
 					albedo_path = std::string(str.begin(), str.end());
 				}
 			}
+
+			ImGui::Text("Normal File : "); ImGui::SameLine();
+			ImGui::Text(normal_path.c_str()); ImGui::SameLine();
 
 			if (ImGui::Button("Select Normal Texture"))
 			{
@@ -73,6 +82,9 @@ namespace Glide3D
 				}
 			}
 
+			ImGui::Text("Metallic File : "); ImGui::SameLine();
+			ImGui::Text(metallic_path.c_str()); ImGui::SameLine();
+
 			if (ImGui::Button("Select Metallic Texture"))
 			{
 				if (GetOpenFileName(&ofn) == TRUE)
@@ -82,6 +94,9 @@ namespace Glide3D
 					metallic_path = std::string(str.begin(), str.end());
 				}
 			}
+
+			ImGui::Text("Roughness File : "); ImGui::SameLine();
+			ImGui::Text(roughness_path.c_str()); ImGui::SameLine();
 
 			if (ImGui::Button("Select Roughness Texture"))
 			{
@@ -93,7 +108,10 @@ namespace Glide3D
 				}
 			}
 
-			if (ImGui::Button("Select Ambient Occlusion Texture"))
+			ImGui::Text("AO File : "); ImGui::SameLine();
+			ImGui::Text(ao_path.c_str()); ImGui::SameLine();
+
+			if (ImGui::Button("Select AO Texture..."))
 			{
 				if (GetOpenFileName(&ofn) == TRUE)
 				{
@@ -165,7 +183,16 @@ namespace Glide3D
 
 		if (ImGui::Begin("Insert Entities"))
 		{
+			for (auto& e : m_Objects)
+			{
+				if (ImGui::Button(e->m_ObjectName.c_str()))
+				{
+					std::unique_ptr<Entity> entity(new Entity(e.get()));
+					m_Entities.push_back(std::move(entity));
 
+					m_Renderer->AddEntity(entity.get());
+				}
+			}
 		}
 	}
 }
