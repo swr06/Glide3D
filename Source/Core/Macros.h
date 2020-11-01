@@ -13,3 +13,17 @@
 #if MAX_POINT_LIGHTS > 15
 #error The maximum point lights cannot be above 15
 #endif
+
+#ifdef _WIN32 
+#define GLIDE3D_WIN32
+#endif
+
+#ifdef _WIN64
+#define GLIDE3D_WIN32
+#define GLIDE3D_WIN64
+#endif
+
+#ifdef _LINUX
+#define GLIDE3D_LINUX
+#endif
+

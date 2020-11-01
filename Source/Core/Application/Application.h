@@ -11,7 +11,7 @@
 #include <imgui_impl_opengl3.h>
 #include <glfw/glfw3.h>
 #include "../Renderer/Renderer.h"
-
+#include "../Editor/Editor.h"
 #include "Logger.h"
 
 namespace Glide3D
@@ -73,14 +73,17 @@ namespace Glide3D
 		virtual void OnImguiRender(double ts) = 0;
 		virtual void OnEvent(Event e) = 0;
 
+		std::shared_ptr<Renderer> m_Renderer;
+		std::unique_ptr<Editor> m_Editor;
+
 	private:
 		void PollEvents();
 		uint64_t m_CurrentFrame;
 		std::queue<Event> m_EventQueue;
 		int m_CurrentWidth = 0;
 		int m_CurrentHeight = 0;
-		std::unique_ptr<Renderer> m_Renderer;
 
 		void RenderImGuiElements() { m_Renderer->RenderImGuiElements(); }
+		
 	};
 }

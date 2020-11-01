@@ -34,6 +34,9 @@ public:
 
 	void OnImguiRender(double ts) override
 	{
+		//Editor::OnUpdate(m_Window, m_Renderer.get());
+		m_Editor->OnUpdate();
+
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoScrollbar;
@@ -125,12 +128,12 @@ int main()
 
 	//FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
 
-	FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
-	
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Albedo.png", TextureType::Albedo);
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Normal.png", TextureType::Normal);
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Metallic.png", TextureType::Metalness);
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Roughness.png", TextureType::Roughness);
+	//FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
+	//
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Albedo.png", TextureType::Albedo);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Normal.png", TextureType::Normal);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Metallic.png", TextureType::Metalness);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Roughness.png", TextureType::Roughness);
 	//object.AddTextureMapToMesh("Resources/pbr/mat2/AO.png", TextureType::AO);
 
 	Entity entity1(&object);
@@ -170,7 +173,7 @@ int main()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
-	renderer.AddEntity(&entity1);
+	//renderer.AddEntity(&entity1);
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{

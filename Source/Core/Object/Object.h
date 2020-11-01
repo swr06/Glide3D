@@ -18,13 +18,18 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <glfw/glfw3.h>
+
 namespace Glide3D
 {
 	class Object;
+	class Renderer;
+	class Editor;
 	
 	namespace FileLoader
 	{
 		void ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, const glm::vec3& reflectivity);
+		void LoadOBJFile(Object* object, const std::string& filepath);
 	}
 
 	enum class TextureType
@@ -75,10 +80,13 @@ namespace Glide3D
 		friend class Renderer;
 		friend class Application;
 		friend class Entity;
+		friend class Editor;
 
 		friend void FileLoader::ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, const glm::vec3& reflectivity);
+		friend void FileLoader::LoadOBJFile(Object* object, const std::string& filepath);
+
 		GLClasses::VertexBuffer m_MatrixBuffer;
 		glm::vec3 m_Center; // The center of the mesh in localized space
-
+		std::string m_ObjectName;
 	};
 }

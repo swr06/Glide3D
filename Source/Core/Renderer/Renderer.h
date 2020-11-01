@@ -26,6 +26,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include <glfw/glfw3.h>
+
 /* OpenGL Specific stuff */
 #include "../GL_Classes/VertexBuffer.h"
 #include "../GL_Classes/IndexBuffer.h"
@@ -40,9 +42,12 @@
 
 namespace Glide3D
 {
+	class Renderer;
+	class Editor;
+
 	class Renderer
 	{
-	public :
+	public:
 		Renderer(GLFWwindow* window);
 
 		void AddDirectionalLight(DirectionalLight* light);
@@ -64,7 +69,7 @@ namespace Glide3D
 		uint32_t GetCurrentFrame() const noexcept { return m_CurrentFrame; }
 		void RecompileShaders();
 
-	private :
+	private:
 
 		// The shader programs
 		GLClasses::Shader m_RendererShader;
@@ -101,6 +106,7 @@ namespace Glide3D
 
 		void RenderImGuiElements();
 		friend class Application;
+		friend class Editor;
 
 		double m_ShadowMapRenderTime = 0;
 		double m_ReflectionMapRenderTime = 0;
@@ -115,5 +121,6 @@ namespace Glide3D
 		float m_Metalness = 0.1f;
 
 		bool m_UsePBR = false;
+
 	};
 }

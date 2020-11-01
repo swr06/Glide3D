@@ -258,6 +258,10 @@ namespace Glide3D
 
 		void LoadOBJFile(Object* object, const std::string& filepath)
 		{
+			// Set the object's name
+			std::string filename = std::filesystem::path(filepath).filename().string();
+			object->m_ObjectName = filename;
+
 			Assimp::Importer importer;
 			Timer timer;
 

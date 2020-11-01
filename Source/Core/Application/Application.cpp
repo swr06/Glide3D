@@ -213,6 +213,8 @@ namespace Glide3D
 		m_Renderer = std::unique_ptr<Renderer>(new Renderer(m_Window));
 		std::cout << "RENDERER INITIALIZED\n------------------------------------------------\n\n";
 
+		m_Editor = std::unique_ptr<Editor>(new Editor(m_Renderer, m_Window));
+
 		return;
 	}
 

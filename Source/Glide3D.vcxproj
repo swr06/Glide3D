@@ -150,6 +150,7 @@
     <ClInclude Include="Core\Application\Application.h" />
     <ClInclude Include="Core\Application\Logger.h" />
     <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\Editor\Editor.h" />
     <ClInclude Include="Core\Entity\Entity.h" />
     <ClInclude Include="Core\FpsCamera.h" />
     <ClInclude Include="Core\GeometryRenderBuffer.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="Core\Application\Application.cpp" />
     <ClCompile Include="Core\Application\Logger.cpp" />
     <ClCompile Include="Core\Camera.cpp" />
+    <ClCompile Include="Core\Editor\Editor.cpp" />
     <ClCompile Include="Core\Entity\Entity.cpp" />
     <ClCompile Include="Core\FpsCamera.cpp" />
     <ClCompile Include="Core\GeometryRenderBuffer.cpp" />

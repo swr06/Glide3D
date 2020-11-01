@@ -55,6 +55,12 @@
     <Filter Include="Core\Engine\Mesh">
       <UniqueIdentifier>{ee378709-9d48-41ec-92be-127a81aa3211}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Engine\Editor">
+      <UniqueIdentifier>{178a1521-f462-4aef-bd37-e9c4edb59ea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Resource Manager">
+      <UniqueIdentifier>{9dddad2a-3603-4bf8-90d2-d6653e2c8642}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -213,6 +219,9 @@
     <ClInclude Include="Core\SSAO.h">
       <Filter>Core\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Editor\Editor.h">
+      <Filter>Core\Engine\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -332,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="Core\SSAO.cpp">
       <Filter>Core\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Editor\Editor.cpp">
+      <Filter>Core\Engine\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,10 @@ namespace GLClasses
 
 	void Texture::CreateTexture(const string& path, bool hdr, bool flip, GLenum type, GLenum min_filter, GLenum mag_filter, GLenum texwrap_s, GLenum texwrap_t, bool clean_up)
 	{
+		if (path.size() == 0) { return; }
+
+		glDeleteTextures(1, &m_Texture);
+
 		/*
 		Check if the texture is already created, if it is, then use the existing texture. Else create a new one :)
 		*/

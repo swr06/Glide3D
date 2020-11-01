@@ -9,7 +9,7 @@ namespace Glide3D
 	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), m_MatrixBuffer(GL_ARRAY_BUFFER),
 	m_ObjectID(++_CurrentObjectID)
 	{
-	
+		m_ObjectName = std::string("Object - ") + std::to_string(_CurrentObjectID);
 	}
 
 	Object::~Object()
