@@ -123,19 +123,19 @@ int main()
 
 	Object object;
 
-	//FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
+	FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
 
-	FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
-	
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Albedo.png", TextureType::Albedo);
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Normal.png", TextureType::Normal);
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Metallic.png", TextureType::Metalness);
-	object.AddTextureMapToMesh("Resources/pbr/mat2/Roughness.png", TextureType::Roughness);
+	//FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
+	//
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Albedo.png", TextureType::Albedo);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Normal.png", TextureType::Normal);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Metallic.png", TextureType::Metalness);
+	//object.AddTextureMapToMesh("Resources/pbr/mat2/Roughness.png", TextureType::Roughness);
 	//object.AddTextureMapToMesh("Resources/pbr/mat2/AO.png", TextureType::AO);
 
 	Entity entity1(&object);
 
-	entity1.GetTransform().Scale(glm::vec3(2.0f));
+	entity1.GetTransform().Scale(glm::vec3(0.1f));
 	entity1.GetTransform().Translate(glm::vec3(0, 0, 0));
 
 	glm::vec3 light_dir = glm::vec3(-0.71f, -0.69f, -0.01f);
@@ -149,10 +149,13 @@ int main()
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 0;
 
-	PointLight p_light;
+	PointLight p_light(512);
 
-	p_light.m_Position = glm::vec3(4.0f, 3.0f, -1.0f);
+	p_light.m_Position = glm::vec3(28, 14, -37);
 	p_light.m_SpecularStrength = 4.0f;
+	p_light.m_Linear = 0.07f;
+	p_light.m_Quadratic = 0.017f;
+	p_light.m_ShadowMapUpdateRate = 0;
 
 	Skybox skybox({
 		"Resources/skybox/px.png",
