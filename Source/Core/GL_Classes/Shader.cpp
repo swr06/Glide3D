@@ -120,8 +120,29 @@ namespace GLClasses
 			std::cout << "ERROR : SHADER LINKING FAILED : \n" << GLInfoLog << std::endl;
 		}
 
+		glValidateProgram(m_Program);
+
+		glGetProgramiv(m_Program, GL_VALIDATE_STATUS, &successful);
+
+		if (!successful)
+		{
+			glGetProgramInfoLog(m_Program, 512, NULL, GLInfoLog);
+			std::cout << "\n\nVALIDATION STATUS OF SHADER\nVertex Shader : " 
+				<< m_VertexPath << "\nFragment Shader : " << m_FragmentPath;
+
+			if (m_GeometryData.size() > 0)
+			{
+				std::cout << "\nGeometry Shader : " << m_GeometryPath << "\n";
+			}
+
+			std::cout << "\n";
+
+			std::cout << GLInfoLog;
+		}
+
 		glDeleteShader(vs);
 		glDeleteShader(fs);
+		glDeleteShader(gs);
 
 		auto end = std::chrono::steady_clock::now();
 		double elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();

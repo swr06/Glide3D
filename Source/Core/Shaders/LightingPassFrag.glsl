@@ -18,10 +18,10 @@ Aluminium			|	(0.91f, 0.92f, 0.92f) 	|  (0.96f, 0.96f, 0.97f)
 Silver 				|	(0.95f, 0.93f, 0.88f) 	|  (0.98f, 0.97f, 0.95f)
 */
 
-#version 330 core
+#version 450 core
 
 #define MAX_DIRECTIONAL_LIGHTS 2
-#define MAX_POINT_LIGHTS 14
+#define MAX_POINT_LIGHTS 4
 #define PI 3.14159265359
 
 layout (location = 0) out vec4 o_Color;
@@ -57,6 +57,7 @@ struct PointLight
 	float m_SpecularStrength;
 	int m_SpecularExponent;
 	int m_IsBlinn;
+	samplerCube m_DepthCubemap;
 };
 
 uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
@@ -239,6 +240,21 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
     return shadow;
 }
 
+float ShadowCalculationPOINT(PointLight pointlight)
+{
+    vec3 fragToLight = g_FragPosition - pointlight.m_Position;
+
+    float closestDepth = texture(pointlight.m_DepthCubemap, fragToLight).r;
+    closestDepth *= 100.0f;
+    float currentDepth = length(fragToLight);
+    float bias = 0.05; 
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;        
+        
+    return shadow;
+
+	return 0.0f;
+}
+
 vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp)
 {
 	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), light.m_DepthMap, light.m_Direction), 0.1f);
@@ -270,6 +286,7 @@ vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp)
 
 vec3 CalculatePointLightPHONG(PointLight light)
 {
+	float shadow = max(ShadowCalculationPOINT(light), 0.0f);
 	vec3 LightDirection = normalize(light.m_Position - g_FragPosition);
 
 	float Diffuse = max(dot(g_Normal, LightDirection), 0.0f);
@@ -297,7 +314,7 @@ vec3 CalculatePointLightPHONG(PointLight light)
 	
 	DiffuseColor  *= Attenuation;
 	SpecularColor *= Attenuation;
-	return vec3(((g_Ambient * Attenuation) + DiffuseColor + SpecularColor) * g_Color);
+	return vec3(((g_Ambient * Attenuation) + (DiffuseColor * shadow) + SpecularColor) * g_Color);
 }
 
 // The below are just implementations of PBR equations

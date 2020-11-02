@@ -54,10 +54,10 @@ namespace Glide3D
 	class PointLight
 	{
 	public :
-		/*PointLight(GLuint res) : m_ShaderCubeMap(res)
+		PointLight(GLuint res) : m_DepthShadowMap(res)
 		{
 
-		}*/
+		}
 
 		glm::vec3 m_Position = glm::vec3(1.0f);
 		glm::vec3 m_SpecularColor = glm::vec3(1.0f);
@@ -67,7 +67,8 @@ namespace Glide3D
 		float m_SpecularStrength = 1.0f;
 		int m_SpecularExponent = 32;
 		bool m_IsBlinn = true;
+		uint32_t m_ShadowMapUpdateRate = 60;
 
-		//GLClasses::CubeDepthMap m_ShaderCubeMap;
+		GLClasses::CubeDepthMap m_DepthShadowMap;
 	};
 }

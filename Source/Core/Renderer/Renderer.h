@@ -89,6 +89,8 @@ namespace Glide3D
 		void BindLightingMaps();
 		void RenderShadowMaps(FPSCamera* camera);
 		void RenderPointLightShadowMap(PointLight& pointlight);
+		void RenderDirectionalLightShadowMaps();
+		void RenderPointLightShadowMaps();
 		void RenderReflectionMaps(FPSCamera* camera);
 		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
 		void RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera);
