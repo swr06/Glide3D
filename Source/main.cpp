@@ -149,13 +149,13 @@ int main()
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 0;
 
-	PointLight p_light(512);
+	/*PointLight p_light(512);
 
 	p_light.m_Position = glm::vec3(28, 14, -37);
 	p_light.m_SpecularStrength = 4.0f;
-	p_light.m_Linear = 0.07f;
-	p_light.m_Quadratic = 0.017f;
-	p_light.m_ShadowMapUpdateRate = 0;
+	p_light.m_Linear = 0.0014f;
+	p_light.m_Quadratic = 0.000007f;
+	p_light.m_ShadowMapUpdateRate = 0;*/
 
 	Skybox skybox({
 		"Resources/skybox/px.png",
@@ -167,8 +167,7 @@ int main()
 		});
 
 	renderer.SetEnvironmentMap(skybox);
-	//renderer.AddDirectionalLight(&d_light);
-	renderer.AddPointLight(&p_light);
+	renderer.AddDirectionalLight(&d_light);
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);

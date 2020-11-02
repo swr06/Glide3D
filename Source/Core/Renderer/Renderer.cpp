@@ -107,6 +107,8 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_Constant", m_PointLights[i]->m_Constant);
 			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i]->m_Quadratic);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_PointLights[i]->m_IsBlinn);
+			shader.SetFloat(name + ".m_ShadowStrength", (int)m_PointLights[i]->m_ShadowStrength);
+			shader.SetFloat(name + ".m_FarPlane", (int)m_PointLights[i]->m_FarPlane);
 		}
 
 		for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
@@ -144,7 +146,6 @@ namespace Glide3D
 			glClear(GL_DEPTH_BUFFER_BIT);
 
 			glm::vec3 light_pos = pointlight.m_Position;
-			float far_plane = 100.0f;
 
 			m_DepthCubemapShader.Use();
 
@@ -158,41 +159,26 @@ namespace Glide3D
 				glm::lookAt(light_pos, light_pos + glm::vec3(0.0f, 0.0f,-1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
 			};
 
-			glm::mat4 projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.2f, far_plane);
+			glm::mat4 projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.2f, pointlight.m_FarPlane);
 
 			for (int i = 0; i < 6; i++)
 			{
 				m_DepthCubemapShader.SetMatrix4("u_ViewProjectionMatrices[" + std::to_string(i) + "]", projection_matrix * view_matrices[i]);
 			}
 
-			m_DepthCubemapShader.SetFloat("u_FarPlane", far_plane);
+			m_DepthCubemapShader.SetFloat("u_FarPlane", pointlight.m_FarPlane);
 			m_DepthCubemapShader.SetVector3f("u_LightPosition", light_pos);
 			m_DepthCubemapShader.Use();
 
 			for (auto& entities : m_Entities)
 			{
 				if (entities.second.size() <= 0) { continue; }
-
 				const Object* object = entities.second[0]->p_Object;
-
-				std::vector<glm::mat4> Matrices;
-
-				for (auto& e : entities.second)
-				{
-					const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-					Matrices.push_back(model);
-					Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-				}
-
-				const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
-				MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 
 				for (auto& e : object->m_Meshes)
 				{
 					const Mesh* mesh = &e;
-
 					bool indexed = mesh->p_Indexed;
-
 					const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
 
 					VAO.Bind();
@@ -242,18 +228,6 @@ namespace Glide3D
 					if (entities.second.size() <= 0) { continue; }
 
 					const Object* object = entities.second[0]->p_Object;
-
-					std::vector<glm::mat4> Matrices;
-
-					for (auto& e : entities.second)
-					{
-						const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-						Matrices.push_back(model);
-						Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-					}
-
-					const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
-					MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 
 					for (auto& e : object->m_Meshes)
 					{
@@ -333,18 +307,6 @@ namespace Glide3D
 			if (entities.second.size() <= 0) { continue; }
 
 			const Object* object = entities.second[0]->p_Object;
-
-			std::vector<glm::mat4> Matrices;
-
-			for (auto& e : entities.second)
-			{
-				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
-				Matrices.push_back(model);
-				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
-			}
-
-			const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
-			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
 
 			for (auto& e : object->m_Meshes)
 			{
@@ -566,6 +528,24 @@ namespace Glide3D
 		m_TotalRenderTime = glfwGetTime();
 		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
 
+		for (auto& entities : m_Entities)
+		{
+			if (entities.second.size() <= 0) { continue; }
+			const Object* object = entities.second[0]->p_Object;
+
+			std::vector<glm::mat4> Matrices;
+
+			for (auto& e : entities.second)
+			{
+				const glm::mat4& model = e->p_Transform.GetTransformationMatrix();
+				Matrices.push_back(model);
+				Matrices.push_back(glm::mat4(e->p_Transform.GetNormalMatrix()));
+			}
+
+			const GLClasses::VertexBuffer& MatrixVBO = object->m_MatrixBuffer;
+			MatrixVBO.BufferData(Matrices.size() * sizeof(glm::mat4), &Matrices.front(), GL_STATIC_DRAW);
+		}
+
 		if (m_CurrentFrame == 0)
 		{
 			RenderReflectionMaps(camera);
@@ -728,10 +708,6 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
 		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
 		m_DeferredLightPassShader.SetInteger("u_PBRComponentTexture", 3);
-		m_DeferredLightPassShader.SetInteger("m_PointlightShadowmap", 12);
-
-		glActiveTexture(GL_TEXTURE12);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PointLights[0]->m_DepthShadowMap.GetTexture());
 
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));

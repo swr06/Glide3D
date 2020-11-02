@@ -48,7 +48,7 @@ namespace Glide3D
 		glm::mat4 m_LightSpaceProjection;
 		glm::mat4 m_LightSpaceView;
 		OrthogonalProperties m_OrthagonalProperties;
-		float m_ShadowStrength = 1.5f;
+		float m_ShadowStrength = 1.0f; // Gets multiplied with the total shadow at the end. Make sure this is 1.0 or lesser
 	};
 
 	class PointLight
@@ -67,6 +67,8 @@ namespace Glide3D
 		float m_SpecularStrength = 1.0f;
 		int m_SpecularExponent = 32;
 		bool m_IsBlinn = true;
+		float m_ShadowStrength = 1.0f;
+		float m_FarPlane = 100.0f;
 		uint32_t m_ShadowMapUpdateRate = 60;
 
 		GLClasses::CubeDepthMap m_DepthShadowMap;

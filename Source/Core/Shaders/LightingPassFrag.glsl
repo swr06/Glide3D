@@ -56,6 +56,8 @@ struct PointLight
 	float m_SpecularStrength;
 	int m_SpecularExponent;
 	int m_IsBlinn;
+	float m_ShadowStrength;
+	float m_FarPlane;
 };
 
 // Shadow maps
@@ -188,7 +190,7 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map
 
 vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
 {
-	float shadow = ShadowCalculationPOINT(light, map) * 2.0f;
+	float shadow = light.m_ShadowStrength * ShadowCalculationPOINT(light, map) * 2.0f;
 	shadow = 1.0f - shadow;
 
 	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
@@ -251,7 +253,7 @@ float ShadowCalculationPOINT(PointLight pointlight, samplerCube map)
     vec3 fragToLight = g_FragPosition - pointlight.m_Position;
 
     float closestDepth = texture(map, fragToLight).r;
-    closestDepth *= 100.0f;
+    closestDepth *= pointlight.m_FarPlane;
     float currentDepth = length(fragToLight);
     float bias = 0.5f; 
     float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;        
@@ -285,12 +287,12 @@ vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D m
 	vec3 DiffuseColor = Diffuse * g_Color; 
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor ; // To be also sampled with specular map
 
-	return vec3((g_Ambient + (DiffuseColor * Shadow) + SpecularColor) * g_Color);  
+	return vec3(((g_Ambient + Shadow) * (Diffuse + SpecularColor)) * g_Color);  
 }
 
 vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)
 {
-	float shadow = ShadowCalculationPOINT(light, map) * 2.0f;
+	float shadow = light.m_ShadowStrength * ShadowCalculationPOINT(light, map);
 	shadow = 1.0f - shadow;
 
 	vec3 LightDirection = normalize(light.m_Position - g_FragPosition);
@@ -320,7 +322,11 @@ vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)
 	
 	DiffuseColor  *= Attenuation;
 	SpecularColor *= Attenuation;
-	return vec3(((g_Ambient * Attenuation) + (DiffuseColor * shadow) + SpecularColor) * g_Color);
+
+	vec3 Ambient = g_Ambient;
+	Ambient *= Attenuation;
+
+	return vec3((Ambient + shadow) * (DiffuseColor + SpecularColor) * g_Color);
 }
 
 // The below are just implementations of PBR equations
