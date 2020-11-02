@@ -120,26 +120,6 @@ namespace GLClasses
 			std::cout << "ERROR : SHADER LINKING FAILED : \n" << GLInfoLog << std::endl;
 		}
 
-		glValidateProgram(m_Program);
-
-		glGetProgramiv(m_Program, GL_VALIDATE_STATUS, &successful);
-
-		if (!successful)
-		{
-			glGetProgramInfoLog(m_Program, 512, NULL, GLInfoLog);
-			std::cout << "\n\nVALIDATION STATUS OF SHADER\nVertex Shader : " 
-				<< m_VertexPath << "\nFragment Shader : " << m_FragmentPath;
-
-			if (m_GeometryData.size() > 0)
-			{
-				std::cout << "\nGeometry Shader : " << m_GeometryPath << "\n";
-			}
-
-			std::cout << "\n";
-
-			std::cout << GLInfoLog;
-		}
-
 		glDeleteShader(vs);
 		glDeleteShader(fs);
 		glDeleteShader(gs);
@@ -208,6 +188,34 @@ namespace GLClasses
 	{
 		glDeleteProgram(m_Program);
 		glUseProgram(0);
+	}
+
+	void Shader::ValidateProgram()
+	{
+		GLchar GLInfoLog[512] = {'\0'};
+		GLint successful = false;
+
+		glValidateProgram(m_Program);
+
+		glGetProgramiv(m_Program, GL_VALIDATE_STATUS, &successful);
+
+		if (!successful)
+		{
+			glGetProgramInfoLog(m_Program, 512, NULL, GLInfoLog);
+			std::cout << "\n\nVALIDATION STATUS OF SHADER\nVertex Shader : "
+				<< m_VertexPath << "\nFragment Shader : " << m_FragmentPath;
+
+			if (m_GeometryData.size() > 0)
+			{
+				std::cout << "\nGeometry Shader : " << m_GeometryPath << "\n";
+			}
+
+			std::cout << "\n";
+
+			std::cout << GLInfoLog;
+		}
+
+		return;
 	}
 
 	void Shader::SetFloat(const std::string& name, GLfloat value, GLboolean useShader)

@@ -140,21 +140,22 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(-0.71f, -0.69f, -0.01f);
 
-	/*DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, { 4096,4096 });
+	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, { 4096,4096 });
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(91, 79, -7);
 	d_light.m_SpecularStrength = 2.0f;
 	d_light.m_SpecularExponent = 32;
 	d_light.m_IsBlinn = true;
-	d_light.m_UpdateRate = 0;*/
+	d_light.m_UpdateRate = 0;
 
-	PointLight p_light(1024);
+	PointLight p_light(512);
 
-	p_light.m_Position = glm::vec3(4.0f, 3.0f, -1.0f);
+	p_light.m_Position = glm::vec3(28, 14, -37);
 	p_light.m_SpecularStrength = 4.0f;
 	p_light.m_Linear = 0.07f;
 	p_light.m_Quadratic = 0.017f;
+	p_light.m_ShadowMapUpdateRate = 0;
 
 	Skybox skybox({
 		"Resources/skybox/px.png",
@@ -176,8 +177,6 @@ int main()
 
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
-		p_light.m_Position = camera.GetPosition();
-
 		renderer.SetUsePBR(pbr);
 		FBO.SetExposure(exposure);
 

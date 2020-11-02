@@ -43,7 +43,6 @@ struct DirectionalLight
 	int m_SpecularExponent;
 	int m_IsBlinn;
 	int m_DirectionalLightElement;
-	sampler2D m_DepthMap;
 	float m_ShadowStrength;
 };
 
@@ -57,8 +56,11 @@ struct PointLight
 	float m_SpecularStrength;
 	int m_SpecularExponent;
 	int m_IsBlinn;
-	samplerCube m_DepthCubemap;
 };
+
+// Shadow maps
+uniform sampler2D m_DirectionalLightShadowmaps[MAX_DIRECTIONAL_LIGHTS];
+uniform samplerCube m_PointlightShadowmaps[MAX_POINT_LIGHTS] ;
 
 uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform PointLight u_ScenePointLights[MAX_POINT_LIGHTS];
@@ -82,15 +84,16 @@ uniform int u_UsesPBRLighting = 0;
 vec3 g_F0;
 
 // Function prototype
-vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp);
-vec3 CalculatePointLightPBR(PointLight light);
-vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp);
-vec3 CalculatePointLightPHONG(PointLight light);
+vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map);
+vec3 CalculatePointLightPBR(PointLight light, samplerCube map);
 float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir);
-vec3 fresnelSchlick(float cosTheta, vec3 F0);
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
-float GeometrySchlickGGX(float NdotV, float roughness);
+float ShadowCalculationPOINT(PointLight pointlight, samplerCube map);
+vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D map);
+vec3 CalculatePointLightPHONG(PointLight light, samplerCube map);
 float DistributionGGX(vec3 N, vec3 H, float roughness);
+float GeometrySchlickGGX(float NdotV, float roughness);
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+vec3 fresnelSchlick(float cosTheta, vec3 F0);
 
 const vec3 EmptyPixel = vec3(0.0f);
 
@@ -123,12 +126,12 @@ void main()
 
 		for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 		{
-			Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i]);
+			Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i], m_DirectionalLightShadowmaps[i]);
 		}	
 
 		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 		{
-			Lo += CalculatePointLightPBR(u_ScenePointLights[i]);
+			Lo += CalculatePointLightPBR(u_ScenePointLights[i], m_PointlightShadowmaps[i]);
 		}	
 
 		o_Color = vec4(g_Ambient + Lo, 1.0f);
@@ -142,12 +145,12 @@ void main()
 
 		for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
 		{
-			FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i]);
+			FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i], m_DirectionalLightShadowmaps[i]);
 		}	
 
 		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 		{
-			FinalColor += CalculatePointLightPHONG(u_ScenePointLights[i]);
+			FinalColor += CalculatePointLightPHONG(u_ScenePointLights[i], m_PointlightShadowmaps[i]);
 		}	
 
 		o_Color = vec4(FinalColor, 1.0f);
@@ -158,9 +161,9 @@ void main()
 	return;
 }
 
-vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp)
+vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map)
 {
-	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), light.m_DepthMap, light.m_Direction), 0.1f);
+	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), map, light.m_Direction), 0.1f);
 
 	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
     vec3 L = normalize(-light.m_Direction);
@@ -183,8 +186,11 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp)
     return (kD * g_Color / PI + specular) * radiance * NdotL * (1.0f - Shadow);
 }
 
-vec3 CalculatePointLightPBR(PointLight light)
+vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
 {
+	float shadow = ShadowCalculationPOINT(light, map) * 2.0f;
+	shadow = 1.0f - shadow;
+
 	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
     vec3 L = normalize(light.m_Position - g_FragPosition);
     vec3 H = normalize(V + L);
@@ -206,7 +212,7 @@ vec3 CalculatePointLightPBR(PointLight light)
 
     float NdotL = max(dot(g_Normal, L), 0.0);        
 
-    return (kD * g_Color / PI + specular * light.m_SpecularStrength) * radiance * NdotL; 
+    return ((kD * g_Color * shadow) / PI + specular * light.m_SpecularStrength) * radiance * NdotL; 
 }
 
 float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
@@ -240,24 +246,22 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
     return shadow;
 }
 
-float ShadowCalculationPOINT(PointLight pointlight)
+float ShadowCalculationPOINT(PointLight pointlight, samplerCube map)
 {
     vec3 fragToLight = g_FragPosition - pointlight.m_Position;
 
-    float closestDepth = texture(pointlight.m_DepthCubemap, fragToLight).r;
+    float closestDepth = texture(map, fragToLight).r;
     closestDepth *= 100.0f;
     float currentDepth = length(fragToLight);
-    float bias = 0.05; 
+    float bias = 0.5f; 
     float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;        
         
     return shadow;
-
-	return 0.0f;
 }
 
-vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp)
+vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D map)
 {
-	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), light.m_DepthMap, light.m_Direction), 0.1f);
+	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), map, light.m_Direction), 0.1f);
 	Shadow = 1.0f - Shadow;
 
 	vec3 LightDirection = normalize(-light.m_Direction);
@@ -284,9 +288,11 @@ vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp)
 	return vec3((g_Ambient + (DiffuseColor * Shadow) + SpecularColor) * g_Color);  
 }
 
-vec3 CalculatePointLightPHONG(PointLight light)
+vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)
 {
-	float shadow = max(ShadowCalculationPOINT(light), 0.0f);
+	float shadow = ShadowCalculationPOINT(light, map) * 2.0f;
+	shadow = 1.0f - shadow;
+
 	vec3 LightDirection = normalize(light.m_Position - g_FragPosition);
 
 	float Diffuse = max(dot(g_Normal, LightDirection), 0.0f);

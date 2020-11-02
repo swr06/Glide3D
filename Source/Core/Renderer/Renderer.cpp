@@ -92,7 +92,6 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i]->m_SpecularStrength);
 			shader.SetFloat(name + ".m_ShadowStrength", m_DirectionalLights[i]->m_ShadowStrength);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i]->m_IsBlinn);
-			shader.SetInteger(name + ".m_DepthMap", (int)6 + i); // 5 slots are used for the materials
 		}
 
 		for (int i = 0; i < m_PointLights.size(); i++)
@@ -108,7 +107,16 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_Constant", m_PointLights[i]->m_Constant);
 			shader.SetFloat(name + ".m_Quadratic", m_PointLights[i]->m_Quadratic);
 			shader.SetInteger(name + ".m_IsBlinn", (int)m_PointLights[i]->m_IsBlinn);
-			shader.SetInteger(name + ".m_DepthCubemap", (int)12 + i); // 7 slots are used for the materials and the directional lighting maps
+		}
+
+		for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
+		{
+			shader.SetInteger("m_DirectionalLightShadowmaps[" + std::to_string(i) + "]", (int)6 + i); // 5 slots are used for the materials
+		}
+
+		for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+		{
+			shader.SetInteger("m_PointlightShadowmaps[" + std::to_string(i) + "]", (int)9 + i); 
 		}
 	}
 
@@ -122,14 +130,14 @@ namespace Glide3D
 
 		for (int i = 0; i < m_PointLights.size(); i++)
 		{
-			glActiveTexture(GL_TEXTURE12 + i);
+			glActiveTexture(GL_TEXTURE9 + i);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_PointLights[i]->m_DepthShadowMap.GetTexture());
 		}
 	}
 
 	void Renderer::RenderPointLightShadowMap(PointLight& pointlight)
 	{
-		if (m_CurrentFrame % pointlight.m_ShadowMapUpdateRate == 0)
+		if (m_CurrentFrame == 0 || (pointlight.m_ShadowMapUpdateRate > 0 && m_CurrentFrame % pointlight.m_ShadowMapUpdateRate == 0))
 		{
 			// Bind the point light's fbo
 			pointlight.m_DepthShadowMap.Bind();
@@ -720,6 +728,10 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
 		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
 		m_DeferredLightPassShader.SetInteger("u_PBRComponentTexture", 3);
+		m_DeferredLightPassShader.SetInteger("m_PointlightShadowmap", 12);
+
+		glActiveTexture(GL_TEXTURE12);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PointLights[0]->m_DepthShadowMap.GetTexture());
 
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));

@@ -51,6 +51,7 @@ namespace GLClasses
 		}
 
 		void Destroy();
+		void ValidateProgram();
 		void SetFloat(const std::string& name, GLfloat value, GLboolean useShader = GL_FALSE);
 		void SetInteger(const std::string& name, GLint value, GLboolean useShader = GL_FALSE);
 		void SetVector2f(const std::string& name, GLfloat x, GLfloat y, GLboolean useShader = GL_FALSE);
