@@ -81,7 +81,7 @@ vec3 g_Ambient;
 // PBR
 float g_Roughness = 0.1f;
 float g_Metalness = 0.1f;
-uniform int u_UsesPBRLighting = 0;
+uniform bool u_UsesPBRLighting = false;
 
 vec3 g_F0;
 
@@ -119,7 +119,7 @@ void main()
 
 	g_Ambient = u_AmbientStrength * PBRComponent.b * g_Color;
 
-	if (u_UsesPBRLighting == 1)
+	if (u_UsesPBRLighting)
 	{
 		g_F0 = vec3(0.05f); // Dielectric Material
 		g_F0 = mix(g_F0, g_Color, g_Metalness);

@@ -34,7 +34,7 @@ out vec3 v_Normal;
 
 uniform mat4 u_ViewProjection;
 
-uniform int u_HasWavePhysics = 0;
+uniform bool u_HasWavePhysics = false;
 uniform WavePhysicsProperties u_WavePhysicsProps;
 
 uniform float u_Time;
@@ -72,7 +72,7 @@ void main()
 
 vec4 DoPhysics(vec4 model_position)
 {
-	if (u_HasWavePhysics == 1)
+	if (u_HasWavePhysics == true)
 	{
 		float time = u_Time;
 		float dist = distance(model_position.y, u_WavePhysicsProps.m_WavePosY);

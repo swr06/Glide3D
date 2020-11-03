@@ -54,6 +54,7 @@ namespace GLClasses
 		void ValidateProgram();
 		void SetFloat(const std::string& name, GLfloat value, GLboolean useShader = GL_FALSE);
 		void SetInteger(const std::string& name, GLint value, GLboolean useShader = GL_FALSE);
+		void SetBool(const std::string& name, bool value, GLboolean useShader = GL_FALSE);
 		void SetVector2f(const std::string& name, GLfloat x, GLfloat y, GLboolean useShader = GL_FALSE);
 		void SetVector2f(const std::string& name, const glm::vec2& value, GLboolean useShader = GL_FALSE);
 		void SetVector3f(const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader = GL_FALSE);

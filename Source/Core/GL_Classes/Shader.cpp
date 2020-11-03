@@ -238,6 +238,18 @@ namespace GLClasses
 		glUniform1i(GetUniformLocation(name), value);
 	}
 
+	void Shader::SetBool(const std::string& name, bool value, GLboolean useShader)
+	{
+		GLint val = value ? GL_TRUE : GL_FALSE;
+
+		if (useShader)
+		{
+			this->Use();
+		}
+
+		glUniform1i(GetUniformLocation(name), val);
+	}
+
 	void Shader::SetIntegerArray(const std::string& name, const GLint* value, GLsizei count, GLboolean useShader)
 	{
 		if (useShader)

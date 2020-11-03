@@ -32,21 +32,21 @@ uniform samplerCube u_EnvironmentMap;
 uniform vec3 u_ViewerPosition;
 uniform vec3 u_Reflectance = vec3(0.0f);
 
-uniform int u_HasReflections = 0;
-uniform int u_HasAlbedoMap = 0;
-uniform int u_HasNormalMap = 0;
+uniform bool u_HasReflections = false;
+uniform bool u_HasAlbedoMap = false;
+uniform bool u_HasNormalMap = false;
 
 // PBR Stuff
-uniform int u_HasMetalnessMap = 0;
-uniform int u_HasRoughnessMap = 0;
-uniform int u_HasAOMap = 0;
+uniform bool u_HasMetalnessMap = false;
+uniform bool u_HasRoughnessMap = false;
+uniform bool u_HasAOMap = false;
 
 uniform float u_Roughness = 0.1f;
 uniform float u_Metalness = 0.2f;
 
 void main()
 {
-	if (u_HasAlbedoMap == 1)
+	if (u_HasAlbedoMap)
 	{
 		o_Color = texture(u_AlbedoMap, v_TexCoords);
 	}
@@ -56,7 +56,7 @@ void main()
 		o_Color = u_Color.rgba;
 	}
 
-	if (u_HasNormalMap == 1)
+	if (u_HasNormalMap)
 	{
 		o_Normal = (texture(u_NormalMap, v_TexCoords)).rgb;
 		o_Normal = o_Normal * 2.0f - 1.0f;
@@ -71,7 +71,7 @@ void main()
 
 	o_Position = v_FragPosition;
 
-	if (u_HasReflections == 1)
+	if (u_HasReflections)
 	{
 		vec4 reflect_color = vec4(texture(u_EnvironmentMap, 
 		reflect(normalize(v_FragPosition - u_ViewerPosition), o_Normal)).rgb, 1.0);
@@ -81,21 +81,21 @@ void main()
 		o_Color.b = mix(o_Color, reflect_color, u_Reflectance.b).b;
 	}
 
-	if (u_HasMetalnessMap == 1)
+	if (u_HasMetalnessMap)
 	{
 		o_PBRComponents.r = texture(u_MetalnessMap, v_TexCoords).r;
 	}
 
 	else { o_PBRComponents.r = u_Metalness; }
 
-	if (u_HasRoughnessMap == 1)
+	if (u_HasRoughnessMap)
 	{
 		o_PBRComponents.g = texture(u_RoughnessMap, v_TexCoords).r;
 	} 
 
 	else { o_PBRComponents.g = u_Roughness; }
 
-	if (u_HasAOMap == 1)
+	if (u_HasAOMap)
 	{
 		o_PBRComponents.b = texture(u_AOMap, v_TexCoords).r;
 	} 

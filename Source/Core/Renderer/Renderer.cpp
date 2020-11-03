@@ -612,7 +612,7 @@ namespace Glide3D
 			{
 				if (e.p_HasWavePhysics)
 				{
-					m_DeferredGeometryPassShader.SetInteger("u_HasWavePhysics", 1);
+					m_DeferredGeometryPassShader.SetBool("u_HasWavePhysics", true);
 					m_DeferredGeometryPassShader.SetFloat("u_WavePhysicsProps.m_WavePosY", e.p_WaveAffectY);
 					m_DeferredGeometryPassShader.SetVector2f("u_WavePhysicsProps.m_WaveFreq", e.p_WaveAffectFreq);
 					m_DeferredGeometryPassShader.SetVector2f("u_WavePhysicsProps.m_WaveSpeed", e.p_WaveAffectSpeed);
@@ -656,12 +656,12 @@ namespace Glide3D
 				}
 
 				m_DeferredGeometryPassShader.SetVector4f("u_Color", mesh->p_Color);
-				m_DeferredGeometryPassShader.SetInteger("u_HasAlbedoMap", static_cast<int>(mesh->p_AlbedoMap.GetTextureID() != 0));
-				m_DeferredGeometryPassShader.SetInteger("u_HasNormalMap", static_cast<int>(mesh->p_NormalMap.GetTextureID() != 0));
-				m_DeferredGeometryPassShader.SetInteger("u_HasReflections", static_cast<int>(mesh->p_Reflectivity != glm::vec3(0.0f)));
-				m_DeferredGeometryPassShader.SetInteger("u_HasMetalnessMap", static_cast<int>(mesh->p_MetalnessMap.GetTextureID() != 0));
-				m_DeferredGeometryPassShader.SetInteger("u_HasRoughnessMap", static_cast<int>(mesh->p_RoughnessMap.GetTextureID() != 0));
-				m_DeferredGeometryPassShader.SetInteger("u_HasAOMap", static_cast<int>(mesh->p_AmbientOcclusionMap.GetTextureID() != 0));
+				m_DeferredGeometryPassShader.SetBool("u_HasAlbedoMap", mesh->p_AlbedoMap.GetTextureID() != 0);
+				m_DeferredGeometryPassShader.SetBool("u_HasNormalMap", mesh->p_NormalMap.GetTextureID() != 0);
+				m_DeferredGeometryPassShader.SetBool("u_HasReflections", mesh->p_Reflectivity != glm::vec3(0.0f));
+				m_DeferredGeometryPassShader.SetBool("u_HasMetalnessMap", mesh->p_MetalnessMap.GetTextureID() != 0);
+				m_DeferredGeometryPassShader.SetBool("u_HasRoughnessMap", mesh->p_RoughnessMap.GetTextureID() != 0);
+				m_DeferredGeometryPassShader.SetBool("u_HasAOMap", mesh->p_AmbientOcclusionMap.GetTextureID() != 0);
 				m_DeferredGeometryPassShader.SetVector3f("u_Reflectance", mesh->p_Reflectivity);
 				
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
@@ -713,7 +713,7 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));
 
 		// PBR
-		m_DeferredLightPassShader.SetInteger("u_UsesPBRLighting", static_cast<int>(m_UsePBR));
+		m_DeferredLightPassShader.SetBool("u_UsesPBRLighting", m_UsePBR);
 		
 		SetLightUniforms(m_DeferredLightPassShader);
 		BindLightingMaps();
