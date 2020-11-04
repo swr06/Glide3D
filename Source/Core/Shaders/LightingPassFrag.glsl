@@ -117,7 +117,7 @@ void main()
 		return;
 	}
 
-	g_Ambient = u_AmbientStrength * PBRComponent.b * g_Color;
+	g_Ambient = 0.1f * PBRComponent.b * g_Color;
 
 	if (u_UsesPBRLighting)
 	{
@@ -287,7 +287,7 @@ vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D m
 	vec3 DiffuseColor = Diffuse * g_Color; 
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor ; // To be also sampled with specular map
 
-	return vec3(((g_Ambient + Shadow) * (Diffuse + SpecularColor)) * g_Color);  
+	return vec3((Shadow * (DiffuseColor + SpecularColor)) + g_Ambient);  
 }
 
 vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)
@@ -326,7 +326,7 @@ vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)
 	vec3 Ambient = g_Ambient;
 	Ambient *= Attenuation;
 
-	return vec3((Ambient + shadow) * (DiffuseColor + SpecularColor) * g_Color);
+	return vec3((shadow * (DiffuseColor + SpecularColor)) + g_Ambient);  
 }
 
 // The below are just implementations of PBR equations
