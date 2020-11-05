@@ -163,60 +163,6 @@ void main()
 	return;
 }
 
-vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map)
-{
-	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), map, light.m_Direction), 0.1f);
-
-	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
-    vec3 L = normalize(-light.m_Direction);
-    vec3 H = normalize(V + L);
-	vec3 radiance = light.m_SpecularColor ;
-
-    float NDF = DistributionGGX(g_Normal, H, g_Roughness);   
-    float G = GeometrySmith(g_Normal, V, L, g_Roughness);      
-    vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), g_F0);
-       
-    vec3 nominator = NDF * G * F; 
-    float denominator = 4 * max(dot(g_Normal, V), 0.0) * max(dot(g_Normal, L), 0.0);
-    vec3 specular = nominator / max(denominator, 0.001f);
-    
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - g_Metalness;	
-
-    float NdotL = max(dot(g_Normal, L), 0.0);
-    return (kD * g_Color / PI + specular) * radiance * NdotL * (1.0f - Shadow);
-}
-
-vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
-{
-	float shadow = light.m_ShadowStrength * ShadowCalculationPOINT(light, map) * 2.0f;
-	shadow = 1.0f - shadow;
-
-	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
-    vec3 L = normalize(light.m_Position - g_FragPosition);
-    vec3 H = normalize(V + L);
-	float Distance = length(light.m_Position - g_FragPosition);
-    float Attenuation = 1.0 / (light.m_Constant + light.m_Linear * Distance + light.m_Quadratic * (Distance * Distance)); 
-	vec3 radiance = light.m_SpecularColor * Attenuation;
-
-    float NDF = DistributionGGX(g_Normal, H, g_Roughness);   
-    float G = GeometrySmith(g_Normal, V, L, g_Roughness);      
-    vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), g_F0);
-       
-    vec3 nominator = NDF * G * F; 
-    float denominator = 4 * max(dot(g_Normal, V), 0.0) * max(dot(g_Normal, L), 0.0);
-    vec3 specular = nominator / max(denominator, 0.001f);
-    
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - g_Metalness;	  
-
-    float NdotL = max(dot(g_Normal, L), 0.0);        
-
-    return ((kD * g_Color * shadow) / PI + specular * light.m_SpecularStrength) * radiance * NdotL; 
-}
-
 float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 {
     vec3 ProjectionCoordinates = light_fragpos.xyz / light_fragpos.w; // Perspective division is not really needed for orthagonal projection but whatever
@@ -329,7 +275,8 @@ vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)
 	return vec3((shadow * (DiffuseColor + SpecularColor)) + g_Ambient);  
 }
 
-// The below are just implementations of PBR equations
+// PBR 
+
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a = roughness * roughness;
@@ -368,4 +315,58 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map)
+{
+	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), map, light.m_Direction), 0.1f);
+
+	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
+    vec3 L = normalize(-light.m_Direction);
+    vec3 H = normalize(V + L);
+	vec3 radiance = light.m_SpecularColor ;
+
+    float NDF = DistributionGGX(g_Normal, H, g_Roughness);   
+    float G = GeometrySmith(g_Normal, V, L, g_Roughness);      
+    vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), g_F0);
+       
+    vec3 nominator = NDF * G * F; 
+    float denominator = 4 * max(dot(g_Normal, V), 0.0) * max(dot(g_Normal, L), 0.0);
+    vec3 specular = nominator / max(denominator, 0.001f);
+    
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - g_Metalness;	
+
+    float NdotL = max(dot(g_Normal, L), 0.0);
+    return (kD * g_Color / PI + specular) * radiance * NdotL * (1.0f - Shadow);
+}
+
+vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
+{
+	float shadow = light.m_ShadowStrength * ShadowCalculationPOINT(light, map) * 2.0f;
+	shadow = 1.0f - shadow;
+
+	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
+    vec3 L = normalize(light.m_Position - g_FragPosition);
+    vec3 H = normalize(V + L);
+	float Distance = length(light.m_Position - g_FragPosition);
+    float Attenuation = 1.0 / (light.m_Constant + light.m_Linear * Distance + light.m_Quadratic * (Distance * Distance)); 
+	vec3 radiance = light.m_SpecularColor * Attenuation;
+
+    float NDF = DistributionGGX(g_Normal, H, g_Roughness);   
+    float G = GeometrySmith(g_Normal, V, L, g_Roughness);      
+    vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), g_F0);
+       
+    vec3 nominator = NDF * G * F; 
+    float denominator = 4 * max(dot(g_Normal, V), 0.0) * max(dot(g_Normal, L), 0.0);
+    vec3 specular = nominator / max(denominator, 0.001f);
+    
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - g_Metalness;	  
+
+    float NdotL = max(dot(g_Normal, L), 0.0);        
+
+    return ((kD * g_Color * shadow) / PI + specular * light.m_SpecularStrength) * radiance * NdotL; 
 }
