@@ -55,6 +55,12 @@
     <Filter Include="Core\Engine\Mesh">
       <UniqueIdentifier>{ee378709-9d48-41ec-92be-127a81aa3211}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Shaders\Tonemapping">
+      <UniqueIdentifier>{6aa0b2e1-5f18-4403-bd45-baff244a1270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Engine\Tonemapper">
+      <UniqueIdentifier>{0e3373a6-c48c-4942-b79e-d4b22c3ad0c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -213,6 +219,9 @@
     <ClInclude Include="Core\SSAO.h">
       <Filter>Core\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Tonemapper\Tonemapper.h">
+      <Filter>Core\Engine\Tonemapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -333,6 +342,9 @@
     <ClCompile Include="Core\SSAO.cpp">
       <Filter>Core\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Tonemapper\Tonemapper.cpp">
+      <Filter>Core\Engine\Tonemapper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">
@@ -383,12 +395,6 @@
     <None Include="Core\Shaders\LightingPassVert.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
-    <None Include="Core\Shaders\FramebufferHDRFrag.glsl">
-      <Filter>Core\Shaders</Filter>
-    </None>
-    <None Include="Core\Shaders\FramebufferHDRVert.glsl">
-      <Filter>Core\Shaders</Filter>
-    </None>
     <None Include="Core\Shaders\DepthCubemapFrag.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
@@ -397,6 +403,39 @@
     </None>
     <None Include="Core\Shaders\DepthCubemapVert.glsl">
       <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\aces.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\filmic.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\LICENSE.MD">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\lottes.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\README.md">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\reinhard.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\reinhard2.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\uchimura.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\uncharted2.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\unreal.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
+    </None>
+    <None Include="Core\Shaders\Tonemapping\TonemapperVert.glsl">
+      <Filter>Core\Shaders\Tonemapping</Filter>
     </None>
   </ItemGroup>
 </Project>

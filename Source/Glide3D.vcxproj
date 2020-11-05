@@ -185,6 +185,7 @@
     <ClInclude Include="Core\Renderer\Renderer.h" />
     <ClInclude Include="Core\Skybox.h" />
     <ClInclude Include="Core\SSAO.h" />
+    <ClInclude Include="Core\Tonemapper\Tonemapper.h" />
     <ClInclude Include="Core\Transform\Transform.h" />
     <ClInclude Include="Core\Utils\Defs.h" />
     <ClInclude Include="Core\Utils\Timer.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="Core\Renderer\Renderer.cpp" />
     <ClCompile Include="Core\Skybox.cpp" />
     <ClCompile Include="Core\SSAO.cpp" />
+    <ClCompile Include="Core\Tonemapper\Tonemapper.cpp" />
     <ClCompile Include="Core\Transform\Transform.cpp" />
     <ClCompile Include="Dependencies\glad\src\glad.c" />
     <ClCompile Include="Dependencies\imgui\imgui.cpp" />
@@ -250,8 +252,6 @@
     <None Include="Core\Shaders\DepthCubemapVert.glsl" />
     <None Include="Core\Shaders\DepthFrag.glsl" />
     <None Include="Core\Shaders\DepthVert.glsl" />
-    <None Include="Core\Shaders\FramebufferHDRFrag.glsl" />
-    <None Include="Core\Shaders\FramebufferHDRVert.glsl" />
     <None Include="Core\Shaders\GeometryPassFrag.glsl" />
     <None Include="Core\Shaders\GeometryPassVert.glsl" />
     <None Include="Core\Shaders\LightingPassFrag.glsl" />
@@ -264,6 +264,17 @@
     <None Include="Core\Shaders\SkyboxVertex.glsl" />
     <None Include="Core\Shaders\SSAOFrag.glsl" />
     <None Include="Core\Shaders\SSAOVert.glsl" />
+    <None Include="Core\Shaders\Tonemapping\aces.glsl" />
+    <None Include="Core\Shaders\Tonemapping\filmic.glsl" />
+    <None Include="Core\Shaders\Tonemapping\LICENSE.MD" />
+    <None Include="Core\Shaders\Tonemapping\lottes.glsl" />
+    <None Include="Core\Shaders\Tonemapping\README.md" />
+    <None Include="Core\Shaders\Tonemapping\reinhard.glsl" />
+    <None Include="Core\Shaders\Tonemapping\reinhard2.glsl" />
+    <None Include="Core\Shaders\Tonemapping\TonemapperVert.glsl" />
+    <None Include="Core\Shaders\Tonemapping\uchimura.glsl" />
+    <None Include="Core\Shaders\Tonemapping\uncharted2.glsl" />
+    <None Include="Core\Shaders\Tonemapping\unreal.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -37,6 +37,7 @@
 #include "../ObjectTypes/Cube.h"
 
 #include "../Lighting/Light.h"
+#include "../Tonemapper/Tonemapper.h"
 
 namespace Glide3D
 {
@@ -68,12 +69,12 @@ namespace Glide3D
 
 		// The shader programs
 		GLClasses::Shader m_RendererShader;
-		GLClasses::Shader m_FBOShader; // The hdr shader
 		GLClasses::Shader m_DepthShader;
 		GLClasses::Shader m_ReflectionShader;
 		GLClasses::Shader m_DeferredGeometryPassShader;
 		GLClasses::Shader m_DeferredLightPassShader;
 		GLClasses::Shader m_DepthCubemapShader; // For omni directional shadow maps
+		Tonemapper m_Tonemapper;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;

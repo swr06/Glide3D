@@ -5,6 +5,21 @@
 #include <glad/glad.h>
 #include "../Application/Logger.h"
 
+namespace Glide3D
+{
+	enum class TonemappingType
+	{
+		ACES = 0,
+		Filmic,
+		Lottes,
+		Reinhard,
+		Reinhard2,
+		Uchimura,
+		Uncharted2,
+		Unreal
+	};
+}
+
 namespace GLClasses
 {
 	class Framebuffer
@@ -130,6 +145,8 @@ namespace GLClasses
 		{
 			return m_Exposure;
 		}
+
+		Glide3D::TonemappingType p_TonemappingType = Glide3D::TonemappingType::ACES;
 
 	private :
 		void CreateFramebuffer(int w, int h, bool hdr);

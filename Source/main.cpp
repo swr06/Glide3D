@@ -18,6 +18,7 @@ bool pbr = false;
 float exposure = 0.1f;
 float camera_speed = 0.02f;
 std::stringstream camera_props;
+TonemappingType tonetype = TonemappingType::ACES;
 
 class MyApp : public Application
 {
@@ -102,6 +103,16 @@ public:
 		{
 			wireframe = !wireframe;
 		}
+
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_E)
+		{
+			tonetype = (TonemappingType) ((int)tonetype + 1);
+
+			if (tonetype > TonemappingType::Unreal)
+			{
+				tonetype = TonemappingType::ACES;
+			}
+		}
 	}
 
 };
@@ -144,8 +155,9 @@ int main()
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(91, 79, -7);
-	d_light.m_SpecularStrength = 2.0f;
-	d_light.m_SpecularExponent = 32;
+	d_light.m_SpecularColor = glm::vec3(0.36745f, 0.21843f, 0.08627f);
+	d_light.m_SpecularStrength = 0.4f;
+	d_light.m_SpecularExponent = 64;
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 0;
 
@@ -178,6 +190,7 @@ int main()
 	{
 		renderer.SetUsePBR(pbr);
 		FBO.SetExposure(exposure);
+		FBO.p_TonemappingType = tonetype;
 
 		app.OnUpdate();
 		app.SetCursorLocked(cursor_locked);

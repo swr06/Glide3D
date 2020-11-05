@@ -11,8 +11,6 @@ namespace Glide3D
 	Renderer::Renderer(GLFWwindow* window) : 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(800, 600)
 	{
-		/* Framebuffer stuff */
-
 		// basic quad vertices
 		float Vertices[] = 
 		{ 
@@ -31,8 +29,6 @@ namespace Glide3D
 		/* Create and compile the shaders */
 		m_RendererShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
 		m_RendererShader.CompileShaders();
-		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferHDRVert.glsl", "Core/Shaders/FramebufferHDRFrag.glsl");
-		m_FBOShader.CompileShaders();
 		m_DepthShader.CreateShaderProgramFromFile("Core/Shaders/DepthVert.glsl", "Core/Shaders/DepthFrag.glsl");
 		m_DepthShader.CompileShaders();
 		m_ReflectionShader.CreateShaderProgramFromFile("Core/Shaders/ReflectionVert.glsl", "Core/Shaders/ReflectionFrag.glsl");
@@ -782,20 +778,8 @@ namespace Glide3D
 			glClear(GL_COLOR_BUFFER_BIT);
 			glClear(GL_DEPTH_BUFFER_BIT);
 
-			glDisable(GL_DEPTH_TEST);
-			m_FBOShader.Use();
-			m_FBOShader.SetInteger("u_FramebufferTexture", 1);
-			m_FBOShader.SetFloat("u_Exposure", fbo.GetExposure());
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
-
-			m_FBOVAO.Bind();
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-			m_FBOVAO.Unbind();
-
-			glEnable(GL_DEPTH_TEST);
-
-			glUseProgram(0);
+			// Do Tonemapping
+			m_Tonemapper.Render(fbo);
 		}
 	}
 
@@ -807,7 +791,6 @@ namespace Glide3D
 		}
 
 		m_RendererShader.Destroy();
-		m_FBOShader.Destroy();
 		m_DepthShader.Destroy();
 		m_ReflectionShader.Destroy();
 		m_DeferredGeometryPassShader.Destroy();
@@ -815,8 +798,6 @@ namespace Glide3D
 
 		m_RendererShader.CreateShaderProgramFromFile("Core/Shaders/RendererVert.glsl", "Core/Shaders/RendererFrag.glsl");
 		m_RendererShader.CompileShaders();
-		m_FBOShader.CreateShaderProgramFromFile("Core/Shaders/FramebufferHDRVert.glsl", "Core/Shaders/FramebufferHDRFrag.glsl");
-		m_FBOShader.CompileShaders();
 		m_DepthShader.CreateShaderProgramFromFile("Core/Shaders/DepthVert.glsl", "Core/Shaders/DepthFrag.glsl");
 		m_DepthShader.CompileShaders();
 		m_ReflectionShader.CreateShaderProgramFromFile("Core/Shaders/ReflectionVert.glsl", "Core/Shaders/ReflectionFrag.glsl");
