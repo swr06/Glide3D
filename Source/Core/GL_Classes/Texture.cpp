@@ -63,7 +63,7 @@ namespace GLClasses
 			else if (m_BPP == 4)
 			{
 				internalformat = GL_RGBA;
-				_internalformat = hdr ? GL_SRGB : GL_RGBA;
+				_internalformat = hdr ? GL_SRGB_ALPHA : GL_RGBA;
 			}
 
 			if (image)

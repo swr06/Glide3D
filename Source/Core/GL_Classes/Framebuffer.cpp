@@ -20,13 +20,14 @@ namespace GLClasses
 	void Framebuffer::CreateFramebuffer(int w, int h, bool hdr)
 	{
         GLenum format = hdr ? GL_RGBA16F : GL_RGBA;
+        GLenum type = hdr ? GL_FLOAT : GL_UNSIGNED_BYTE;
 
         glGenFramebuffers(1, &m_FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
         glGenTextures(1, &m_TextureAttachment);
         glBindTexture(GL_TEXTURE_2D, m_TextureAttachment);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, GL_RGBA, type, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureAttachment, 0);
