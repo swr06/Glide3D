@@ -74,7 +74,10 @@ namespace Glide3D
 		GLClasses::Shader m_DeferredGeometryPassShader;
 		GLClasses::Shader m_DeferredLightPassShader;
 		GLClasses::Shader m_DepthCubemapShader; // For omni directional shadow maps
+		GLClasses::Shader m_VolumetricLightingShader;
 		Tonemapper m_Tonemapper;
+
+		GLClasses::Framebuffer m_VolumetricPassFBO;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;

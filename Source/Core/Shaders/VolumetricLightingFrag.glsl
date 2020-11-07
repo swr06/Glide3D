@@ -1,13 +1,12 @@
 #version 330 core
 
 #define PI 3.14159265359
-#define G_SCATTERING 0.1f
-#define NB_STEPS 50
+#define G_SCATTERING 1.0f
+#define NB_STEPS 30
 
 layout(location = 0) out vec3 o_VolumetricFog; // outputs to the volumetric texture that is in half resolution
 in vec2 v_TexCoords;
 
-uniform sampler2D u_DepthTexture;
 uniform sampler2D u_PositionTexture;
 uniform sampler2D u_ShadowMap;
 uniform mat4 u_LightViewProjection;
@@ -27,10 +26,9 @@ void main()
 {
 	vec3 WorldPosition = texture(u_PositionTexture, v_TexCoords).xyz;
 	vec3 StartPosition = u_ViewerPosition;
-	vec3 EndRayPosition = WorldPosition; // Todo!
+	vec3 EndRayPosition = WorldPosition; 
 
 	vec3 RayVector = EndRayPosition.xyz - StartPosition;
-
 	float RayLength = length(RayVector);
 	vec3 RayDirection = RayVector / RayLength;
 
@@ -50,6 +48,7 @@ void main()
 		// Perspective Divide
 		ShadowMapCoords.xyz /= ShadowMapCoords.w;
 
+		// Sample Depth
 		float ShadowDepth = texture(u_ShadowMap, ShadowMapCoords.xy).r;
 
 		if (ShadowDepth > ShadowMapCoords.z)

@@ -275,6 +275,8 @@
     <None Include="Core\Shaders\Tonemapping\uchimura.glsl" />
     <None Include="Core\Shaders\Tonemapping\uncharted2.glsl" />
     <None Include="Core\Shaders\Tonemapping\unreal.glsl" />
+    <None Include="Core\Shaders\VolumetricLightingFrag.glsl" />
+    <None Include="Core\Shaders\VolumetricLightingVert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

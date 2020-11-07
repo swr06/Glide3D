@@ -437,5 +437,11 @@
     <None Include="Core\Shaders\Tonemapping\TonemapperVert.glsl">
       <Filter>Core\Shaders\Tonemapping</Filter>
     </None>
+    <None Include="Core\Shaders\VolumetricLightingFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\VolumetricLightingVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

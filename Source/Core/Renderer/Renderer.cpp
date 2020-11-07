@@ -9,7 +9,8 @@ The Glide3D Rendering Engine
 namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
-		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(800, 600)
+		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(800, 600), 
+		m_VolumetricPassFBO(800, 600, true)
 	{
 		// basic quad vertices
 		float Vertices[] = 
@@ -39,6 +40,8 @@ namespace Glide3D
 		m_DeferredLightPassShader.CompileShaders();
 		m_DepthCubemapShader.CreateShaderProgramFromFile("Core/Shaders/DepthCubemapVert.glsl", "Core/Shaders/DepthCubemapFrag.glsl", "Core/Shaders/DepthCubemapGeometry.glsl");
 		m_DepthCubemapShader.CompileShaders();
+		m_VolumetricLightingShader.CreateShaderProgramFromFile("Core/Shaders/VolumetricLightingVert.glsl", "Core/Shaders/VolumetricLightingFrag.glsl");
+		m_VolumetricLightingShader.CompileShaders();
 	}
 
 	void Renderer::AddDirectionalLight(DirectionalLight* light)
@@ -523,6 +526,7 @@ namespace Glide3D
 		m_IndexCount = 0;
 		m_TotalRenderTime = glfwGetTime();
 		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
+		m_VolumetricPassFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
 
 		for (auto& entities : m_Entities)
 		{
@@ -686,6 +690,32 @@ namespace Glide3D
 		m_GeometryPassTime *= 1000.0f;
 
 		/* Geometry Pass ends here */
+
+		/* Volumetric Pass starts here */
+
+		m_VolumetricPassFBO.Bind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_DEPTH_TEST);
+
+		m_VolumetricLightingShader.Use();
+		m_VolumetricLightingShader.SetInteger("u_PositionTexture", 0);
+		m_VolumetricLightingShader.SetInteger("u_ShadowMap", 1);
+		m_VolumetricLightingShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
+		m_VolumetricLightingShader.SetVector3f("u_LightDirection", m_DirectionalLights[0]->m_Direction);
+		m_VolumetricLightingShader.SetMatrix4("u_LightViewProjection", m_DirectionalLights[0]->m_LightSpaceViewProjection);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPositionTexture());		
+		
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0]->m_DepthBuffer.GetDepthTexture());
+
+		m_FBOVAO.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_FBOVAO.Unbind();
+
+		/* Volumetric Pass ends here */
 		
 		/* Lighting Pass starts here */
 
