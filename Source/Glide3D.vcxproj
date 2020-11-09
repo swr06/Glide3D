@@ -161,6 +161,7 @@
     <ClInclude Include="Core\GL_Classes\DepthBuffer.h" />
     <ClInclude Include="Core\GL_Classes\Fps.h" />
     <ClInclude Include="Core\GL_Classes\Framebuffer.h" />
+    <ClInclude Include="Core\GL_Classes\FramebufferRed.h" />
     <ClInclude Include="Core\GL_Classes\IndexBuffer.h" />
     <ClInclude Include="Core\GL_Classes\Random.h" />
     <ClInclude Include="Core\GL_Classes\Shader.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="Core\GL_Classes\DepthBuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\Fps.cpp" />
     <ClCompile Include="Core\GL_Classes\Framebuffer.cpp" />
+    <ClCompile Include="Core\GL_Classes\FramebufferRed.cpp" />
     <ClCompile Include="Core\GL_Classes\IndexBuffer.cpp" />
     <ClCompile Include="Core\GL_Classes\Random.cpp" />
     <ClCompile Include="Core\GL_Classes\Shader.cpp" />
@@ -245,6 +247,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Core\Shaders\BlurFrag.glsl" />
+    <None Include="Core\Shaders\BlurVert.glsl" />
     <None Include="Core\Shaders\CubeRendererFrag.glsl" />
     <None Include="Core\Shaders\CubeRendererVert.glsl" />
     <None Include="Core\Shaders\DepthCubemapFrag.glsl" />

@@ -1,7 +1,7 @@
 #version 330 core
 
-#define PI 3.14159265359
-#define NB_STEPS 100
+#define PI 3.14159265359f
+#define NB_STEPS 25
 
 layout(location = 0) out vec3 o_VolumetricFog; // outputs to the volumetric texture that is in half resolution
 in vec2 v_TexCoords;
@@ -9,9 +9,16 @@ in vec2 v_TexCoords;
 uniform float u_Scattering = 0.75f;
 uniform sampler2D u_PositionTexture;
 uniform sampler2D u_ShadowMap;
+uniform sampler2D u_NoiseTexture;
 uniform mat4 u_LightViewProjection;
 uniform vec3 u_ViewerPosition;
 uniform vec3 u_LightDirection;
+
+uniform int u_Width;
+uniform int u_Height;
+
+// We want to tile the noise texture over the screen
+vec2 NoiseScale = vec2(float(u_Width) / 2.0f, float(u_Height) / 2.0f);
 
 // Henyey-Greenstein phase function
 float ComputeScattering(float lightDotView) // Dot product of the light direction vector and the view vector
@@ -24,7 +31,8 @@ float ComputeScattering(float lightDotView) // Dot product of the light directio
 
 void main()
 {
-	vec3 WorldPosition = texture(u_PositionTexture, v_TexCoords).xyz;
+	vec3 NoiseValue = texture(u_NoiseTexture, v_TexCoords * NoiseScale).rgb;
+	vec3 WorldPosition = texture(u_PositionTexture, v_TexCoords).rgb;
 	vec3 StartPosition = u_ViewerPosition;
 	vec3 EndRayPosition = WorldPosition; 
 
@@ -33,8 +41,9 @@ void main()
 	vec3 RayDirection = RayVector / RayLength;
 
 	float StepLength = RayLength / NB_STEPS;
-
+	
 	vec3 step_sz = RayDirection * StepLength;
+	StartPosition += NoiseValue * step_sz;
 
 	vec3 CurrentPosition = StartPosition;
 

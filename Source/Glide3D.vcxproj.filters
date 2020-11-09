@@ -222,6 +222,9 @@
     <ClInclude Include="Core\Tonemapper\Tonemapper.h">
       <Filter>Core\Engine\Tonemapper</Filter>
     </ClInclude>
+    <ClInclude Include="Core\GL_Classes\FramebufferRed.h">
+      <Filter>Core\GL Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -345,6 +348,9 @@
     <ClCompile Include="Core\Tonemapper\Tonemapper.cpp">
       <Filter>Core\Engine\Tonemapper</Filter>
     </ClCompile>
+    <ClCompile Include="Core\GL_Classes\FramebufferRed.cpp">
+      <Filter>Core\GL Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\RendererFrag.glsl">
@@ -441,6 +447,12 @@
       <Filter>Core\Shaders</Filter>
     </None>
     <None Include="Core\Shaders\VolumetricLightingVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\BlurVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\BlurFrag.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
   </ItemGroup>

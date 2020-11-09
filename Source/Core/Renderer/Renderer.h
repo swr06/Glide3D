@@ -75,9 +75,11 @@ namespace Glide3D
 		GLClasses::Shader m_DeferredLightPassShader;
 		GLClasses::Shader m_DepthCubemapShader; // For omni directional shadow maps
 		GLClasses::Shader m_VolumetricLightingShader;
+		GLClasses::Shader m_BlurShader;
 		Tonemapper m_Tonemapper;
 
 		GLClasses::Framebuffer m_VolumetricPassFBO;
+		GLClasses::Framebuffer m_VolumetricPassBlurFBO;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
@@ -123,5 +125,7 @@ namespace Glide3D
 		float m_Metalness = 0.1f;
 
 		bool m_UsePBR = false;
+
+		GLuint m_VolumetricNoiseTexture = 0;
 	};
 }

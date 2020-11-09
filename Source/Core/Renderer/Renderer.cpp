@@ -10,7 +10,7 @@ namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(800, 600), 
-		m_VolumetricPassFBO(800, 600, true)
+		m_VolumetricPassFBO(2, 2, true), m_VolumetricPassBlurFBO(2, 2, true)
 	{
 		// basic quad vertices
 		float Vertices[] = 
@@ -42,6 +42,29 @@ namespace Glide3D
 		m_DepthCubemapShader.CompileShaders();
 		m_VolumetricLightingShader.CreateShaderProgramFromFile("Core/Shaders/VolumetricLightingVert.glsl", "Core/Shaders/VolumetricLightingFrag.glsl");
 		m_VolumetricLightingShader.CompileShaders();
+		m_BlurShader.CreateShaderProgramFromFile("Core/Shaders/BlurVert.glsl", "Core/Shaders/BlurFrag.glsl");
+		m_BlurShader.CompileShaders();
+
+		// Create the noise texture
+		std::vector<glm::vec3> Noise;
+		std::uniform_real_distribution<GLfloat> RandomFloatGenerator(0.0, 1.0); 
+		std::default_random_engine Generator;
+
+		for (unsigned int i = 0; i < 64 * 64; i++)
+		{
+			glm::vec3 noise(RandomFloatGenerator(Generator) * 2.0 - 1.0,
+				RandomFloatGenerator(Generator) * 2.0 - 1.0, 
+				RandomFloatGenerator(Generator) * 2.0 - 1.0);
+			Noise.push_back(noise);
+		}
+
+		glGenTextures(1, &m_VolumetricNoiseTexture);
+		glBindTexture(GL_TEXTURE_2D, m_VolumetricNoiseTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 64, 64, 0, GL_RGBA, GL_FLOAT, &Noise.front());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
 	void Renderer::SetDirectionalLight(DirectionalLight* light)
@@ -516,6 +539,7 @@ namespace Glide3D
 		m_TotalRenderTime = glfwGetTime();
 		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
 		m_VolumetricPassFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
+		m_VolumetricPassBlurFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
 
 		for (auto& entities : m_Entities)
 		{
@@ -692,6 +716,9 @@ namespace Glide3D
 			m_VolumetricLightingShader.Use();
 			m_VolumetricLightingShader.SetInteger("u_PositionTexture", 0);
 			m_VolumetricLightingShader.SetInteger("u_ShadowMap", 1);
+			m_VolumetricLightingShader.SetInteger("u_NoiseTexture", 2);
+			m_VolumetricLightingShader.SetInteger("u_Width", m_VolumetricPassFBO.GetWidth());
+			m_VolumetricLightingShader.SetInteger("u_Height", m_VolumetricPassFBO.GetHeight());
 			m_VolumetricLightingShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 			m_VolumetricLightingShader.SetVector3f("u_LightDirection", m_DirectionalLight->m_Direction);
 			m_VolumetricLightingShader.SetMatrix4("u_LightViewProjection", m_DirectionalLight->m_LightSpaceViewProjection);
@@ -703,10 +730,32 @@ namespace Glide3D
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_DirectionalLight->m_DepthBuffer.GetDepthTexture());
 
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_VolumetricNoiseTexture);
+
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
+
+			glUseProgram(0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			/* Volumetric Blur Pass Starts here */
+			m_VolumetricPassBlurFBO.Bind();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			m_BlurShader.Use();
+			m_BlurShader.SetInteger("u_Texture", 0);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_VolumetricPassFBO.GetTexture());
+
 			m_FBOVAO.Bind();
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			m_FBOVAO.Unbind();
 		}
+
+
 
 		/* Volumetric Pass ends here */
 		
@@ -752,7 +801,7 @@ namespace Glide3D
 		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPBRComponentTexture());
 
 		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, m_VolumetricPassFBO.GetTexture());
+		glBindTexture(GL_TEXTURE_2D, m_VolumetricPassBlurFBO.GetTexture());
 
 		m_FBOVAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
