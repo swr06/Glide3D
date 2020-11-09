@@ -31,6 +31,7 @@ in vec2 v_TextureCoordinates;
 uniform sampler2D u_PositionTexture;
 uniform sampler2D u_NormalTexture;
 uniform sampler2D u_ColorTexture;
+uniform sampler2D u_VolumetricTexture;
 
 // PBR TEXTURES
 uniform sampler2D u_PBRComponentTexture;
@@ -101,10 +102,14 @@ const vec3 EmptyPixel = vec3(0.0f);
 
 void main()
 {
+	vec3 VolumetricColor;
+
+
 	// Obtain values from the geometry buffer
 	g_Color = vec3(texture(u_ColorTexture, v_TextureCoordinates));
 	g_Normal = vec3(texture(u_NormalTexture, v_TextureCoordinates));
 	g_FragPosition = vec3(texture(u_PositionTexture, v_TextureCoordinates));
+	VolumetricColor = vec3(texture(u_VolumetricTexture, v_TextureCoordinates));
 
 	vec3 PBRComponent = texture(u_PBRComponentTexture, v_TextureCoordinates).rgb;
 	g_Metalness = PBRComponent.r;
@@ -137,6 +142,7 @@ void main()
 		}	
 
 		o_Color = vec4(g_Ambient + Lo, 1.0f);
+		o_Color += vec4(VolumetricColor, 0.0f);
 
 		return;
 	}
@@ -156,6 +162,7 @@ void main()
 		}	
 
 		o_Color = vec4(FinalColor, 1.0f);
+		o_Color += vec4(VolumetricColor, 0.0f);
 
 		return;
 	}
