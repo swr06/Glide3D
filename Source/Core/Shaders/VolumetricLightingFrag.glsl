@@ -1,12 +1,12 @@
 #version 330 core
 
 #define PI 3.14159265359
-#define G_SCATTERING 0.75f
 #define NB_STEPS 100
 
 layout(location = 0) out vec3 o_VolumetricFog; // outputs to the volumetric texture that is in half resolution
 in vec2 v_TexCoords;
 
+uniform float u_Scattering = 0.75f;
 uniform sampler2D u_PositionTexture;
 uniform sampler2D u_ShadowMap;
 uniform mat4 u_LightViewProjection;
@@ -16,8 +16,8 @@ uniform vec3 u_LightDirection;
 // Henyey-Greenstein phase function
 float ComputeScattering(float lightDotView) // Dot product of the light direction vector and the view vector
 {
-	float result = 1.0f - G_SCATTERING * G_SCATTERING;
-	result /= (4.0f * PI * pow(1.0f + G_SCATTERING * G_SCATTERING - (2.0f * G_SCATTERING) * lightDotView, 1.5f));
+	float result = 1.0f - u_Scattering * u_Scattering;
+	result /= (4.0f * PI * pow(1.0f + u_Scattering * u_Scattering - (2.0f * u_Scattering) * lightDotView, 1.5f));
 	
 	return result;
 }

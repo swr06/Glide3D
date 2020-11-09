@@ -384,6 +384,12 @@ namespace Glide3D
 			ImGui::Text("Total Indices : %d", m_IndexCount);
 			ImGui::End();
 		}
+
+		if (ImGui::Begin("Volumetric Lighting Properties"))
+		{
+			ImGui::SliderFloat("Scattering", &u_VolumetricScattering, -1.0f, 1.0f);
+			ImGui::End();
+		}
 	}
 
 	void Renderer::RenderReflectionMaps(FPSCamera* camera)
@@ -704,6 +710,7 @@ namespace Glide3D
 		m_VolumetricLightingShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_VolumetricLightingShader.SetVector3f("u_LightDirection", m_DirectionalLights[0]->m_Direction);
 		m_VolumetricLightingShader.SetMatrix4("u_LightViewProjection", m_DirectionalLights[0]->m_LightSpaceViewProjection);
+		m_VolumetricLightingShader.SetFloat("u_Scattering", u_VolumetricScattering);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPositionTexture());		
