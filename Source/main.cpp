@@ -36,10 +36,6 @@ public:
 	void OnImguiRender(double ts) override
 	{
 		ImGuiWindowFlags window_flags = 0;
-		window_flags |= ImGuiWindowFlags_NoTitleBar;
-		window_flags |= ImGuiWindowFlags_NoScrollbar;
-		window_flags |= ImGuiWindowFlags_NoResize;
-		window_flags |= ImGuiWindowFlags_NoBackground;
 
 		if (ImGui::Begin("Settings", false, window_flags))
 		{
@@ -106,7 +102,7 @@ public:
 
 		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_E)
 		{
-			tonetype = (TonemappingType) ((int)tonetype + 1);
+			tonetype = (TonemappingType)((int)tonetype + 1);
 
 			if (tonetype > TonemappingType::Unreal)
 			{
@@ -162,7 +158,6 @@ int main()
 	d_light.m_UpdateRate = 0;
 
 	/*PointLight p_light(512);
-
 	p_light.m_Position = glm::vec3(28, 14, -37);
 	p_light.m_SpecularStrength = 4.0f;
 	p_light.m_Linear = 0.0014f;

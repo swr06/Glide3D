@@ -78,6 +78,7 @@ vec3 g_Normal;
 vec3 g_Color;
 vec3 g_ViewDir;
 vec3 g_Ambient;
+vec3 g_VolumetricLight;
 
 // PBR
 float g_Roughness = 0.1f;
@@ -102,14 +103,11 @@ const vec3 EmptyPixel = vec3(0.0f);
 
 void main()
 {
-	vec3 VolumetricColor;
-
-
 	// Obtain values from the geometry buffer
 	g_Color = vec3(texture(u_ColorTexture, v_TextureCoordinates));
 	g_Normal = vec3(texture(u_NormalTexture, v_TextureCoordinates));
 	g_FragPosition = vec3(texture(u_PositionTexture, v_TextureCoordinates));
-	VolumetricColor = vec3(texture(u_VolumetricTexture, v_TextureCoordinates));
+	g_VolumetricLight = vec3(texture(u_VolumetricTexture, v_TextureCoordinates));
 
 	vec3 PBRComponent = texture(u_PBRComponentTexture, v_TextureCoordinates).rgb;
 	g_Metalness = PBRComponent.r;
@@ -142,7 +140,6 @@ void main()
 		}	
 
 		o_Color = vec4(g_Ambient + Lo, 1.0f);
-		o_Color += vec4(VolumetricColor, 0.0f);
 
 		return;
 	}
@@ -162,7 +159,6 @@ void main()
 		}	
 
 		o_Color = vec4(FinalColor, 1.0f);
-		o_Color += vec4(VolumetricColor, 0.0f);
 
 		return;
 	}
@@ -239,8 +235,9 @@ vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D m
 	
 	vec3 DiffuseColor = Diffuse * g_Color; 
 	vec3 SpecularColor = light.m_SpecularStrength * Specular * light.m_SpecularColor ; // To be also sampled with specular map
+	vec3 VolumetricColor = g_VolumetricLight * light.m_SpecularColor;
 
-	return vec3((Shadow * (DiffuseColor + SpecularColor)) + g_Ambient);  
+	return vec3((Shadow * (DiffuseColor + SpecularColor)) + VolumetricColor + g_Ambient);  
 }
 
 vec3 CalculatePointLightPHONG(PointLight light, samplerCube map)

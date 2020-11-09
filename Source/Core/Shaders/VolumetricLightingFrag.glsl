@@ -22,19 +22,6 @@ float ComputeScattering(float lightDotView) // Dot product of the light directio
 	return result;
 }
 
-float ShadowCalculation(vec3 Position)
-{
-	vec4 FragPosLightSpace = u_LightViewProjection * vec4(Position, 1.0f);
-    vec3 ProjectionCoordinates = FragPosLightSpace.xyz / FragPosLightSpace.w;
-    ProjectionCoordinates = ProjectionCoordinates * 0.5 + 0.5;
-    float SampledDepth = texture(u_ShadowMap, ProjectionCoordinates.xy).r; 
-    float CurrentDepth = ProjectionCoordinates.z;
-    float bias = 0.005f;
-	float shadow = CurrentDepth - bias > SampledDepth  ? 1.0 : 0.0;  
-
-    return shadow;
-}
-
 void main()
 {
 	vec3 WorldPosition = texture(u_PositionTexture, v_TexCoords).xyz;
@@ -55,17 +42,15 @@ void main()
 
 	for (int i = 0; i < NB_STEPS; i++)
 	{
-		// Convert to clip space
-		vec4 ShadowMapCoords = u_LightViewProjection * vec4(CurrentPosition, 1.0f);
-
-		// Perspective Divide
-		ShadowMapCoords.xyz /= ShadowMapCoords.w;
-
-		// Sample Depth
-		float ShadowDepth = texture(u_ShadowMap, ShadowMapCoords.xy).r;
-		const float bias = 0.005f;
-
-		if (ShadowCalculation(CurrentPosition) == 0.0f)
+		// Check if the fragment is in shadow
+		vec4 FragPosLightSpace = u_LightViewProjection * vec4(CurrentPosition, 1.0f);
+		vec3 ProjectionCoordinates = FragPosLightSpace.xyz / FragPosLightSpace.w;
+		ProjectionCoordinates = ProjectionCoordinates * 0.5 + 0.5;
+		float SampledDepth = texture(u_ShadowMap, ProjectionCoordinates.xy).r; 
+		float CurrentDepth = ProjectionCoordinates.z;
+		float bias = 0.005f;
+		
+		if ((CurrentDepth - bias) < SampledDepth)
 		{
 			TotalFog += ComputeScattering(dot(RayDirection, -u_LightDirection)) * vec3(1.0f);
 		}
