@@ -44,17 +44,9 @@ namespace Glide3D
 		m_VolumetricLightingShader.CompileShaders();
 	}
 
-	void Renderer::AddDirectionalLight(DirectionalLight* light)
+	void Renderer::SetDirectionalLight(DirectionalLight* light)
 	{
-		if (m_DirectionalLights.size() + 1 > MAX_DIRECTIONAL_LIGHTS)
-		{
-			std::stringstream s;
-			s << "Max DIRECTIONAL lights allowed is : " << MAX_DIRECTIONAL_LIGHTS << " || Light could not be added!";
-			Logger::Log(s.str());
-			assert(0);
-		}
-
-		m_DirectionalLights.emplace_back(light);
+		m_DirectionalLight = light;
 	}
 
 	void Renderer::AddPointLight(PointLight* light)
@@ -73,25 +65,20 @@ namespace Glide3D
 	void Renderer::SetLightUniforms(GLClasses::Shader& shader)
 	{
 		shader.Use();
-		shader.SetInteger("u_SceneDirectionalLightCount", m_DirectionalLights.size(), 0);
-		shader.SetInteger("u_ScenePointLightCount", m_PointLights.size(), 0);
 
-		for (int i = 0; i < m_DirectionalLights.size(); i++)
+		if (m_DirectionalLight)
 		{
-			std::string name("u_SceneDirectionalLights[");
-			name = name + std::to_string(i) + "]";
-
-			std::string matname = "u_DirectionalLightSpaceVP[" + std::to_string(i) + "]";
-			shader.SetMatrix4(matname,
-				m_DirectionalLights[i]->m_LightSpaceViewProjection, 0);
-
-			shader.SetVector3f(name + ".m_Direction", m_DirectionalLights[i]->m_Direction);
-			shader.SetVector3f(name + ".m_SpecularColor", m_DirectionalLights[i]->m_SpecularColor);
-			shader.SetInteger(name + ".m_SpecularExponent", m_DirectionalLights[i]->m_SpecularExponent);
-			shader.SetFloat(name + ".m_SpecularStrength", m_DirectionalLights[i]->m_SpecularStrength);
-			shader.SetFloat(name + ".m_ShadowStrength", m_DirectionalLights[i]->m_ShadowStrength);
-			shader.SetInteger(name + ".m_IsBlinn", (int)m_DirectionalLights[i]->m_IsBlinn);
+			shader.SetMatrix4("u_DirectionalLightSpaceVP", m_DirectionalLight->m_LightSpaceViewProjection, 0);
+			shader.SetVector3f("u_SceneDirectionalLight.m_Direction", m_DirectionalLight->m_Direction);
+			shader.SetVector3f("u_SceneDirectionalLight.m_SpecularColor", m_DirectionalLight->m_SpecularColor);
+			shader.SetInteger("u_SceneDirectionalLight.m_SpecularExponent", m_DirectionalLight->m_SpecularExponent);
+			shader.SetFloat("u_SceneDirectionalLight.m_SpecularStrength", m_DirectionalLight->m_SpecularStrength);
+			shader.SetFloat("u_SceneDirectionalLight.m_ShadowStrength", m_DirectionalLight->m_ShadowStrength);
+			shader.SetInteger("u_SceneDirectionalLight.m_IsBlinn", (int)m_DirectionalLight->m_IsBlinn);
 		}
+
+		shader.SetInteger("m_DirectionalLightShadowmap", (int)6); // 5 slots are used for the materials
+		shader.SetInteger("u_ScenePointLightCount", m_PointLights.size(), 0);
 
 		for (int i = 0; i < m_PointLights.size(); i++)
 		{
@@ -110,11 +97,6 @@ namespace Glide3D
 			shader.SetFloat(name + ".m_FarPlane", (int)m_PointLights[i]->m_FarPlane);
 		}
 
-		for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
-		{
-			shader.SetInteger("m_DirectionalLightShadowmaps[" + std::to_string(i) + "]", (int)6 + i); // 5 slots are used for the materials
-		}
-
 		for (int i = 0; i < MAX_POINT_LIGHTS; i++)
 		{
 			shader.SetInteger("m_PointlightShadowmaps[" + std::to_string(i) + "]", (int)9 + i); 
@@ -123,10 +105,10 @@ namespace Glide3D
 
 	void Renderer::BindLightingMaps()
 	{
-		for (int i = 0 ; i < m_DirectionalLights.size() ; i++)
+		if (m_DirectionalLight)
 		{
-			glActiveTexture(GL_TEXTURE6 + i);
-			glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[i]->m_DepthBuffer.GetDepthTexture());
+			glActiveTexture(GL_TEXTURE6);
+			glBindTexture(GL_TEXTURE_2D, m_DirectionalLight->m_DepthBuffer.GetDepthTexture());
 		}
 
 		for (int i = 0; i < m_PointLights.size(); i++)
@@ -204,71 +186,72 @@ namespace Glide3D
 	{
 		/* Render the depth maps of each light */
 
+		if (!m_DirectionalLight) { return; }
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		m_DepthShader.Use();
 
-		for (auto& e : m_DirectionalLights)
+		DirectionalLight* e = m_DirectionalLight;
+
+		if (m_CurrentFrame == 0 || (e->m_UpdateRate > 0 && m_CurrentFrame % e->m_UpdateRate == 0))
 		{
-			if (m_CurrentFrame == 0 || (e->m_UpdateRate > 0 && m_CurrentFrame % e->m_UpdateRate == 0))
+			e->m_DepthBuffer.Bind();
+			e->m_DepthBuffer.OnUpdate();
+			glDisable(GL_CULL_FACE);
+
+			/* Create the view projection matrix for the light */
+
+			e->m_LightSpaceView = glm::lookAt(e->m_ShadowPosition, e->m_ShadowPosition + e->m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
+			e->m_LightSpaceViewProjection = e->m_LightSpaceProjection * e->m_LightSpaceView;
+
+			m_DepthShader.SetMatrix4("u_ViewProjection", e->m_LightSpaceViewProjection);
+
+			for (auto& entities : m_Entities)
 			{
-				e->m_DepthBuffer.Bind();
-				e->m_DepthBuffer.OnUpdate();
-				glDisable(GL_CULL_FACE);
+				if (entities.second.size() <= 0) { continue; }
 
-				/* Create the view projection matrix for the light */
+				const Object* object = entities.second[0]->p_Object;
 
-				e->m_LightSpaceView = glm::lookAt(e->m_ShadowPosition, e->m_ShadowPosition + e->m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
-				e->m_LightSpaceViewProjection = e->m_LightSpaceProjection * e->m_LightSpaceView;
-
-				m_DepthShader.SetMatrix4("u_ViewProjection", e->m_LightSpaceViewProjection);
-
-				for (auto& entities : m_Entities)
+				for (auto& e : object->m_Meshes)
 				{
-					if (entities.second.size() <= 0) { continue; }
+					const Mesh* mesh = &e;
 
-					const Object* object = entities.second[0]->p_Object;
+					const std::vector<Vertex>& Vertices = mesh->p_Vertices;
+					const std::vector<GLuint>& Indices = mesh->p_Indices;
+					bool indexed = mesh->p_Indexed;
 
-					for (auto& e : object->m_Meshes)
+					const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
+					VAO.Bind();
+
+					glDisableVertexAttribArray(1);
+					glDisableVertexAttribArray(2);
+					glDisableVertexAttribArray(3);
+					glDisableVertexAttribArray(4);
+					glDisableVertexAttribArray(9);
+					glDisableVertexAttribArray(10);
+					glDisableVertexAttribArray(11);
+					glDisableVertexAttribArray(12);
+
+					if (indexed)
 					{
-						const Mesh* mesh = &e;
-
-						const std::vector<Vertex>& Vertices = mesh->p_Vertices;
-						const std::vector<GLuint>& Indices = mesh->p_Indices;
-						bool indexed = mesh->p_Indexed;
-
-						const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
-						VAO.Bind();
-
-						glDisableVertexAttribArray(1);
-						glDisableVertexAttribArray(2);
-						glDisableVertexAttribArray(3);
-						glDisableVertexAttribArray(4);
-						glDisableVertexAttribArray(9);
-						glDisableVertexAttribArray(10);
-						glDisableVertexAttribArray(11);
-						glDisableVertexAttribArray(12);
-
-						if (indexed)
-						{
-							glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.second.size());
-						}
-
-						else
-						{
-							glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.second.size());
-						}
-
-						glEnableVertexAttribArray(1);
-						glEnableVertexAttribArray(2);
-						glEnableVertexAttribArray(3);
-						glEnableVertexAttribArray(4);
-						glEnableVertexAttribArray(9);
-						glEnableVertexAttribArray(10);
-						glEnableVertexAttribArray(11);
-						glEnableVertexAttribArray(12);
-
-						VAO.Unbind();
+						glDrawElementsInstanced(GL_TRIANGLES, mesh->p_IndicesCount, GL_UNSIGNED_INT, 0, entities.second.size());
 					}
+
+					else
+					{
+						glDrawArraysInstanced(GL_TRIANGLES, 0, mesh->p_VertexCount, entities.second.size());
+					}
+
+					glEnableVertexAttribArray(1);
+					glEnableVertexAttribArray(2);
+					glEnableVertexAttribArray(3);
+					glEnableVertexAttribArray(4);
+					glEnableVertexAttribArray(9);
+					glEnableVertexAttribArray(10);
+					glEnableVertexAttribArray(11);
+					glEnableVertexAttribArray(12);
+
+					VAO.Unbind();
 				}
 			}
 		}
@@ -699,28 +682,31 @@ namespace Glide3D
 
 		/* Volumetric Pass starts here */
 
-		m_VolumetricPassFBO.Bind();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (m_DirectionalLight)
+		{
+			m_VolumetricPassFBO.Bind();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDisable(GL_DEPTH_TEST);
+			glDisable(GL_DEPTH_TEST);
 
-		m_VolumetricLightingShader.Use();
-		m_VolumetricLightingShader.SetInteger("u_PositionTexture", 0);
-		m_VolumetricLightingShader.SetInteger("u_ShadowMap", 1);
-		m_VolumetricLightingShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
-		m_VolumetricLightingShader.SetVector3f("u_LightDirection", m_DirectionalLights[0]->m_Direction);
-		m_VolumetricLightingShader.SetMatrix4("u_LightViewProjection", m_DirectionalLights[0]->m_LightSpaceViewProjection);
-		m_VolumetricLightingShader.SetFloat("u_Scattering", u_VolumetricScattering);
+			m_VolumetricLightingShader.Use();
+			m_VolumetricLightingShader.SetInteger("u_PositionTexture", 0);
+			m_VolumetricLightingShader.SetInteger("u_ShadowMap", 1);
+			m_VolumetricLightingShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
+			m_VolumetricLightingShader.SetVector3f("u_LightDirection", m_DirectionalLight->m_Direction);
+			m_VolumetricLightingShader.SetMatrix4("u_LightViewProjection", m_DirectionalLight->m_LightSpaceViewProjection);
+			m_VolumetricLightingShader.SetFloat("u_Scattering", u_VolumetricScattering);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPositionTexture());		
-		
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_DirectionalLights[0]->m_DepthBuffer.GetDepthTexture());
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_GeometryPassBuffer.GetPositionTexture());
 
-		m_FBOVAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		m_FBOVAO.Unbind();
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_DirectionalLight->m_DepthBuffer.GetDepthTexture());
+
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
+		}
 
 		/* Volumetric Pass ends here */
 		
@@ -741,7 +727,7 @@ namespace Glide3D
 		m_DeferredLightPassShader.SetInteger("u_NormalTexture", 1);
 		m_DeferredLightPassShader.SetInteger("u_ColorTexture", 2);
 		m_DeferredLightPassShader.SetInteger("u_PBRComponentTexture", 3);
-		m_DeferredLightPassShader.SetInteger("u_VolumetricTexture", 4);
+		m_DeferredLightPassShader.SetInteger("u_DirectionalLightVolumetricTexture", 4);
 
 		m_DeferredLightPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredLightPassShader.SetVector3f("u_AmbientLight", glm::vec3(1.0f));

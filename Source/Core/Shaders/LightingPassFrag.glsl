@@ -20,7 +20,6 @@ Silver 				|	(0.95f, 0.93f, 0.88f) 	|  (0.98f, 0.97f, 0.95f)
 
 #version 450 core
 
-#define MAX_DIRECTIONAL_LIGHTS 2
 #define MAX_POINT_LIGHTS 4
 #define PI 3.14159265359
 
@@ -31,7 +30,6 @@ in vec2 v_TextureCoordinates;
 uniform sampler2D u_PositionTexture;
 uniform sampler2D u_NormalTexture;
 uniform sampler2D u_ColorTexture;
-uniform sampler2D u_VolumetricTexture;
 
 // PBR TEXTURES
 uniform sampler2D u_PBRComponentTexture;
@@ -62,16 +60,18 @@ struct PointLight
 };
 
 // Shadow maps
-uniform sampler2D m_DirectionalLightShadowmaps[MAX_DIRECTIONAL_LIGHTS];
 uniform samplerCube m_PointlightShadowmaps[MAX_POINT_LIGHTS] ;
 
-uniform DirectionalLight u_SceneDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
+// Single directional light stuff
+uniform DirectionalLight u_SceneDirectionalLight;
+uniform mat4 u_DirectionalLightSpaceVP;
+uniform sampler2D m_DirectionalLightShadowmap;
+uniform sampler2D u_DirectionalLightVolumetricTexture;
+
 uniform PointLight u_ScenePointLights[MAX_POINT_LIGHTS];
 uniform vec3 u_ViewerPosition;
 uniform float u_AmbientStrength = 0.75;
-uniform int u_SceneDirectionalLightCount = 0;
 uniform int u_ScenePointLightCount = 0;
-uniform mat4 u_DirectionalLightSpaceVP[MAX_DIRECTIONAL_LIGHTS];
 
 vec3 g_FragPosition;
 vec3 g_Normal;
@@ -107,7 +107,7 @@ void main()
 	g_Color = vec3(texture(u_ColorTexture, v_TextureCoordinates));
 	g_Normal = vec3(texture(u_NormalTexture, v_TextureCoordinates));
 	g_FragPosition = vec3(texture(u_PositionTexture, v_TextureCoordinates));
-	g_VolumetricLight = vec3(texture(u_VolumetricTexture, v_TextureCoordinates));
+	g_VolumetricLight = vec3(texture(u_DirectionalLightVolumetricTexture, v_TextureCoordinates));
 
 	vec3 PBRComponent = texture(u_PBRComponentTexture, v_TextureCoordinates).rgb;
 	g_Metalness = PBRComponent.r;
@@ -129,10 +129,7 @@ void main()
 
 		vec3 Lo = vec3(0.0f);
 
-		for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
-		{
-			Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i], m_DirectionalLightShadowmaps[i]);
-		}	
+		Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLight, u_DirectionalLightSpaceVP, m_DirectionalLightShadowmap);
 
 		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 		{
@@ -148,10 +145,7 @@ void main()
 	{
 		vec3 FinalColor;
 
-		for (int i = 0 ; i < u_SceneDirectionalLightCount ; i++)
-		{
-			FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLights[i], u_DirectionalLightSpaceVP[i], m_DirectionalLightShadowmaps[i]);
-		}	
+		FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLight, u_DirectionalLightSpaceVP, m_DirectionalLightShadowmap);
 
 		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 		{
