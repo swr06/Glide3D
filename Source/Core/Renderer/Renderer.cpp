@@ -11,7 +11,7 @@ namespace Glide3D
 	Renderer::Renderer(GLFWwindow* window) : 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(2, 2), 
 		m_VolumetricPassFBO(2, 2, true), m_VolumetricPassBlurFBO(2, 2, true), m_LightingPassFBO(2, 2, true),
-		m_BloomFBO(2, 2, false), m_BloomFBO_2(2, 2, false)
+		m_BloomFBO(2, 2, false), m_TempFBO(2, 2, false)
 	{
 		// basic quad vertices
 		float Vertices[] = 
@@ -551,7 +551,7 @@ namespace Glide3D
 		m_VolumetricPassFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
 		m_VolumetricPassBlurFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
 		m_BloomFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
-		m_BloomFBO_2.SetSize(fbo.GetWidth(), fbo.GetHeight());
+		m_TempFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
 
 		for (auto& entities : m_Entities)
 		{
@@ -773,7 +773,15 @@ namespace Glide3D
 
 		m_LightingPassTime = glfwGetTime();
 
-		m_LightingPassFBO.Bind();
+		if (m_HasBloom)
+		{
+			m_LightingPassFBO.Bind();
+		}
+
+		else
+		{
+			fbo.Bind();
+		}
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -826,59 +834,62 @@ namespace Glide3D
 
 		/* Bloom Pass starts here */
 
-		// Find all the bright parts of the texture 
-		m_BloomFBO.Bind();
-		m_BloomBrightnessShader.Use();
-		m_BloomBrightnessShader.SetInteger("u_Texture", 0);
+		if (m_HasBloom)
+		{
+			// Find all the bright parts of the texture 
+			m_BloomFBO.Bind();
+			m_BloomBrightnessShader.Use();
+			m_BloomBrightnessShader.SetInteger("u_Texture", 0);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_LightingPassFBO.GetTexture());
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_LightingPassFBO.GetTexture());
 
-		m_FBOVAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		m_FBOVAO.Unbind();
-		
-		// Now vertically blur the result
-		m_BloomFBO_2.Bind();
-		m_GaussianVerticalShader.Use();
-		m_GaussianVerticalShader.SetInteger("u_Texture", 0);
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_BloomFBO.GetTexture());
+			// Now vertically blur the result
+			m_TempFBO.Bind();
+			m_GaussianVerticalShader.Use();
+			m_GaussianVerticalShader.SetInteger("u_Texture", 0);
 
-		m_FBOVAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		m_FBOVAO.Unbind();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_BloomFBO.GetTexture());
 
-		// Now horizontally blur the result
-		m_BloomFBO.Bind();
-		m_GaussianHorizontalShader.Use();
-		m_GaussianHorizontalShader.SetInteger("u_Texture", 0);
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_BloomFBO_2.GetTexture());
+			// Now horizontally blur the result
+			m_BloomFBO.Bind();
+			m_GaussianHorizontalShader.Use();
+			m_GaussianHorizontalShader.SetInteger("u_Texture", 0);
 
-		m_FBOVAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		m_FBOVAO.Unbind();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_TempFBO.GetTexture());
 
-		// The bloom fbo now has the blurred result
-		// Now combine the buffers
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
 
-		fbo.Bind();
-		m_BloomShader.Use();
-		m_BloomShader.SetInteger("u_LightPassTexture", 0);
-		m_BloomShader.SetInteger("u_BloomPassTexture", 1);
+			// The bloom fbo now has the blurred result
+			// Now combine the buffers
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_LightingPassFBO.GetTexture());
+			fbo.Bind();
+			m_BloomShader.Use();
+			m_BloomShader.SetInteger("u_LightPassTexture", 0);
+			m_BloomShader.SetInteger("u_BloomPassTexture", 1);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_BloomFBO.GetTexture());
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_LightingPassFBO.GetTexture());
 
-		m_FBOVAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		m_FBOVAO.Unbind();
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_BloomFBO.GetTexture());
+
+			m_FBOVAO.Bind();
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			m_FBOVAO.Unbind();
+		}
 
 		// Clean up
 		glUseProgram(0);

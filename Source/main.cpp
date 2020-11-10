@@ -15,6 +15,7 @@ FPSCamera camera(90, 800.0f / 600.0f, 0.1f, 1000.0f, 0.25f);
 bool wireframe = false;
 bool cursor_locked = true;
 bool pbr = false;
+bool bloom = false;
 float exposure = 0.1f;
 float camera_speed = 0.02f;
 std::stringstream camera_props;
@@ -88,6 +89,11 @@ public:
 		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_F1)
 		{
 			pbr = !pbr;
+		}
+
+		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_F3)
+		{
+			bloom = !bloom;
 		}
 
 		else if (e.type == EventTypes::KeyPress && e.key == GLFW_KEY_ESCAPE)
@@ -184,6 +190,7 @@ int main()
 	while (!glfwWindowShouldClose(app.GetWindow()))
 	{
 		renderer.SetUsePBR(pbr);
+		renderer.SetUseBloom(bloom);
 		FBO.SetExposure(exposure);
 		FBO.p_TonemappingType = tonetype;
 

@@ -48,7 +48,8 @@ namespace Glide3D
 
 		void SetDirectionalLight(DirectionalLight* light);
 		void AddPointLight(PointLight* light);
-		void SetUsePBR(bool v) noexcept { m_UsePBR = v; };
+		inline void SetUsePBR(bool v) noexcept { m_UsePBR = v; };
+		inline void SetUseBloom(bool v) noexcept { m_HasBloom = v; };
 
 		// Rendering
 		void AddEntities(const std::vector<const Entity*>& entities);
@@ -88,7 +89,7 @@ namespace Glide3D
 		GLClasses::Framebuffer m_VolumetricPassBlurFBO;
 		GLClasses::Framebuffer m_LightingPassFBO;
 		GLClasses::Framebuffer m_BloomFBO;
-		GLClasses::Framebuffer m_BloomFBO_2;
+		GLClasses::Framebuffer m_TempFBO;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
@@ -134,6 +135,7 @@ namespace Glide3D
 		float m_Metalness = 0.1f;
 
 		bool m_UsePBR = false;
+		bool m_HasBloom = false;
 
 		GLuint m_VolumetricNoiseTexture = 0;
 	};
