@@ -15,7 +15,7 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Cubemap reflections ✔
 - Shadow mapping ✔
   - PCF Shadowing ✔
-  - Point Shadows
+  - Point Shadows ✔
 - Anti Aliasing ✔
 - Post Processing pipeline ✔
 - Gamma correction ✔
@@ -27,6 +27,9 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Skeletal animations
 - Physically based rendering
   - Image based lighting
+- Volumetric Lighting ✔
+- Volumetric Clouds 
+- Alpha Blending
 
 # Advanced Features (That will come later..)
 - Screen space reflections
