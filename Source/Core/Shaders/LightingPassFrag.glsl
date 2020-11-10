@@ -173,8 +173,8 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 
     float ClosestDepth = texture(map, ProjectionCoordinates.xy).r; 
     float Depth = ProjectionCoordinates.z;
-    float Bias =  max(0.05f * (1.0f - dot(g_Normal, light_dir)), 0.005f);
-    //float Bias =  0.005f;
+    //float Bias =  max(0.05f * (1.0f - dot(g_Normal, light_dir)), 0.005f);
+    float Bias =  0.005f;
 	vec2 TexelSize = 1.0 / textureSize(map, 0); // LOD = 0
 
 	// Take the average of the surrounding texels to create the PCF effect
@@ -209,7 +209,7 @@ vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D m
 	float Shadow = max(light.m_ShadowStrength * ShadowCalculation(vp * vec4(g_FragPosition, 1.0f), map, light.m_Direction), 0.1f);
 	Shadow = 1.0f - Shadow;
 
-	vec3 LightDirection = normalize(-light.m_Direction);
+	vec3 LightDirection = -light.m_Direction;
 
 	float Diffuse = max(dot(g_Normal, LightDirection), 0.0f);
 

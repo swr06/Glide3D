@@ -53,7 +53,7 @@ public:
 
 	void OnEvent(Event e) override
 	{
-		if (e.type == EventTypes::MouseMove)
+		if (e.type == EventTypes::MouseMove && cursor_locked)
 		{
 			camera.UpdateOnMouseMovement(e.mx, e.my);
 		}
@@ -153,7 +153,7 @@ int main()
 
 	glm::vec3 light_dir = glm::vec3(-0.71f, -0.69f, -0.01f);
 
-	DirectionalLight d_light({ -300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 300.0f }, { 4096,4096 });
+	DirectionalLight d_light({ -400.0f, 400.0f, -400.0f, 400.0f, 0.1f, 400.0f }, { 8096,8096 });
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(91, 79, -7);
@@ -201,36 +201,39 @@ int main()
 		FBO.Bind();
 		FBO.OnUpdate(app.GetWidth(), app.GetHeight(), wireframe);
 
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		if (cursor_locked)
 		{
-			glm::vec3 front = -glm::cross(camera.GetRight(), camera.GetUp());
-			camera.ApplyAcceleration(front * camera_speed);
-		}
+			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			{
+				glm::vec3 front = -glm::cross(camera.GetRight(), camera.GetUp());
+				camera.ApplyAcceleration(front * camera_speed);
+			}
 
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			glm::vec3 back = glm::cross(camera.GetRight(), camera.GetUp());
-			camera.ApplyAcceleration(back * camera_speed);
-		}
+			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			{
+				glm::vec3 back = glm::cross(camera.GetRight(), camera.GetUp());
+				camera.ApplyAcceleration(back * camera_speed);
+			}
 
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		{
-			camera.ApplyAcceleration(-(camera.GetRight() * camera_speed));
-		}
+			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			{
+				camera.ApplyAcceleration(-(camera.GetRight() * camera_speed));
+			}
 
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		{
-			camera.ApplyAcceleration(camera.GetRight() * camera_speed);
-		}
+			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			{
+				camera.ApplyAcceleration(camera.GetRight() * camera_speed);
+			}
 
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		{
-			camera.ApplyAcceleration(camera.GetUp() * camera_speed);
-		}
+			if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+			{
+				camera.ApplyAcceleration(camera.GetUp() * camera_speed);
+			}
 
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		{
-			camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
+			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+			{
+				camera.ApplyAcceleration(-(camera.GetUp() * camera_speed));
+			}
 		}
 
 		renderer.Render(&camera, FBO);

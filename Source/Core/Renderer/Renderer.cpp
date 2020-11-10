@@ -225,8 +225,12 @@ namespace Glide3D
 
 		DirectionalLight* e = m_DirectionalLight;
 
-		if (m_CurrentFrame == 0 || (e->m_UpdateRate > 0 && m_CurrentFrame % e->m_UpdateRate == 0))
+		if (m_CurrentFrame == 0 ||
+			e->m_UpdateOnce ||
+			(e->m_UpdateRate > 0 && m_CurrentFrame % e->m_UpdateRate == 0))
 		{
+			e->m_UpdateOnce = false;
+
 			e->m_DepthBuffer.Bind();
 			e->m_DepthBuffer.OnUpdate();
 			glDisable(GL_CULL_FACE);
@@ -405,6 +409,40 @@ namespace Glide3D
 			ImGui::SliderFloat("Scattering", &u_VolumetricScattering, -1.0f, 1.0f);
 			ImGui::End();
 		}
+
+		if (ImGui::Begin("Lights"))
+		{
+			if (ImGui::CollapsingHeader("Directional Light"))
+			{
+				DirectionalLight* light = m_DirectionalLight;
+				float vals[3] = { 
+				light->m_ShadowPosition.x,
+				light->m_ShadowPosition.y,
+				light->m_ShadowPosition.z 
+				};
+				
+				ImGui::Text("Light Position : ");
+				ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
+
+				if (vals[0] != light->m_ShadowPosition.x ||
+					vals[1] != light->m_ShadowPosition.y ||
+					vals[2] != light->m_ShadowPosition.z)
+				{
+					light->m_ShadowPosition.x = vals[0];
+					light->m_ShadowPosition.y = vals[1];
+					light->m_ShadowPosition.z = vals[2];
+
+					light->m_UpdateOnce = true;
+				}
+
+				if (ImGui::Button("Set as scene camera"))
+				{
+					light->m_ShadowPosition = m_Camera->GetPosition();
+					light->m_Direction = m_Camera->GetFront();
+					light->m_UpdateOnce = true;
+				}
+			}
+		}
 	}
 
 	void Renderer::RenderReflectionMaps(FPSCamera* camera)
@@ -542,6 +580,7 @@ namespace Glide3D
 	*/
 	void Renderer::Render(FPSCamera* camera, const GLClasses::Framebuffer& fbo)
 	{
+		m_Camera = camera;
 		m_DrawCalls = 0;
 		m_VertexCount = 0;
 		m_IndexCount = 0;

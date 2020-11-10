@@ -8,6 +8,8 @@
 
 namespace Glide3D
 {
+	class Renderer;
+
 	struct OrthogonalProperties
 	{
 		float left;
@@ -20,8 +22,10 @@ namespace Glide3D
 
 	typedef std::pair<uint32_t, uint32_t> ShadowBufferResolution;
 
-	struct DirectionalLight
+	class DirectionalLight
 	{
+	public :
+
 		DirectionalLight(const OrthogonalProperties& ortho_properties = { -60.0f, 60.0f, -60.0f, 60.0f, 0.15f, 60.0f }
 			, const ShadowBufferResolution& shadow_res = {(int)1024, (int)1024})
 			: m_DepthBuffer(shadow_res.first, shadow_res.second)
@@ -49,6 +53,11 @@ namespace Glide3D
 		glm::mat4 m_LightSpaceView;
 		OrthogonalProperties m_OrthagonalProperties;
 		float m_ShadowStrength = 1.0f; // Gets multiplied with the total shadow at the end. Make sure this is 1.0 or lesser
+	
+	private :
+
+		bool m_UpdateOnce = false;
+		friend class Renderer;
 	};
 
 	class PointLight

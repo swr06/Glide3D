@@ -138,5 +138,6 @@ namespace Glide3D
 		bool m_HasBloom = false;
 
 		GLuint m_VolumetricNoiseTexture = 0;
+		FPSCamera* m_Camera = nullptr;
 	};
 }
