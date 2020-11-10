@@ -89,7 +89,7 @@ namespace Glide3D
 		GLClasses::Framebuffer m_VolumetricPassBlurFBO;
 		GLClasses::Framebuffer m_LightingPassFBO;
 		GLClasses::Framebuffer m_BloomFBO;
-		GLClasses::Framebuffer m_TempFBO;
+		GLClasses::Framebuffer m_BloomFBO_2;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
