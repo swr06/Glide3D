@@ -21,7 +21,7 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Gamma correction ✔
 - Deferrred Rendering ✔
 - Full HDR Pipeline ✔
-- Bloom
+- Bloom ✔
 - SSAO (Ambient Occlusion)
 - HDR (Exposure control etc.) ✔
 - Skeletal animations
