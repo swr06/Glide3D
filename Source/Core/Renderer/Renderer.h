@@ -78,8 +78,17 @@ namespace Glide3D
 		GLClasses::Shader m_BlurShader;
 		Tonemapper m_Tonemapper;
 
+		// Bloom Shaders
+		GLClasses::Shader m_BloomShader;
+		GLClasses::Shader m_BloomBrightnessShader;
+		GLClasses::Shader m_GaussianVerticalShader;
+		GLClasses::Shader m_GaussianHorizontalShader;
+
 		GLClasses::Framebuffer m_VolumetricPassFBO;
 		GLClasses::Framebuffer m_VolumetricPassBlurFBO;
+		GLClasses::Framebuffer m_LightingPassFBO;
+		GLClasses::Framebuffer m_BloomFBO;
+		GLClasses::Framebuffer m_BloomFBO_2;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;

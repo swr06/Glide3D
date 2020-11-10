@@ -455,5 +455,26 @@
     <None Include="Core\Shaders\BlurFrag.glsl">
       <Filter>Core\Shaders</Filter>
     </None>
+    <None Include="Core\Shaders\BloomFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\BloomVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\GaussianBlurVerticalFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\BloomBrightFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\BloomBrightVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\GaussianBlurHorizontalFrag.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\GaussianBlurVert.glsl">
+      <Filter>Core\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

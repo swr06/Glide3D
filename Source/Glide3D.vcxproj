@@ -247,6 +247,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Core\Shaders\BloomBrightFrag.glsl" />
+    <None Include="Core\Shaders\BloomBrightVert.glsl" />
+    <None Include="Core\Shaders\BloomFrag.glsl" />
+    <None Include="Core\Shaders\BloomVert.glsl" />
     <None Include="Core\Shaders\BlurFrag.glsl" />
     <None Include="Core\Shaders\BlurVert.glsl" />
     <None Include="Core\Shaders\CubeRendererFrag.glsl" />
@@ -256,6 +260,9 @@
     <None Include="Core\Shaders\DepthCubemapVert.glsl" />
     <None Include="Core\Shaders\DepthFrag.glsl" />
     <None Include="Core\Shaders\DepthVert.glsl" />
+    <None Include="Core\Shaders\GaussianBlurHorizontalFrag.glsl" />
+    <None Include="Core\Shaders\GaussianBlurVerticalFrag.glsl" />
+    <None Include="Core\Shaders\GaussianBlurVert.glsl" />
     <None Include="Core\Shaders\GeometryPassFrag.glsl" />
     <None Include="Core\Shaders\GeometryPassVert.glsl" />
     <None Include="Core\Shaders\LightingPassFrag.glsl" />
