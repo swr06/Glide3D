@@ -26,8 +26,11 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - HDR (Exposure control etc.) ✔
 - Skeletal animations
 - Physically based rendering
+  - Physically based lighting ✔
   - Image based lighting
 - Volumetric Lighting ✔
+- Multiple Tonemapping Options ✔
+- Temperature Tonemapping ✔
 - Volumetric Clouds 
 - Alpha Blending
 
