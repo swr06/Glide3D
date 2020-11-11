@@ -50,7 +50,8 @@ namespace Glide3D
 		void AddPointLight(PointLight* light);
 		inline void SetUsePBR(bool v) noexcept { m_UsePBR = v; };
 		inline void SetUseBloom(bool v) noexcept { m_HasBloom = v; };
-
+		inline void SetTemperature(float v) noexcept { m_Temperature = v; }
+		
 		// Rendering
 		void AddEntities(const std::vector<const Entity*>& entities);
 		void AddEntity(const Entity* entity);
@@ -77,6 +78,7 @@ namespace Glide3D
 		GLClasses::Shader m_DepthCubemapShader; // For omni directional shadow maps
 		GLClasses::Shader m_VolumetricLightingShader;
 		GLClasses::Shader m_BlurShader;
+		GLClasses::Shader m_TemperatureTonemappingShader;
 		Tonemapper m_Tonemapper;
 
 		// Bloom Shaders
@@ -89,7 +91,7 @@ namespace Glide3D
 		GLClasses::Framebuffer m_VolumetricPassBlurFBO;
 		GLClasses::Framebuffer m_LightingPassFBO;
 		GLClasses::Framebuffer m_BloomFBO;
-		GLClasses::Framebuffer m_BloomFBO_2;
+		GLClasses::Framebuffer m_TempFBO;
 
 		GLClasses::VertexArray m_FBOVAO;
 		GLClasses::VertexBuffer m_FBOVBO;
@@ -133,6 +135,7 @@ namespace Glide3D
 
 		float m_Roughness = 0.1f;
 		float m_Metalness = 0.1f;
+		float m_Temperature = 1000.0f;
 
 		bool m_UsePBR = false;
 		bool m_HasBloom = false;

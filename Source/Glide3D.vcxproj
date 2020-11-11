@@ -275,6 +275,8 @@
     <None Include="Core\Shaders\SkyboxVertex.glsl" />
     <None Include="Core\Shaders\SSAOFrag.glsl" />
     <None Include="Core\Shaders\SSAOVert.glsl" />
+    <None Include="Core\Shaders\TemperatureTonemapFrag.glsl" />
+    <None Include="Core\Shaders\TemperatureTonemapVert.glsl" />
     <None Include="Core\Shaders\Tonemapping\aces.glsl" />
     <None Include="Core\Shaders\Tonemapping\filmic.glsl" />
     <None Include="Core\Shaders\Tonemapping\LICENSE.MD" />

@@ -11,7 +11,7 @@ namespace Glide3D
 	Renderer::Renderer(GLFWwindow* window) : 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(2, 2), 
 		m_VolumetricPassFBO(2, 2, true), m_VolumetricPassBlurFBO(2, 2, true), m_LightingPassFBO(2, 2, true),
-		m_BloomFBO(2, 2, false), m_BloomFBO_2(2, 2, false)
+		m_BloomFBO(2, 2, false), m_TempFBO(2, 2, false)
 	{
 		// basic quad vertices
 		float Vertices[] = 
@@ -53,6 +53,8 @@ namespace Glide3D
 		m_GaussianVerticalShader.CompileShaders();
 		m_GaussianHorizontalShader.CreateShaderProgramFromFile("Core/Shaders/GaussianBlurVert.glsl", "Core/Shaders/GaussianBlurHorizontalFrag.glsl");
 		m_GaussianHorizontalShader.CompileShaders();
+		m_TemperatureTonemappingShader.CreateShaderProgramFromFile("Core/Shaders/TemperatureTonemapVert.glsl", "Core/Shaders/TemperatureTonemapFrag.glsl");
+		m_TemperatureTonemappingShader.CompileShaders();
 
 		// Create the noise texture
 		std::vector<glm::vec3> Noise;
@@ -92,6 +94,66 @@ namespace Glide3D
 		}
 
 		m_PointLights.push_back(light);
+	}
+
+	void Renderer::RenderImGuiElements()
+	{
+		if (ImGui::Begin("Renderer Stats"))
+		{
+			ImGui::Text("Geometry Pass Render Time : %f ms", m_GeometryPassTime);
+			ImGui::Text("Lighting Pass Time : %f ms", m_LightingPassTime);
+			ImGui::Text("Shadow Map Render Time : %f ms", m_ShadowMapRenderTime);
+			ImGui::Text("Reflection Map Render Time : %f ms", m_ReflectionMapRenderTime);
+			ImGui::Text("Total Render Time : %f ms", m_TotalRenderTime);
+			ImGui::Text("Total Draw Calls : %d", m_DrawCalls);
+			ImGui::Text("Total Vertices : %d", m_VertexCount);
+			ImGui::Text("Total Indices : %d", m_IndexCount);
+			ImGui::End();
+		}
+
+		if (ImGui::Begin("Volumetric Lighting Properties"))
+		{
+			ImGui::SliderFloat("Scattering", &u_VolumetricScattering, -1.0f, 1.0f);
+			ImGui::End();
+		}
+
+		if (ImGui::Begin("Lighting"))
+		{
+			ImGui::SliderFloat("Temperature", &m_Temperature, -16000.0f, 16000.0f);
+
+			if (ImGui::CollapsingHeader("Directional Light"))
+			{
+				DirectionalLight* light = m_DirectionalLight;
+				float vals[3] = {
+				light->m_ShadowPosition.x,
+				light->m_ShadowPosition.y,
+				light->m_ShadowPosition.z
+				};
+
+				ImGui::Text("Light Position : ");
+				ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
+
+				if (vals[0] != light->m_ShadowPosition.x ||
+					vals[1] != light->m_ShadowPosition.y ||
+					vals[2] != light->m_ShadowPosition.z)
+				{
+					light->m_ShadowPosition.x = vals[0];
+					light->m_ShadowPosition.y = vals[1];
+					light->m_ShadowPosition.z = vals[2];
+
+					light->m_UpdateOnce = true;
+				}
+
+				if (ImGui::Button("Set as scene camera"))
+				{
+					light->m_ShadowPosition = m_Camera->GetPosition();
+					light->m_Direction = m_Camera->GetFront();
+					light->m_UpdateOnce = true;
+				}
+			}
+
+			ImGui::End();
+		}
 	}
 
 	void Renderer::SetLightUniforms(GLClasses::Shader& shader)
@@ -389,62 +451,6 @@ namespace Glide3D
 		}
 	}
 
-	void Renderer::RenderImGuiElements()
-	{
-		if (ImGui::Begin("Renderer Stats"))
-		{
-			ImGui::Text("Geometry Pass Render Time : %f ms", m_GeometryPassTime);
-			ImGui::Text("Lighting Pass Time : %f ms", m_LightingPassTime);
-			ImGui::Text("Shadow Map Render Time : %f ms", m_ShadowMapRenderTime);
-			ImGui::Text("Reflection Map Render Time : %f ms", m_ReflectionMapRenderTime);
-			ImGui::Text("Total Render Time : %f ms", m_TotalRenderTime);
-			ImGui::Text("Total Draw Calls : %d", m_DrawCalls);
-			ImGui::Text("Total Vertices : %d", m_VertexCount);
-			ImGui::Text("Total Indices : %d", m_IndexCount);
-			ImGui::End();
-		}
-
-		if (ImGui::Begin("Volumetric Lighting Properties"))
-		{
-			ImGui::SliderFloat("Scattering", &u_VolumetricScattering, -1.0f, 1.0f);
-			ImGui::End();
-		}
-
-		if (ImGui::Begin("Lights"))
-		{
-			if (ImGui::CollapsingHeader("Directional Light"))
-			{
-				DirectionalLight* light = m_DirectionalLight;
-				float vals[3] = { 
-				light->m_ShadowPosition.x,
-				light->m_ShadowPosition.y,
-				light->m_ShadowPosition.z 
-				};
-				
-				ImGui::Text("Light Position : ");
-				ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
-
-				if (vals[0] != light->m_ShadowPosition.x ||
-					vals[1] != light->m_ShadowPosition.y ||
-					vals[2] != light->m_ShadowPosition.z)
-				{
-					light->m_ShadowPosition.x = vals[0];
-					light->m_ShadowPosition.y = vals[1];
-					light->m_ShadowPosition.z = vals[2];
-
-					light->m_UpdateOnce = true;
-				}
-
-				if (ImGui::Button("Set as scene camera"))
-				{
-					light->m_ShadowPosition = m_Camera->GetPosition();
-					light->m_Direction = m_Camera->GetFront();
-					light->m_UpdateOnce = true;
-				}
-			}
-		}
-	}
-
 	void Renderer::RenderReflectionMaps(FPSCamera* camera)
 	{
 		m_ReflectionMapRenderTime = glfwGetTime();
@@ -590,7 +596,7 @@ namespace Glide3D
 		m_VolumetricPassFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
 		m_VolumetricPassBlurFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
 		m_BloomFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
-		m_BloomFBO_2.SetSize(fbo.GetWidth(), fbo.GetHeight());
+		m_TempFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
 
 		for (auto& entities : m_Entities)
 		{
@@ -888,7 +894,7 @@ namespace Glide3D
 			m_FBOVAO.Unbind();
 
 			// Now vertically blur the result
-			m_BloomFBO_2.Bind();
+			m_TempFBO.Bind();
 			m_GaussianVerticalShader.Use();
 			m_GaussianVerticalShader.SetInteger("u_Texture", 0);
 
@@ -905,7 +911,7 @@ namespace Glide3D
 			m_GaussianHorizontalShader.SetInteger("u_Texture", 0);
 
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_BloomFBO_2.GetTexture());
+			glBindTexture(GL_TEXTURE_2D, m_TempFBO.GetTexture());
 
 			m_FBOVAO.Bind();
 			glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -948,13 +954,28 @@ namespace Glide3D
 	*/
 	void Renderer::RenderFBO(const GLClasses::Framebuffer& fbo)
 	{
+		// Temperature Tonemapping
+
+		m_TempFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
+		m_TempFBO.Bind();
+		m_TemperatureTonemappingShader.Use();
+		m_TemperatureTonemappingShader.SetInteger("u_Texture", 0);
+		m_TemperatureTonemappingShader.SetFloat("u_Temperature", m_Temperature);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fbo.GetTexture());
+
+		m_FBOVAO.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_FBOVAO.Unbind();
+
 		if (!fbo.IsHDR())
 		{
 			int w = 0, h = 0;
 
 			glfwGetFramebufferSize(m_Window, &w, &h);
 
-			fbo.Bind();
+			m_TempFBO.Bind();
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -971,7 +992,7 @@ namespace Glide3D
 			glClear(GL_DEPTH_BUFFER_BIT);
 
 			// Do Tonemapping
-			m_Tonemapper.Render(fbo);
+			m_Tonemapper.Render(m_TempFBO);
 		}
 	}
 
