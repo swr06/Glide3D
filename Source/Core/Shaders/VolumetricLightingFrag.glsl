@@ -1,7 +1,7 @@
 #version 330 core
 
 #define PI 3.14159265359f
-#define NB_STEPS 25
+#define NB_STEPS 30
 
 layout(location = 0) out vec3 o_VolumetricFog; // outputs to the volumetric texture that is in half resolution
 in vec2 v_TexCoords;
@@ -18,7 +18,7 @@ uniform int u_Width;
 uniform int u_Height;
 
 // We want to tile the noise texture over the screen
-vec2 NoiseScale = vec2(float(u_Width) / 2.0f, float(u_Height) / 2.0f);
+vec2 NoiseScale = vec2(float(u_Width) / 8.0f, float(u_Height) / 8.0f);
 
 // Henyey-Greenstein phase function
 float ComputeScattering(float lightDotView) // Dot product of the light direction vector and the view vector
