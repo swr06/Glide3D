@@ -11,7 +11,7 @@
 
 #include "Macros.h"
 #include "Application/Application.h"
-#include "Model Loader/OBJFileLoader.h"
+#include "Model Loader/ModelFileLoader.h"
 #include "Application/Logger.h"
 #include "Entity/Entity.h"
 #include "Object/Object.h"

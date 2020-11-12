@@ -120,9 +120,6 @@
     <ClInclude Include="Core\OrthographicCamera.h">
       <Filter>Core\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Model Loader\OBJFileLoader.h">
-      <Filter>Core\Engine\Model Loader</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Post Processor\PostProcessor.h">
       <Filter>Core\Engine\Post Processor</Filter>
     </ClInclude>
@@ -225,6 +222,9 @@
     <ClInclude Include="Core\GL_Classes\FramebufferRed.h">
       <Filter>Core\GL Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Model Loader\ModelFileLoader.h">
+      <Filter>Core\Engine\Model Loader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\glad\src\glad.c">
@@ -272,9 +272,6 @@
     </ClCompile>
     <ClCompile Include="Core\OrthographicCamera.cpp">
       <Filter>Core\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Model Loader\OBJFileLoader.cpp">
-      <Filter>Core\Engine\Model Loader</Filter>
     </ClCompile>
     <ClCompile Include="Core\Post Processor\PostProcessor.cpp">
       <Filter>Core\Engine\Post Processor</Filter>
@@ -350,6 +347,9 @@
     </ClCompile>
     <ClCompile Include="Core\GL_Classes\FramebufferRed.cpp">
       <Filter>Core\GL Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Model Loader\ModelFileLoader.cpp">
+      <Filter>Core\Engine\Model Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

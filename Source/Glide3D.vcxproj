@@ -174,7 +174,7 @@
     <ClInclude Include="Core\Lighting\Light.h" />
     <ClInclude Include="Core\Macros.h" />
     <ClInclude Include="Core\Mesh\Mesh.h" />
-    <ClInclude Include="Core\Model Loader\OBJFileLoader.h" />
+    <ClInclude Include="Core\Model Loader\ModelFileLoader.h" />
     <ClInclude Include="Core\ObjectTypes\Cone.h" />
     <ClInclude Include="Core\ObjectTypes\Cube.h" />
     <ClInclude Include="Core\ObjectTypes\Plane.h" />
@@ -227,7 +227,7 @@
     <ClCompile Include="Core\GL_Classes\VertexArray.cpp" />
     <ClCompile Include="Core\GL_Classes\VertexBuffer.cpp" />
     <ClCompile Include="Core\Mesh\Mesh.cpp" />
-    <ClCompile Include="Core\Model Loader\OBJFileLoader.cpp" />
+    <ClCompile Include="Core\Model Loader\ModelFileLoader.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
     <ClCompile Include="Core\OrthographicCamera.cpp" />
     <ClCompile Include="Core\Post Processor\PostProcessor.cpp" />

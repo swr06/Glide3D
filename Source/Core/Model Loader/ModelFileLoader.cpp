@@ -1,4 +1,4 @@
-#include "OBJFileLoader.h"
+#include "ModelFileLoader.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
