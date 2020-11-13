@@ -126,31 +126,91 @@ namespace Glide3D
 			if (ImGui::CollapsingHeader("Directional Light"))
 			{
 				DirectionalLight* light = m_DirectionalLight;
-				float vals[3] = {
-				light->m_ShadowPosition.x,
-				light->m_ShadowPosition.y,
-				light->m_ShadowPosition.z
-				};
 
-				ImGui::Text("Light Position : ");
-				ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
-
-				if (vals[0] != light->m_ShadowPosition.x ||
-					vals[1] != light->m_ShadowPosition.y ||
-					vals[2] != light->m_ShadowPosition.z)
+				if (light)
 				{
-					light->m_ShadowPosition.x = vals[0];
-					light->m_ShadowPosition.y = vals[1];
-					light->m_ShadowPosition.z = vals[2];
+					float vals[3] = {
+					light->m_ShadowPosition.x,
+					light->m_ShadowPosition.y,
+					light->m_ShadowPosition.z
+					};
 
-					light->m_UpdateOnce = true;
+					ImGui::Text("Light Position : ");
+					ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
+
+					if (vals[0] != light->m_ShadowPosition.x ||
+						vals[1] != light->m_ShadowPosition.y ||
+						vals[2] != light->m_ShadowPosition.z)
+					{
+						light->m_ShadowPosition.x = vals[0];
+						light->m_ShadowPosition.y = vals[1];
+						light->m_ShadowPosition.z = vals[2];
+
+						light->m_UpdateOnce = true;
+					}
+
+					if (ImGui::Button("Set as scene camera"))
+					{
+						light->m_ShadowPosition = m_Camera->GetPosition();
+						light->m_Direction = m_Camera->GetFront();
+						light->m_UpdateOnce = true;
+					}
 				}
+			}
 
-				if (ImGui::Button("Set as scene camera"))
+			if (ImGui::CollapsingHeader("Point Lights"))
+			{
+				for (int i = 0 ; i < m_PointLights.size() ; i++)
 				{
-					light->m_ShadowPosition = m_Camera->GetPosition();
-					light->m_Direction = m_Camera->GetFront();
-					light->m_UpdateOnce = true;
+					std::string s = "Point Light " + std::to_string(i);
+
+					if (ImGui::CollapsingHeader(s.c_str()))
+					{
+						PointLight* light = m_PointLights[i];
+
+						if (ImGui::Button("Set as scene camera"))
+						{
+							light->m_Position = m_Camera->GetPosition();
+							light->m_UpdateOnce = true;
+						}
+
+						float vals[3] = {
+							light->m_Position.x,
+							light->m_Position.y,
+							light->m_Position.z
+						};
+
+						float far_plane = light->m_FarPlane;
+						float linear = light->m_Linear;
+						float quadratic = light->m_Quadratic;
+						float constant = light->m_Constant;
+
+						ImGui::SliderFloat("Linear", &linear, 0.0f, 1.0f);
+						ImGui::SliderFloat("Quadratic", &quadratic, 0.0f, 1.0f);
+						ImGui::SliderFloat("Constant", &constant, 0.0f, 1.0f);
+						ImGui::SliderFloat("Far Plane", &far_plane, 0.0f, 1000.0f);
+						ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
+
+						if (vals[0] != light->m_Position.x ||
+							vals[1] != light->m_Position.y ||
+							vals[2] != light->m_Position.z ||
+							far_plane != light->m_FarPlane ||
+							linear != light->m_Linear ||
+							quadratic != light->m_Quadratic || 
+							constant != light->m_Constant)
+						{
+							light->m_Position.x = vals[0];
+							light->m_Position.y = vals[1];
+							light->m_Position.z = vals[2];
+
+							light->m_Linear = linear;
+							light->m_Constant = constant;
+							light->m_Quadratic = quadratic;
+							light->m_FarPlane = far_plane;
+
+							light->m_UpdateOnce = true;
+						}
+					}
 				}
 			}
 
@@ -162,6 +222,8 @@ namespace Glide3D
 	{
 		shader.Use();
 
+		shader.SetBool("u_DirectionalLightIsThere", m_DirectionalLight ? 1 : 0);
+
 		if (m_DirectionalLight)
 		{
 			shader.SetMatrix4("u_DirectionalLightSpaceVP", m_DirectionalLight->m_LightSpaceViewProjection, 0);
@@ -171,6 +233,17 @@ namespace Glide3D
 			shader.SetFloat("u_SceneDirectionalLight.m_SpecularStrength", m_DirectionalLight->m_SpecularStrength);
 			shader.SetFloat("u_SceneDirectionalLight.m_ShadowStrength", m_DirectionalLight->m_ShadowStrength);
 			shader.SetInteger("u_SceneDirectionalLight.m_IsBlinn", (int)m_DirectionalLight->m_IsBlinn);
+		}
+
+		else
+		{
+			shader.SetMatrix4("u_DirectionalLightSpaceVP", glm::mat4(1.0f), 0);
+			shader.SetVector3f("u_SceneDirectionalLight.m_Direction", glm::vec3(0.0f));
+			shader.SetVector3f("u_SceneDirectionalLight.m_SpecularColor", glm::vec3(0.0f));
+			shader.SetInteger("u_SceneDirectionalLight.m_SpecularExponent", 0);
+			shader.SetFloat("u_SceneDirectionalLight.m_SpecularStrength", 0);
+			shader.SetFloat("u_SceneDirectionalLight.m_ShadowStrength", 0);
+			shader.SetInteger("u_SceneDirectionalLight.m_IsBlinn", 0);
 		}
 
 		shader.SetInteger("m_DirectionalLightShadowmap", (int)6); // 5 slots are used for the materials

@@ -67,6 +67,7 @@ uniform DirectionalLight u_SceneDirectionalLight;
 uniform mat4 u_DirectionalLightSpaceVP;
 uniform sampler2D m_DirectionalLightShadowmap;
 uniform sampler2D u_DirectionalLightVolumetricTexture;
+uniform bool u_DirectionalLightIsThere;
 
 uniform PointLight u_ScenePointLights[MAX_POINT_LIGHTS];
 uniform vec3 u_ViewerPosition;
@@ -129,7 +130,10 @@ void main()
 
 		vec3 Lo = vec3(0.0f);
 
-		Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLight, u_DirectionalLightSpaceVP, m_DirectionalLightShadowmap);
+		if (u_DirectionalLightIsThere)
+		{
+			Lo += CalculateDirectionalLightPBR(u_SceneDirectionalLight, u_DirectionalLightSpaceVP, m_DirectionalLightShadowmap);
+		}
 
 		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 		{
@@ -143,7 +147,10 @@ void main()
 	{
 		vec3 FinalColor;
 
-		FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLight, u_DirectionalLightSpaceVP, m_DirectionalLightShadowmap);
+		if (u_DirectionalLightIsThere)
+		{
+			FinalColor += CalculateDirectionalLightPHONG(u_SceneDirectionalLight, u_DirectionalLightSpaceVP, m_DirectionalLightShadowmap);
+		}
 
 		for (int i = 0 ; i < u_ScenePointLightCount ; i++)
 		{
@@ -337,8 +344,7 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map
 
 vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
 {
-	float shadow = light.m_ShadowStrength * ShadowCalculationPOINT(light, map) * 2.0f;
-	shadow = 1.0f - shadow;
+	float shadow = light.m_ShadowStrength * ShadowCalculationPOINT(light, map);
 
 	vec3 V = normalize(u_ViewerPosition - g_FragPosition);
     vec3 L = normalize(light.m_Position - g_FragPosition);
@@ -361,5 +367,5 @@ vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
 
     float NdotL = max(dot(g_Normal, L), 0.0);        
 
-    return ((kD * g_Color * shadow) / PI + specular * light.m_SpecularStrength) * radiance * NdotL; 
+    return ((kD * g_Color) / PI + specular * light.m_SpecularStrength) * radiance * NdotL * (1.0f - shadow); 
 }
