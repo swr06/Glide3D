@@ -17,7 +17,7 @@ bool cursor_locked = true;
 bool pbr = false;
 bool bloom = false;
 float exposure = 0.1f;
-float camera_speed = 0.02f;
+float camera_speed = 0.2f;
 std::stringstream camera_props;
 TonemappingType tonetype = TonemappingType::ACES;
 
@@ -138,14 +138,6 @@ int main()
 
 	//FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
 	FileLoader::LoadOBJFile(&object, "Resources/models/sponza-pbr/Sponza.gltf");
-
-	//FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
-	//
-	//object.AddTextureMapToMesh("Resources/pbr/mat2/Albedo.png", TextureType::Albedo);
-	//object.AddTextureMapToMesh("Resources/pbr/mat2/Normal.png", TextureType::Normal);
-	//object.AddTextureMapToMesh("Resources/pbr/mat2/Metallic.png", TextureType::Metalness);
-	//object.AddTextureMapToMesh("Resources/pbr/mat2/Roughness.png", TextureType::Roughness);
-	//object.AddTextureMapToMesh("Resources/pbr/mat2/AO.png", TextureType::AO);
 
 	Entity entity1(&object);
 
