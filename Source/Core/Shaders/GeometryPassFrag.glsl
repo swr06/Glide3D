@@ -44,6 +44,10 @@ uniform bool u_HasAOMap = false;
 uniform float u_Roughness = 0.1f;
 uniform float u_Metalness = 0.2f;
 
+uniform bool u_HasMetalnessRoughnessMap = false;
+uniform sampler2D u_MetalnessRoughnessMap;
+uniform bool u_IsGLTF = false;
+
 void main()
 {
 	if (u_HasAlbedoMap)
@@ -81,19 +85,33 @@ void main()
 		o_Color.b = mix(o_Color, reflect_color, u_Reflectance.b).b;
 	}
 
-	if (u_HasMetalnessMap)
+	if (u_IsGLTF)
 	{
-		o_PBRComponents.r = texture(u_MetalnessMap, v_TexCoords).r;
+		if (u_HasMetalnessRoughnessMap)
+		{
+			o_PBRComponents.r = texture(u_MetalnessRoughnessMap, v_TexCoords).r;
+			o_PBRComponents.g = texture(u_MetalnessRoughnessMap, v_TexCoords).g;
+		}
+
+		else { o_PBRComponents.r = u_Metalness; o_PBRComponents.g = u_Roughness;}
 	}
 
-	else { o_PBRComponents.r = u_Metalness; }
-
-	if (u_HasRoughnessMap)
+	else 
 	{
-		o_PBRComponents.g = texture(u_RoughnessMap, v_TexCoords).r;
-	} 
+		if (u_HasMetalnessMap)
+		{
+			o_PBRComponents.r = texture(u_MetalnessMap, v_TexCoords).r;
+		} 
 
-	else { o_PBRComponents.g = u_Roughness; }
+		else { o_PBRComponents.r = u_Roughness; }
+
+		if (u_HasRoughnessMap)
+		{
+			o_PBRComponents.g = texture(u_RoughnessMap, v_TexCoords).r;
+		} 
+
+		else { o_PBRComponents.g = u_Roughness; }
+	}
 
 	if (u_HasAOMap)
 	{

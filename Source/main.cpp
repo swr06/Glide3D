@@ -136,7 +136,8 @@ int main()
 
 	Object object;
 
-	FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
+	//FileLoader::LoadOBJFile(&object, "Resources/models/sponza/quintessentials.model");
+	FileLoader::LoadOBJFile(&object, "Resources/models/sponza-pbr/Sponza.gltf");
 
 	//FileLoader::LoadOBJFile(&object, "Resources/sphere.model");
 	//
@@ -157,8 +158,9 @@ int main()
 
 	d_light.m_Direction = light_dir;
 	d_light.m_ShadowPosition = glm::vec3(91, 79, -7);
-	d_light.m_SpecularColor = glm::vec3(0.36745f, 0.21843f, 0.08627f);
-	d_light.m_SpecularStrength = 0.4f;
+	//d_light.m_SpecularColor = glm::vec3(0.36745f, 0.21843f, 0.08627f);
+	d_light.m_SpecularColor = glm::vec3(1.0f);
+	d_light.m_SpecularStrength = 3.0f;
 	d_light.m_SpecularExponent = 64;
 	d_light.m_IsBlinn = true;
 	d_light.m_UpdateRate = 0;

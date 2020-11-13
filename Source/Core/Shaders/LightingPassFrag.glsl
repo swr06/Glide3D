@@ -137,8 +137,6 @@ void main()
 		}	
 
 		o_Color = vec4(g_Ambient + Lo, 1.0f);
-
-		return;
 	}
 
 	else
@@ -153,8 +151,6 @@ void main()
 		}	
 
 		o_Color = vec4(FinalColor, 1.0f);
-
-		return;
 	}
 
 	return;
@@ -173,14 +169,13 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 
     float ClosestDepth = texture(map, ProjectionCoordinates.xy).r; 
     float Depth = ProjectionCoordinates.z;
-    //float Bias =  max(0.05f * (1.0f - dot(g_Normal, light_dir)), 0.005f);
     float Bias =  0.005f;
 	vec2 TexelSize = 1.0 / textureSize(map, 0); // LOD = 0
 
 	// Take the average of the surrounding texels to create the PCF effect
-	for(int x = -1; x <= 1; ++x)
+	for(int x = -1; x <= 1; x++)
 	{
-		for(int y = -1; y <= 1; ++y)
+		for(int y = -1; y <= 1; y++)
 		{
 			float pcf = texture(map, ProjectionCoordinates.xy + vec2(x, y) * TexelSize).r; 
 			shadow += Depth - Bias > pcf ? 1.0 : 0.0;        
@@ -337,7 +332,7 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map
     kD *= 1.0 - g_Metalness;	
 
     float NdotL = max(dot(g_Normal, L), 0.0);
-    return (kD * g_Color / PI + specular) * radiance * NdotL * (1.0f - Shadow);
+    return (kD * g_Color / PI + (specular * light.m_SpecularStrength)) * radiance * NdotL * (1.0f - Shadow);
 }
 
 vec3 CalculatePointLightPBR(PointLight light, samplerCube map)

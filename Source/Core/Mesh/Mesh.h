@@ -35,6 +35,7 @@ namespace Glide3D
 		GLClasses::Texture p_MetalnessMap;
 		GLClasses::Texture p_RoughnessMap;
 		GLClasses::Texture p_AmbientOcclusionMap;
+		GLClasses::Texture p_MetalnessRoughnessMap; // When the metalness and roughness textures packed
 
 		GLClasses::VertexBuffer p_VertexBuffer;
 		GLClasses::VertexArray p_VertexArray;
@@ -43,6 +44,7 @@ namespace Glide3D
 		std::uint32_t p_VertexCount = 0;
 		std::uint32_t p_IndicesCount = 0;
 		bool p_Indexed = false;
+		bool p_IsGLTF = false;
 
 		glm::vec4 p_Color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 p_Reflectivity = glm::vec3(0.0f);

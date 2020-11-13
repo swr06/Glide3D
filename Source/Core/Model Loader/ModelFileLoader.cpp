@@ -1,5 +1,6 @@
 #include "ModelFileLoader.h"
 
+#include <assimp/pbrmaterial.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -13,75 +14,73 @@ namespace Glide3D
 {
 	namespace FileLoader
 	{
-		void LoadMaterialTexture(aiMesh* mesh, aiMaterial* mat, aiTextureType type, Mesh* _mesh, const std::string& path)
+		bool is_gltf = false;
+
+		void LoadMaterialTextures(aiMesh* mesh, aiMaterial* mat, Mesh* _mesh, const std::string& path)
 		{
 			std::filesystem::path pth(path);
 
-			aiString material_name;
 			std::string texture_path = pth.parent_path().string().c_str();
+			aiString material_name;
+			aiString diffuse_texture;
+			aiString specular_texture;
+			aiString normal_texture;
+			aiString roughness_texture;
+			aiString metallic_texture;
+			aiString ao_texture;
 
-			mat->GetTexture(type, 0, &material_name);
+			_mesh->p_IsGLTF = is_gltf;
 
-			texture_path = texture_path + "/" + material_name.C_Str();
-
-			if (material_name.length > 0 && material_name.C_Str())
+			if (mat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &diffuse_texture) == aiReturn_SUCCESS)
 			{
-				switch (type)
+				std::string pth = texture_path + "/" + diffuse_texture.C_Str();
+				_mesh->p_AlbedoMap.CreateTexture(pth.c_str(), true);
+			}
+
+			else if(mat->GetTexture(aiTextureType_DIFFUSE, 0, &diffuse_texture) == aiReturn_SUCCESS)
+			{
+				std::string pth = texture_path + "/" + diffuse_texture.C_Str();
+				_mesh->p_AlbedoMap.CreateTexture(pth.c_str(), true);
+			}
+
+			if (mat->GetTexture(aiTextureType_SPECULAR, 0, &specular_texture) == aiReturn_SUCCESS)
+			{
+				std::string pth = texture_path + "/" + specular_texture.C_Str();
+				_mesh->p_LightMap.CreateTexture(pth.c_str(), false);
+			}
+
+			if (mat->GetTexture(aiTextureType_NORMALS, 0, &normal_texture) == aiReturn_SUCCESS)
+			{
+				std::string pth = texture_path + "/" + normal_texture.C_Str();
+				_mesh->p_NormalMap.CreateTexture(pth.c_str(), false);
+			}
+
+			if (mat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metallic_texture) == aiReturn_SUCCESS)
+			{
+				std::string pth = texture_path + "/" + metallic_texture.C_Str();
+				_mesh->p_MetalnessRoughnessMap.CreateTexture(pth.c_str(), false);
+			}
+
+			else 
+			{
+				if (mat->GetTexture(aiTextureType_METALNESS, 0, &metallic_texture) == aiReturn_SUCCESS)
 				{
-				case aiTextureType_DIFFUSE:
-				{
-					_mesh->p_AlbedoMap.CreateTexture(texture_path, true) ;
-
-					if (texture_path.find("curtain") != std::string::npos)
-					{
-						_mesh->p_HasWavePhysics = true;
-						_mesh->p_WaveAffectY = 30;
-						_mesh->p_WaveAffectFreq = glm::vec2(0.5f, 0.25f);
-						_mesh->p_WaveAffectSpeed = glm::vec2(2.5f, 5.0f);
-					}
-
-					if (texture_path.find("fabric") != std::string::npos)
-					{
-						_mesh->p_HasWavePhysics = true;
-						_mesh->p_WaveAffectY = 58;
-						_mesh->p_WaveAffectFreq = glm::vec2(0.5f, 0.25f);
-						_mesh->p_WaveAffectSpeed = glm::vec2(2.5f, 4.0f);
-					}
-
-					break;
+					std::string pth = texture_path + "/" + metallic_texture.C_Str();
+					_mesh->p_MetalnessMap.CreateTexture(pth.c_str(), false);
 				}
 
-				case aiTextureType_SPECULAR:
+				if (mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_texture) == aiReturn_SUCCESS)
 				{
-					_mesh->p_LightMap.CreateTexture(texture_path, false);
-					break;
+					std::string pth = texture_path + "/" + roughness_texture.C_Str();
+					_mesh->p_RoughnessMap.CreateTexture(pth.c_str(), false);
 				}
-
-				case aiTextureType_HEIGHT:
-				{
-					_mesh->p_NormalMap.CreateTexture(texture_path, false);
-					break;
-				}
-
-				case aiTextureType_METALNESS:
-				{
-					_mesh->p_MetalnessMap.CreateTexture(texture_path, false);
-					break;
-				}
-
-				case aiTextureType_DIFFUSE_ROUGHNESS:
-				{
-					_mesh->p_RoughnessMap.CreateTexture(texture_path, false);
-					break;
-				}
-
-				case aiTextureType_AMBIENT_OCCLUSION:
-				{
-					_mesh->p_AmbientOcclusionMap.CreateTexture(texture_path, false);
-					break;
-				}
-
-				}
+			
+			}
+			
+			if (mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ao_texture) == aiReturn_SUCCESS)
+			{
+				std::string pth = texture_path + "/" + ao_texture.C_Str();
+				_mesh->p_AmbientOcclusionMap.CreateTexture(pth.c_str(), false);
 			}
 		}
 
@@ -95,25 +94,25 @@ namespace Glide3D
 			{
 				Vertex vt;
 				vt.position = glm::vec3(
-					(float)mesh->mVertices[i].x,
-					(float)mesh->mVertices[i].y,
-					(float)mesh->mVertices[i].z
+					mesh->mVertices[i].x,
+					mesh->mVertices[i].y,
+					mesh->mVertices[i].z
 				);
 
 				if (mesh->HasNormals())
 				{
 					vt.normals = glm::vec3(
-						(float)mesh->mNormals[i].x,
-						(float)mesh->mNormals[i].y,
-						(float)mesh->mNormals[i].z
+						mesh->mNormals[i].x,
+						mesh->mNormals[i].y,
+						mesh->mNormals[i].z
 					);
 				}
 
 				if (mesh->mTextureCoords[0])
 				{
 					vt.tex_coords = glm::vec2(
-						(float)mesh->mTextureCoords[0][i].x,
-						(float)mesh->mTextureCoords[0][i].y
+						mesh->mTextureCoords[0][i].x,
+						mesh->mTextureCoords[0][i].y
 					);
 
 					if (mesh->mTangents)
@@ -163,12 +162,7 @@ namespace Glide3D
 			_mesh.p_Color = col;
 			_mesh.p_Reflectivity = reflectivity;
 	
-			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE, &object->m_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_SPECULAR, &object->m_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_HEIGHT, &object->m_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_METALNESS, &object->m_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_DIFFUSE_ROUGHNESS, &object->m_Meshes.back(), pth);
-			LoadMaterialTexture(mesh, material, aiTextureType_AMBIENT_OCCLUSION, &object->m_Meshes.back(), pth);
+			LoadMaterialTextures(mesh, material, &object->m_Meshes.back(), pth);
 		}
 
 		struct TransparentMesh
@@ -258,6 +252,11 @@ namespace Glide3D
 
 		void LoadOBJFile(Object* object, const std::string& filepath)
 		{
+			if (filepath.find("glb") != std::string::npos || filepath.find("gltf") != std::string::npos)
+			{
+				is_gltf = true;
+			}
+
 			Assimp::Importer importer;
 			Timer timer;
 
@@ -268,16 +267,9 @@ namespace Glide3D
 				filepath,
 				aiProcess_JoinIdenticalVertices |
 				aiProcess_Triangulate |
-				aiProcess_GenSmoothNormals |
 				aiProcess_CalcTangentSpace |
-				aiProcess_ImproveCacheLocality |
-				aiProcess_RemoveRedundantMaterials |
 				aiProcess_GenUVCoords |
-				aiProcess_FlipUVs |
-				aiProcess_SortByPType |
-				aiProcess_FindDegenerates |
-				aiProcess_FindInvalidData |
-				aiProcess_OptimizeMeshes
+				aiProcess_FlipUVs 
 			);
 
 			if (!Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode)
@@ -297,6 +289,7 @@ namespace Glide3D
 			"\n\tMesh Count : " + std::to_string(mesh_count));
 
 			mesh_count = 0;
+			is_gltf = false;
 
 			return;
 		}

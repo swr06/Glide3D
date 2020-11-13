@@ -647,12 +647,13 @@ namespace Glide3D
 		m_DeferredGeometryPassShader.SetInteger("u_MetalnessMap", 3, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_RoughnessMap", 4, 0);
 		m_DeferredGeometryPassShader.SetInteger("u_AOMap", 5, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_MetalnessRoughnessMap", 6, 0);
 
-		m_DeferredGeometryPassShader.SetInteger("u_EnvironmentMap", 6, 0);
+		m_DeferredGeometryPassShader.SetInteger("u_EnvironmentMap", 8, 0);
 		m_DeferredGeometryPassShader.SetVector3f("u_ViewerPosition", camera->GetPosition());
 		m_DeferredGeometryPassShader.SetFloat("u_Time", (float)glfwGetTime());
 
-		glActiveTexture(GL_TEXTURE6);
+		glActiveTexture(GL_TEXTURE8);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_ReflectionMap.GetTexture());
 
 		for (auto& entities : m_Entities)
@@ -726,6 +727,11 @@ namespace Glide3D
 					mesh->p_AmbientOcclusionMap.Bind(5);
 				}
 
+				if (mesh->p_MetalnessRoughnessMap.GetTextureID() != 0)
+				{
+					mesh->p_MetalnessRoughnessMap.Bind(6);
+				}
+
 				m_DeferredGeometryPassShader.SetVector4f("u_Color", mesh->p_Color);
 				m_DeferredGeometryPassShader.SetBool("u_HasAlbedoMap", mesh->p_AlbedoMap.GetTextureID() != 0);
 				m_DeferredGeometryPassShader.SetBool("u_HasNormalMap", mesh->p_NormalMap.GetTextureID() != 0);
@@ -733,6 +739,8 @@ namespace Glide3D
 				m_DeferredGeometryPassShader.SetBool("u_HasMetalnessMap", mesh->p_MetalnessMap.GetTextureID() != 0);
 				m_DeferredGeometryPassShader.SetBool("u_HasRoughnessMap", mesh->p_RoughnessMap.GetTextureID() != 0);
 				m_DeferredGeometryPassShader.SetBool("u_HasAOMap", mesh->p_AmbientOcclusionMap.GetTextureID() != 0);
+				m_DeferredGeometryPassShader.SetBool("u_HasMetalnessRoughnessMap", mesh->p_MetalnessRoughnessMap.GetTextureID() != 0);
+				m_DeferredGeometryPassShader.SetBool("u_IsGLTF", mesh->p_IsGLTF);
 				m_DeferredGeometryPassShader.SetVector3f("u_Reflectance", mesh->p_Reflectivity);
 				
 				const GLClasses::VertexArray& VAO = mesh->p_VertexArray;
