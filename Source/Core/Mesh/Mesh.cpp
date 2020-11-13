@@ -2,7 +2,7 @@
 
 namespace Glide3D
 {
-	Mesh::Mesh(const GLClasses::VertexBuffer& MatrixVBO, const uint32_t number) : p_VertexBuffer(GL_ARRAY_BUFFER), p_MeshNumber(number)
+	Mesh::Mesh(const uint32_t number) : p_VertexBuffer(GL_ARRAY_BUFFER), p_MeshNumber(number)
 	{
 		/*
 		Setup all the ogl objects
@@ -15,32 +15,6 @@ namespace Glide3D
 		p_VertexBuffer.VertexAttribPointer(2, 2, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tex_coords)));
 		p_VertexBuffer.VertexAttribPointer(3, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, tangent)));
 		p_VertexBuffer.VertexAttribPointer(4, 3, GL_FLOAT, 0, sizeof(Vertex), (void*)(offsetof(Vertex, bitangent)));
-		MatrixVBO.Bind();
-
-		constexpr float matrix_stride = 32 * sizeof(GLfloat);
-
-		// Structure padding shouldn't be an issue since the size is 32 * 4 bytes 
-		MatrixVBO.VertexAttribPointer(5, 4, GL_FLOAT, 0, matrix_stride, (void*)0); // column 1
-		MatrixVBO.VertexAttribPointer(6, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 4)); // column 2
-		MatrixVBO.VertexAttribPointer(7, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 8)); // column 3
-		MatrixVBO.VertexAttribPointer(8, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 12)); // column 4
-
-		// Normal matrices								   
-		MatrixVBO.VertexAttribPointer(9, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 16)); // column 1
-		MatrixVBO.VertexAttribPointer(10, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 20)); // column 2
-		MatrixVBO.VertexAttribPointer(11, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 24)); // column 3
-		MatrixVBO.VertexAttribPointer(12, 4, GL_FLOAT, 0, matrix_stride, (void*)(sizeof(GLfloat) * 28)); // column 4
-
-		// Set the matrix attributes to be per-instance
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-		glVertexAttribDivisor(7, 1);
-		glVertexAttribDivisor(8, 1);
-		glVertexAttribDivisor(9, 1);
-		glVertexAttribDivisor(10, 1);
-		glVertexAttribDivisor(11, 1);
-		glVertexAttribDivisor(12, 1);
-
 		p_VertexArray.Unbind();
 	}
 

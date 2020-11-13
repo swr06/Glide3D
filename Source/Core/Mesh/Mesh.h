@@ -20,7 +20,7 @@ namespace Glide3D
 	class Mesh
 	{
 	public:
-		Mesh(const GLClasses::VertexBuffer& MatrixVBO, const uint32_t number);
+		Mesh(const uint32_t number);
 		void Buffer();
 		void CalculateTangentNormals();
 

@@ -77,7 +77,6 @@ namespace Glide3D
 		friend class Entity;
 
 		friend void FileLoader::ProcessAssimpMesh(aiMesh* mesh, const aiScene* scene, Object* object, const std::string& pth, const glm::vec4& col, const glm::vec3& reflectivity);
-		GLClasses::VertexBuffer m_MatrixBuffer;
 		glm::vec3 m_Center; // The center of the mesh in localized space
 
 	};

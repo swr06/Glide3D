@@ -6,8 +6,7 @@ namespace Glide3D
 {
 	static uint32_t _CurrentObjectID = 1;
 
-	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), m_MatrixBuffer(GL_ARRAY_BUFFER),
-	m_ObjectID(++_CurrentObjectID)
+	Object::Object(const ReflectionMapProperties& props) : p_ReflectionProps(props), m_ObjectID(++_CurrentObjectID)
 	{
 	
 	}
@@ -87,7 +86,7 @@ namespace Glide3D
 
 	Mesh& Object::GenerateMesh()
 	{
-		m_Meshes.emplace_back(m_MatrixBuffer, m_Meshes.size());
+		m_Meshes.emplace_back(m_Meshes.size());
 		return m_Meshes.back();
 	}
 

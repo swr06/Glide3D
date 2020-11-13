@@ -99,7 +99,7 @@ namespace Glide3D
 		GLClasses::SSBO m_LightSSBO;
 		DirectionalLight* m_DirectionalLight = nullptr;
 		std::vector<PointLight*> m_PointLights;
-		std::unordered_map<uint32_t, std::vector<const Entity*>> m_Entities;
+		std::vector<const Entity*> m_Entities;
 		Skybox* m_EnvironmentMap = nullptr;
 		uint32_t m_CurrentFrame = 0;
 		float u_VolumetricScattering = 0.75f;

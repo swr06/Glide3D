@@ -81,5 +81,9 @@ namespace Glide3D
 		uint32_t m_ShadowMapUpdateRate = 60;
 
 		GLClasses::CubeDepthMap m_DepthShadowMap;
+
+	private : 
+		bool m_UpdateOnce = false;
+		friend class Renderer;
 	};
 }
