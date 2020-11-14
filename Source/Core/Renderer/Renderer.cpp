@@ -11,8 +11,8 @@ namespace Glide3D
 {
 	Renderer::Renderer(GLFWwindow* window) : 
 		m_FBOVBO(GL_ARRAY_BUFFER), m_Window(window), m_ReflectionMap(128), m_GeometryPassBuffer(2, 2), 
-		m_VolumetricPassFBO(2, 2, true), m_VolumetricPassBlurFBO(2, 2, true), m_LightingPassFBO(2, 2, true),
-		m_BloomFBO(2, 2, false), m_TempFBO(2, 2, false)
+		m_VolumetricPassFBO(2, 2, true, false), m_VolumetricPassBlurFBO(2, 2, true, false), m_LightingPassFBO(2, 2, true, false),
+		m_BloomFBO(2, 2, false, false), m_TempFBO(2, 2, false, false)
 	{
 		// basic quad vertices
 		float Vertices[] = 

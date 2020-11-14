@@ -2,7 +2,7 @@
 
 namespace Glide3D
 {
-	PostProcessingPipeline::PostProcessingPipeline(uint32_t w, uint32_t h) : m_Framebuffer(w, h, true), m_FBOVBO(GL_ARRAY_BUFFER)
+	PostProcessingPipeline::PostProcessingPipeline(uint32_t w, uint32_t h) : m_Framebuffer(w, h, true, false), m_FBOVBO(GL_ARRAY_BUFFER)
 	{
 		// basic quad vertices
 		float Vertices[] =

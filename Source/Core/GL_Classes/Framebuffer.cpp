@@ -6,8 +6,8 @@
 
 namespace GLClasses
 {
-    Framebuffer::Framebuffer(unsigned int w, unsigned int h, bool hdr) : 
-        m_FBO(0), m_FBWidth(w), m_FBHeight(h), m_IsHDR(hdr)
+    Framebuffer::Framebuffer(unsigned int w, unsigned int h, bool hdr, bool has_depth_attachment) :
+        m_FBO(0), m_FBWidth(w), m_FBHeight(h), m_IsHDR(hdr), m_HasDepthMap(has_depth_attachment)
     {
         CreateFramebuffer(w, h, hdr);
     }
@@ -32,11 +32,14 @@ namespace GLClasses
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureAttachment, 0);
 
-        glGenRenderbuffers(1, &m_DepthStencilBuffer);
-        glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilBuffer);
-
+        if (m_HasDepthMap)
+        {
+            glGenRenderbuffers(1, &m_DepthStencilBuffer);
+            glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilBuffer);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilBuffer);
+        }
+       
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         {
             Glide3D::Logger::Log("Fatal error! Framebuffer creation failed!");
