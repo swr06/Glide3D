@@ -174,7 +174,7 @@ int main()
 		});
 
 	renderer.SetEnvironmentMap(skybox);
-	renderer.SetDirectionalLight(&d_light);
+	//renderer.SetDirectionalLight(&d_light);
 	renderer.AddPointLight(&p_light);
 
 	glDisable(GL_BLEND);

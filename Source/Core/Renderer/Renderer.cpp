@@ -149,7 +149,7 @@ namespace Glide3D
 						light->m_UpdateOnce = true;
 					}
 
-					if (ImGui::Button("Set as scene camera"))
+					if (ImGui::Button("Set directional light as scene camera"))
 					{
 						light->m_ShadowPosition = m_Camera->GetPosition();
 						light->m_Direction = m_Camera->GetFront();
@@ -160,58 +160,42 @@ namespace Glide3D
 
 			if (ImGui::CollapsingHeader("Point Lights"))
 			{
+				ImGui::BeginChild("Point Light list");
+
 				for (int i = 0 ; i < m_PointLights.size() ; i++)
 				{
 					std::string s = "Point Light " + std::to_string(i);
 
 					if (ImGui::CollapsingHeader(s.c_str()))
 					{
+						ImGui::BeginChild("1");
+
 						PointLight* light = m_PointLights[i];
 
-						if (ImGui::Button("Set as scene camera"))
+						ImGui::SliderFloat("Linear", &light->m_Linear, 0.0f, 1.0f);
+						ImGui::SliderFloat("Quadratic", &light->m_Quadratic, 0.0f, 1.0f);
+						ImGui::SliderFloat("Constant", &light->m_Constant, 0.0f, 1.0f);
+						ImGui::SliderFloat("Far Plane", &light->m_FarPlane, 0.0f, 1000.0f);
+						ImGui::SliderFloat("Specular Intensity", &light->m_SpecularStrength, 0.05f, 100.0f);
+						ImGui::SliderInt("Specular Exponent", &light->m_SpecularExponent, 0, 1024);
+						ImGui::SliderFloat3("Position", glm::value_ptr(light->m_Position), -200.0f, 200.0f);
+
+						if (ImGui::Button("Set point light's position as scene camera"))
 						{
 							light->m_Position = m_Camera->GetPosition();
 							light->m_UpdateOnce = true;
 						}
 
-						float vals[3] = {
-							light->m_Position.x,
-							light->m_Position.y,
-							light->m_Position.z
-						};
-
-						float far_plane = light->m_FarPlane;
-						float linear = light->m_Linear;
-						float quadratic = light->m_Quadratic;
-						float constant = light->m_Constant;
-
-						ImGui::SliderFloat("Linear", &linear, 0.0f, 1.0f);
-						ImGui::SliderFloat("Quadratic", &quadratic, 0.0f, 1.0f);
-						ImGui::SliderFloat("Constant", &constant, 0.0f, 1.0f);
-						ImGui::SliderFloat("Far Plane", &far_plane, 0.0f, 1000.0f);
-						ImGui::SliderFloat3("Position", vals, -200.0f, 200.0f);
-
-						if (vals[0] != light->m_Position.x ||
-							vals[1] != light->m_Position.y ||
-							vals[2] != light->m_Position.z ||
-							far_plane != light->m_FarPlane ||
-							linear != light->m_Linear ||
-							quadratic != light->m_Quadratic || 
-							constant != light->m_Constant)
+						if (ImGui::Button("Update Point light"))
 						{
-							light->m_Position.x = vals[0];
-							light->m_Position.y = vals[1];
-							light->m_Position.z = vals[2];
-
-							light->m_Linear = linear;
-							light->m_Constant = constant;
-							light->m_Quadratic = quadratic;
-							light->m_FarPlane = far_plane;
-
 							light->m_UpdateOnce = true;
 						}
+
+						ImGui::EndChild();
 					}
 				}
+
+				ImGui::EndChild();
 			}
 
 			ImGui::End();
@@ -983,7 +967,11 @@ namespace Glide3D
 	{
 		// Temperature Tonemapping
 
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+
 		m_TempFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
+
 		m_TempFBO.Bind();
 		m_TemperatureTonemappingShader.Use();
 		m_TemperatureTonemappingShader.SetInteger("u_Texture", 0);
