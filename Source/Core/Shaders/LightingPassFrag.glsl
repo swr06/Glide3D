@@ -195,15 +195,34 @@ float ShadowCalculation(vec4 light_fragpos, sampler2D map, vec3 light_dir)
 
 float ShadowCalculationPOINT(PointLight pointlight, samplerCube map)
 {
-    vec3 fragToLight = g_FragPosition - pointlight.m_Position;
+	const vec3 SampleOffsets[20] = vec3[]
+	(
+	   vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+	   vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+	   vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+	   vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+	   vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+	); 
 
-    float closestDepth = texture(map, fragToLight).r;
-    closestDepth *= pointlight.m_FarPlane;
-    float currentDepth = length(fragToLight);
-    float bias = 0.5f; 
-    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;        
-        
-    return shadow;
+	vec3 FragToLight = g_FragPosition - pointlight.m_Position;
+	float CurrentDepth = length(FragToLight);
+    float Shadow = 0.0;
+	float Bias   = 0.5f;
+	float Radius = 0.5f;
+
+	for(int i = 0; i < 20; ++i)
+	{
+	    float ClosestDepth = texture(map, FragToLight + SampleOffsets[i] * Radius).r;
+	    ClosestDepth *= pointlight.m_FarPlane;   
+
+	    if(CurrentDepth - Bias > ClosestDepth)
+		{
+	        Shadow += 1.0;
+		}
+	}
+
+	Shadow /= 20;  
+	return Shadow;
 }
 
 vec3 CalculateDirectionalLightPHONG(DirectionalLight light, mat4 vp, sampler2D map)
@@ -339,7 +358,9 @@ vec3 CalculateDirectionalLightPBR(DirectionalLight light, mat4 vp, sampler2D map
     kD *= 1.0 - g_Metalness;	
 
     float NdotL = max(dot(g_Normal, L), 0.0);
-    return (kD * g_Color / PI + (specular * light.m_SpecularStrength)) * radiance * NdotL * (1.0f - Shadow);
+	vec3 Result = (kD * g_Color / PI + (specular * light.m_SpecularStrength)) * radiance * NdotL * (1.0f - Shadow);
+
+    return Result + (g_VolumetricLight);
 }
 
 vec3 CalculatePointLightPBR(PointLight light, samplerCube map)
