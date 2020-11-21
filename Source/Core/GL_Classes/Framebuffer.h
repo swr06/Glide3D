@@ -101,7 +101,7 @@ namespace GLClasses
 			{
 				glDeleteFramebuffers(1, &m_FBO);
 				glDeleteTextures(1, &m_TextureAttachment);
-				glDeleteTextures(1, &m_DepthStencilBuffer);
+				glDeleteRenderbuffers(1, &m_DepthStencilBuffer);
 
 				m_FBO = 0;
 				m_TextureAttachment = 0;

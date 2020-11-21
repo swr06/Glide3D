@@ -87,11 +87,13 @@ namespace Glide3D
 		glDeleteTextures(1, &m_PositionTexture);
 		glDeleteTextures(1, &m_NormalTexture);
 		glDeleteTextures(1, &m_PBRComponentTexture);
+		glDeleteRenderbuffers(1, &m_DepthRenderBuffer);
 
 		m_FBO = 0;
 		m_ColorTexture = 0;
 		m_PositionTexture = 0;
 		m_NormalTexture = 0;
 		m_PBRComponentTexture = 0;
+		m_DepthRenderBuffer = 0;
 	}
 }

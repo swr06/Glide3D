@@ -100,7 +100,7 @@ namespace Glide3D
 
 	void Renderer::RenderImGuiElements()
 	{
-		if (ImGui::Begin("Renderer Stats"))
+		if (ImGui::Begin("Renderer Stats and Settings"))
 		{
 			ImGui::Text("Geometry Pass Render Time : %f ms", m_GeometryPassTime);
 			ImGui::Text("Lighting Pass Time : %f ms", m_LightingPassTime);
@@ -110,6 +110,7 @@ namespace Glide3D
 			ImGui::Text("Total Draw Calls : %d", m_DrawCalls);
 			ImGui::Text("Total Vertices : %d", m_VertexCount);
 			ImGui::Text("Total Indices : %d", m_IndexCount);
+			ImGui::SliderFloat("Render Scale", &m_RenderScale, 0.1f, 2.0f);
 		}
 
 		ImGui::End();
@@ -605,12 +606,15 @@ namespace Glide3D
 		m_VertexCount = 0;
 		m_IndexCount = 0;
 		m_TotalRenderTime = glfwGetTime();
-		m_GeometryPassBuffer.SetDimensions(fbo.GetWidth(), fbo.GetHeight());
-		m_LightingPassFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
-		m_VolumetricPassFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
-		m_VolumetricPassBlurFBO.SetSize(floor(fbo.GetWidth() / 2.0f), floor(fbo.GetHeight() / 2.0f));
-		m_BloomFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
-		m_TempFBO.SetSize(fbo.GetWidth(), fbo.GetHeight());
+
+		glm::vec2 scale_sz = glm::vec2(fbo.GetWidth() * m_RenderScale, fbo.GetHeight() * m_RenderScale);
+
+		m_GeometryPassBuffer.SetDimensions(scale_sz.x, scale_sz.y);
+		m_LightingPassFBO.SetSize(scale_sz.x, scale_sz.y);
+		m_VolumetricPassFBO.SetSize(floor(scale_sz.x / 2.0f), floor(scale_sz.y / 2.0f));
+		m_VolumetricPassBlurFBO.SetSize(floor(scale_sz.x / 2.0f), floor(scale_sz.y / 2.0f));
+		m_BloomFBO.SetSize(scale_sz.x, scale_sz.y);
+		m_TempFBO.SetSize(scale_sz.x, scale_sz.y);
 
 		if (m_CurrentFrame == 0)
 		{

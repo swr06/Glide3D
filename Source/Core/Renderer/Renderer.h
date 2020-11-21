@@ -114,6 +114,8 @@ namespace Glide3D
 		void _RenderEntitesForReflectionMap(const glm::mat4& projection, const glm::mat4& view);
 		void RenderReflectionMapForEntity(const Entity* entity, FPSCamera* camera);
 		void RenderEnvironmentMap(FPSCamera* camera);
+		inline void SetRenderScale(float v) noexcept { m_RenderScale = v; }
+		inline float GetRenderScale() const noexcept { return m_RenderScale; }
 
 		// Deferred rendering pass stuff
 		GeometryRenderBuffer m_GeometryPassBuffer;
@@ -136,6 +138,7 @@ namespace Glide3D
 		float m_Roughness = 0.1f;
 		float m_Metalness = 0.1f;
 		float m_Temperature = 1000.0f;
+		float m_RenderScale = 1.0f;
 
 		bool m_UsePBR = false;
 		bool m_HasBloom = false;
