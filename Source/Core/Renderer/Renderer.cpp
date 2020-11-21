@@ -110,14 +110,16 @@ namespace Glide3D
 			ImGui::Text("Total Draw Calls : %d", m_DrawCalls);
 			ImGui::Text("Total Vertices : %d", m_VertexCount);
 			ImGui::Text("Total Indices : %d", m_IndexCount);
-			ImGui::End();
 		}
+
+		ImGui::End();
 
 		if (ImGui::Begin("Volumetric Lighting Properties"))
 		{
 			ImGui::SliderFloat("Scattering", &u_VolumetricScattering, -1.0f, 1.0f);
-			ImGui::End();
 		}
+
+		ImGui::End();
 
 		if (ImGui::Begin("Lighting"))
 		{
@@ -160,16 +162,12 @@ namespace Glide3D
 
 			if (ImGui::CollapsingHeader("Point Lights"))
 			{
-				ImGui::BeginChild("Point Light list");
-
 				for (int i = 0 ; i < m_PointLights.size() ; i++)
 				{
 					std::string s = "Point Light " + std::to_string(i);
 
 					if (ImGui::CollapsingHeader(s.c_str()))
 					{
-						ImGui::BeginChild("1");
-
 						PointLight* light = m_PointLights[i];
 
 						ImGui::SliderFloat("Linear", &light->m_Linear, 0.0f, 1.0f);
@@ -190,16 +188,13 @@ namespace Glide3D
 						{
 							light->m_UpdateOnce = true;
 						}
-
-						ImGui::EndChild();
 					}
 				}
 
-				ImGui::EndChild();
 			}
-
-			ImGui::End();
 		}
+
+		ImGui::End();
 	}
 
 	void Renderer::SetLightUniforms(GLClasses::Shader& shader)

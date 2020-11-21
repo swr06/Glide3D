@@ -47,9 +47,11 @@ public:
 			ImGui::SliderFloat("Speed", &camera_speed, 0.01f, 2.0f);
 			ImGui::Text("Camera Position : %f, %f, %f", position.x, position.y, position.z);
 			ImGui::Text("Camera Front : %f, %f, %f", front.x, front.y, front.z);
-			ImGui::End();
 		}
+
+		ImGui::End();
 	}
+
 
 	void OnEvent(Event e) override
 	{
