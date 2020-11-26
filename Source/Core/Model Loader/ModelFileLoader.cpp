@@ -250,7 +250,7 @@ namespace Glide3D
 			transparent_meshes.clear();
 		}
 
-		void LoadOBJFile(Object* object, const std::string& filepath)
+		void LoadModelFile(Object* object, const std::string& filepath)
 		{
 			if (filepath.find("glb") != std::string::npos || filepath.find("gltf") != std::string::npos)
 			{

@@ -29,6 +29,8 @@ namespace Glide3D
 
 	void PostProcessingPipeline::StartPipeline(GLClasses::Framebuffer& fbo)
 	{
+		m_Framebuffer.SetSize(fbo.GetWidth(), fbo.GetHeight());
+		
 		const GLuint FBO_Texture = fbo.GetTexture();
 		const GLuint SwapFBO_Texture = m_Framebuffer.GetTexture();
 		const GLuint FBO = fbo.GetFramebuffer();
@@ -42,6 +44,9 @@ namespace Glide3D
 
 		for (int i = 0; i < m_Shaders.size(); i++)
 		{
+			glDisable(GL_CULL_FACE);
+			glDisable(GL_DEPTH_TEST);
+
 			glBindFramebuffer(GL_FRAMEBUFFER, Framebuffer);
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
@@ -79,7 +84,7 @@ namespace Glide3D
 			}
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, Framebuffer);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			glUseProgram(0);
 		}

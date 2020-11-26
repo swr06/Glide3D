@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -267,6 +268,8 @@
     <None Include="Core\Shaders\GeometryPassVert.glsl" />
     <None Include="Core\Shaders\LightingPassFrag.glsl" />
     <None Include="Core\Shaders\LightingPassVert.glsl" />
+    <None Include="Core\Shaders\PostProcessing\QuadVert.glsl" />
+    <None Include="Core\Shaders\PostProcessing\Vignette.glsl" />
     <None Include="Core\Shaders\ReflectionFrag.glsl" />
     <None Include="Core\Shaders\ReflectionVert.glsl" />
     <None Include="Core\Shaders\RendererFrag.glsl" />

@@ -21,6 +21,7 @@
 #include "ObjectTypes/Plane.h"
 #include "FpsCamera.h"
 #include "OrthographicCamera.h"
+#include "Post Processor/PostProcessor.h"
 
 #include "GL_Classes/Fps.h"
 

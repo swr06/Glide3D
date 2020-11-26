@@ -102,7 +102,7 @@ namespace Glide3D
 		std::vector<const Entity*> m_Entities;
 		Skybox* m_EnvironmentMap = nullptr;
 		uint32_t m_CurrentFrame = 0;
-		float u_VolumetricScattering = 0.75f;
+		float u_VolumetricScattering = 0.5f;
 
 		void SetLightUniforms(GLClasses::Shader& shader);
 		void BindLightingMaps();
@@ -137,7 +137,7 @@ namespace Glide3D
 
 		float m_Roughness = 0.1f;
 		float m_Metalness = 0.1f;
-		float m_Temperature = 1000.0f;
+		float m_Temperature = 6200.0f;
 		float m_RenderScale = 1.0f;
 
 		bool m_UsePBR = false;

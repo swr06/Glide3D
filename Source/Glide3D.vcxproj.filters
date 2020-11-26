@@ -61,6 +61,9 @@
     <Filter Include="Core\Engine\Tonemapper">
       <UniqueIdentifier>{0e3373a6-c48c-4942-b79e-d4b22c3ad0c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Shaders\PostProcessing">
+      <UniqueIdentifier>{a605a73a-8700-4786-983f-1f103bd6c998}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\glad\include\glad\glad.h">
@@ -481,6 +484,12 @@
     </None>
     <None Include="Core\Shaders\TemperatureTonemapVert.glsl">
       <Filter>Core\Shaders</Filter>
+    </None>
+    <None Include="Core\Shaders\PostProcessing\QuadVert.glsl">
+      <Filter>Core\Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="Core\Shaders\PostProcessing\Vignette.glsl">
+      <Filter>Core\Shaders\PostProcessing</Filter>
     </None>
   </ItemGroup>
 </Project>
