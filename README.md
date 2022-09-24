@@ -39,23 +39,23 @@ This project has long since been abandoned and will not be worked on anytime soo
 
 </br>
 
-![s1](https://github.com/swr06/Glide3D/blob/main/Screenshots/1.jpg)
+![s1](https://github.com/swr06/Glide3D/blob/master/Screenshots/1.jpg)
 
 </br>
 
 </br>
 
-![s2](https://github.com/swr06/Glide3D/blob/main/Screenshots/2.jpeg)
+![s2](https://github.com/swr06/Glide3D/blob/master/Screenshots/2.jpeg)
 
 </br>
 
 </br>
 
-![s3](https://github.com/swr06/Glide3D/blob/main/Screenshots/3.png)
+![s3](https://github.com/swr06/Glide3D/blob/master/Screenshots/3.png)
 
 </br>
 
 </br>
 
-![s4](https://github.com/swr06/Glide3D/blob/main/Screenshots/4.jpg)
+![s4](https://github.com/swr06/Glide3D/blob/master/Screenshots/4.jpg)
 
