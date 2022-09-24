@@ -1,7 +1,8 @@
 # Glide3D
-A Tiny 3D Game Engine. This purpose of this engine is purely educational (To learn more about Computer Graphics)
+A Tiny 3D Game Engine. This engine was the first 3D engine I've ever tried making.
 
-# THIS PROJECT HAS LONG SINCE BEEN ABANDONED. IT IS IN AN EXTREMELY EXPERIMENTAL STATE AND I DO NOT RECOMMEND TRYING IT.
+# Project Status
+This project has long since been abandoned and will not be worked on anytime soon. 
 
 # Planned Features
 - 3D Object rendering (such as cubes, cones and spheres)  ✔
@@ -33,16 +34,28 @@ A Tiny 3D Game Engine. This purpose of this engine is purely educational (To lea
 - Volumetric Lighting ✔
 - Multiple Tonemapping Options ✔
 - Temperature Tonemapping ✔
-- Volumetric Clouds 
-- Alpha Blending
 
-# Advanced Features (That will come later..)
-- Screen space reflections
-- Planar reflections
-- Cascaded shadow maps
+# Screenshots
 
-# Requirements 
-- CPU : Any Dual Core CPU or better
-- GPU : OpenGL 4.0+ capable gpu 
-- RAM : 2 GB 
+</br>
+
+![s1](https://github.com/swr06/Glide3D/blob/main/Screenshots/1.jpg)
+
+</br>
+
+</br>
+
+![s2](https://github.com/swr06/Glide3D/blob/main/Screenshots/2.jpeg)
+
+</br>
+
+</br>
+
+![s3](https://github.com/swr06/Glide3D/blob/main/Screenshots/3.png)
+
+</br>
+
+</br>
+
+![s4](https://github.com/swr06/Glide3D/blob/main/Screenshots/4.jpg)
 
